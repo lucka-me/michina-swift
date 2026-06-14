@@ -1,0 +1,12 @@
+{
+    "invocations": [
+        {
+            "protoFiles": [
+                "ONNX.proto",
+                "ONNXPartial.proto"
+            ],
+            "visibility": "internal",
+            "fileNaming": "dropPath"
+        }
+    ]
+}

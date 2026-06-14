@@ -1,0 +1,7 @@
+[
+  {
+    "fingerprint" : "f6506eaa86ed2e01cb0ae14a75035b7fdbf0918f",
+    "packageIdentity" : "swift-protobuf",
+    "targetName" : "SwiftProtobufPlugin"
+  }
+]

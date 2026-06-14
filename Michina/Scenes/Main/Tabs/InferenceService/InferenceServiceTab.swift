@@ -1,0 +1,149 @@
+//
+//  InferenceServiceTab.swift
+//  Michina
+//
+//  Created by Lucka on 2026-05-19.
+//
+
+import Magearna
+import SwiftUI
+
+struct InferenceServiceTab : TabContent {
+    @State private var values = ViewValues()
+    
+    @State private var metrics = InferenceServiceMetrics.shared
+    
+    @State private var isInspectorPresented = true
+    @State private var selection: Selection? = nil
+    
+    var body: some TabContent<Never> {
+        Tab(Self.titleKey, systemImage: Self.systemImage) {
+            List(selection: $selection) {
+                section(for: nil)
+                
+                ForEach(InferenceModelSuite.Category.allCases, content: section(for:))
+            }
+            .listStyle(.inset)
+            .frame(minWidth: 300, minHeight: 400)
+            .toolbar {
+                toolbarContent
+            }
+            .navigationTitle("Inference Service")
+            .inspector(isPresented: $isInspectorPresented) {
+                if case let .category(category) = selection {
+                    InferencePipelineMetricView(metric: metrics.pipelines[category]!)
+                } else {
+                    Text("No Selection")
+                        .font(.system(.title, weight: .semibold))
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .onChange(of: selection) {
+                if selection != nil {
+                    isInspectorPresented = true
+                }
+            }
+        }
+    }
+}
+
+fileprivate extension InferenceServiceTab {
+    static let titleKey: LocalizedStringKey = "Inference"
+    static let systemImage: String = "sparkles.rectangle.stack"
+}
+
+fileprivate extension InferenceServiceTab {
+    @MainActor
+    @Observable
+    final class ViewValues {
+        private struct Storage {
+            @AppStorage("InferenceServiceTab.ShowCharts")
+            var showCharts = true
+        }
+        
+        var showCharts: Bool {
+            didSet { storage.showCharts = showCharts }
+        }
+        
+        private let storage = Storage()
+        
+        init() {
+            self.showCharts = storage.showCharts
+        }
+    }
+    
+    @ToolbarContentBuilder
+    var toolbarContent: some ToolbarContent {
+        ToolbarItem {
+            Toggle(
+                "Show Charts",
+                systemImage: "chart.xyaxis.line",
+                isOn: $values.showCharts
+            )
+        }
+    }
+}
+
+fileprivate extension InferenceServiceTab {
+    @ViewBuilder
+    func section(for category: InferenceModelSuite.Category?) -> some View {
+        Section {
+            row(for: metrics.pipelines[category]!)
+                .tag(Selection.category(category: category))
+            
+            if values.showCharts {
+                PipelineCountChart(counts: metrics.runningPipelineCounts[category]!)
+                    .frame(height: 60)
+                    .padding(.top, 12)
+                    .listRowSeparator(.hidden)
+            }
+        } header: {
+            if let category {
+                Label(category)
+            } else {
+                Label("Overall", systemImage: "rectangle.stack")
+            }
+        }
+    }
+    
+    @ViewBuilder
+    func row(for pipelineMetric: InferencePipelineMetric) -> some View {
+        HStack(alignment: .center, spacing: 12) {
+            Text(
+                pipelineMetric.totalCount,
+                format: .number.grouping(.never).precision(.integerLength(6...))
+            )
+            .font(.system(size: 24, weight: .medium))
+            
+            Grid(alignment: .leading, horizontalSpacing: 6) {
+                GridRow {
+                    Text("Success")
+                    Text(pipelineMetric.successCount, format: .number)
+                        .gridColumnAlignment(.trailing)
+                }
+                .foregroundStyle(pipelineMetric.successCount > 0 ? .green : .secondary)
+                GridRow {
+                    Text("Failure")
+                    Text(pipelineMetric.failureCount, format: .number)
+                }
+                .foregroundStyle(pipelineMetric.failureCount > 0 ? .red : .secondary)
+            }
+            .font(.caption)
+            
+            Spacer()
+            
+            VStack(alignment: .trailing) {
+                Text("Average Elapse")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Text(pipelineMetric.averageElapse, format: .elapse)
+            }
+        }
+        .monospaced()
+        .lineLimit(1)
+    }
+}
+
+fileprivate enum Selection: Hashable {
+    case category(category: InferenceModelSuite.Category?)
+}

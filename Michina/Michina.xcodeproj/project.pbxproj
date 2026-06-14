@@ -1,0 +1,489 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		848E4AB52FD1353E0049E3F7 /* ONNXRuntimeExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = 848E4AB42FD1353E0049E3F7 /* ONNXRuntimeExtensions */; };
+		84949AD42FBC3D7F0071D768 /* MichinaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84949AD32FBC3D7F0071D768 /* MichinaApp.swift */; };
+		8494A2D82FC4685A0071D768 /* ONNXRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 8494A2D72FC4685A0071D768 /* ONNXRuntime */; };
+		84AC7EA12FDBF08D004F972F /* Hummingbird in Frameworks */ = {isa = PBXBuildFile; productRef = 84AC7EA02FDBF08D004F972F /* Hummingbird */; };
+		84AC7EA42FDC0BB9004F972F /* MultipartKit in Frameworks */ = {isa = PBXBuildFile; productRef = 84AC7EA32FDC0BB9004F972F /* MultipartKit */; };
+		84AD9B452FD95FFC00114195 /* Magearna in Frameworks */ = {isa = PBXBuildFile; productRef = 84AD9B442FD95FFC00114195 /* Magearna */; };
+		84B77DD52FC6D9A6007E6226 /* Tokenizers in Frameworks */ = {isa = PBXBuildFile; productRef = 84B77DD42FC6D9A6007E6226 /* Tokenizers */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		84949AD02FBC3D7F0071D768 /* Michina.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Michina.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		84949AD32FBC3D7F0071D768 /* MichinaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MichinaApp.swift; sourceTree = "<group>"; };
+		84949E942FBE35640071D768 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
+		84B77F292FC806D7007E6226 /* onnxruntime.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = onnxruntime.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		84949AD22FBC3D7F0071D768 /* Scenes */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Scenes;
+			sourceTree = "<group>";
+		};
+		84949ADE2FBC3EDE0071D768 /* Resources */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		84949AFB2FBC510A0071D768 /* Services */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Services;
+			sourceTree = "<group>";
+		};
+		84949B082FBC6BDC0071D768 /* Utilities */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		84D8A4642FD5E74D00A9C13C /* Settings */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Settings;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		84949ACD2FBC3D7F0071D768 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84AC7EA12FDBF08D004F972F /* Hummingbird in Frameworks */,
+				8494A2D82FC4685A0071D768 /* ONNXRuntime in Frameworks */,
+				84B77DD52FC6D9A6007E6226 /* Tokenizers in Frameworks */,
+				848E4AB52FD1353E0049E3F7 /* ONNXRuntimeExtensions in Frameworks */,
+				84AC7EA42FDC0BB9004F972F /* MultipartKit in Frameworks */,
+				84AD9B452FD95FFC00114195 /* Magearna in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		84949AC72FBC3D7E0071D768 = {
+			isa = PBXGroup;
+			children = (
+				84949AD32FBC3D7F0071D768 /* MichinaApp.swift */,
+				84949E932FBE35640071D768 /* Frameworks */,
+				84949AD12FBC3D7F0071D768 /* Products */,
+				84949ADE2FBC3EDE0071D768 /* Resources */,
+				84949AD22FBC3D7F0071D768 /* Scenes */,
+				84949AFB2FBC510A0071D768 /* Services */,
+				84D8A4642FD5E74D00A9C13C /* Settings */,
+				84949B082FBC6BDC0071D768 /* Utilities */,
+			);
+			sourceTree = "<group>";
+		};
+		84949AD12FBC3D7F0071D768 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				84949AD02FBC3D7F0071D768 /* Michina.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		84949E932FBE35640071D768 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				84B77F292FC806D7007E6226 /* onnxruntime.framework */,
+				84949E942FBE35640071D768 /* CoreImage.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		84949ACF2FBC3D7F0071D768 /* Michina */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 84949ADB2FBC3D7F0071D768 /* Build configuration list for PBXNativeTarget "Michina" */;
+			buildPhases = (
+				84949ACC2FBC3D7F0071D768 /* Sources */,
+				84949ACD2FBC3D7F0071D768 /* Frameworks */,
+				84949ACE2FBC3D7F0071D768 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				84949AD22FBC3D7F0071D768 /* Scenes */,
+				84949ADE2FBC3EDE0071D768 /* Resources */,
+				84949AFB2FBC510A0071D768 /* Services */,
+				84949B082FBC6BDC0071D768 /* Utilities */,
+				84D8A4642FD5E74D00A9C13C /* Settings */,
+			);
+			name = Michina;
+			packageProductDependencies = (
+				8494A2D72FC4685A0071D768 /* ONNXRuntime */,
+				84B77DD42FC6D9A6007E6226 /* Tokenizers */,
+				848E4AB42FD1353E0049E3F7 /* ONNXRuntimeExtensions */,
+				84AD9B442FD95FFC00114195 /* Magearna */,
+				84AC7EA02FDBF08D004F972F /* Hummingbird */,
+				84AC7EA32FDC0BB9004F972F /* MultipartKit */,
+			);
+			productName = Michina;
+			productReference = 84949AD02FBC3D7F0071D768 /* Michina.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		84949AC82FBC3D7E0071D768 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2650;
+				LastUpgradeCheck = 2650;
+				TargetAttributes = {
+					84949ACF2FBC3D7F0071D768 = {
+						CreatedOnToolsVersion = 26.5;
+					};
+				};
+			};
+			buildConfigurationList = 84949ACB2FBC3D7F0071D768 /* Build configuration list for PBXProject "Michina" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 84949AC72FBC3D7E0071D768;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				84AD9B432FD95FFC00114195 /* XCLocalSwiftPackageReference "../Magearna" */,
+				84AC7E9F2FDBF08D004F972F /* XCRemoteSwiftPackageReference "hummingbird" */,
+				84AC7EA22FDC0BB9004F972F /* XCRemoteSwiftPackageReference "multipart-kit" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 84949AD12FBC3D7F0071D768 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				84949ACF2FBC3D7F0071D768 /* Michina */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		84949ACE2FBC3D7F0071D768 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		84949ACC2FBC3D7F0071D768 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84949AD42FBC3D7F0071D768 /* MichinaApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		84949AD92FBC3D7F0071D768 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 4J48MW8HQS;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				EXCLUDED_ARCHS = "";
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		84949ADA2FBC3D7F0071D768 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 4J48MW8HQS;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				EXCLUDED_ARCHS = "";
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		84949ADC2FBC3D7F0071D768 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = Default;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 4J48MW8HQS;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Michina;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.lucka.Michina;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+			};
+			name = Debug;
+		};
+		84949ADD2FBC3D7F0071D768 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = Default;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 4J48MW8HQS;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Michina;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.lucka.Michina;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		84949ACB2FBC3D7F0071D768 /* Build configuration list for PBXProject "Michina" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84949AD92FBC3D7F0071D768 /* Debug */,
+				84949ADA2FBC3D7F0071D768 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		84949ADB2FBC3D7F0071D768 /* Build configuration list for PBXNativeTarget "Michina" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84949ADC2FBC3D7F0071D768 /* Debug */,
+				84949ADD2FBC3D7F0071D768 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		84AD9B432FD95FFC00114195 /* XCLocalSwiftPackageReference "../Magearna" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Magearna;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		84AC7E9F2FDBF08D004F972F /* XCRemoteSwiftPackageReference "hummingbird" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hummingbird-project/hummingbird.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.25.0;
+			};
+		};
+		84AC7EA22FDC0BB9004F972F /* XCRemoteSwiftPackageReference "multipart-kit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/vapor/multipart-kit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.7.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		848E4AB42FD1353E0049E3F7 /* ONNXRuntimeExtensions */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ONNXRuntimeExtensions;
+		};
+		8494A2D72FC4685A0071D768 /* ONNXRuntime */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ONNXRuntime;
+		};
+		84AC7EA02FDBF08D004F972F /* Hummingbird */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 84AC7E9F2FDBF08D004F972F /* XCRemoteSwiftPackageReference "hummingbird" */;
+			productName = Hummingbird;
+		};
+		84AC7EA32FDC0BB9004F972F /* MultipartKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 84AC7EA22FDC0BB9004F972F /* XCRemoteSwiftPackageReference "multipart-kit" */;
+			productName = MultipartKit;
+		};
+		84AD9B442FD95FFC00114195 /* Magearna */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Magearna;
+		};
+		84B77DD42FC6D9A6007E6226 /* Tokenizers */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Tokenizers;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 84949AC82FBC3D7E0071D768 /* Project object */;
+}

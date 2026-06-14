@@ -1,0 +1,9 @@
+# Swift Package Manager
+.swiftpm
+.build/
+
+# Xcode
+/build
+
+# Finder
+.DS_Store

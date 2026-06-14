@@ -1,0 +1,26 @@
+// Reference: https://github.com/onnx/onnx/blob/v1.21.0/onnx/onnx.in.proto
+// Only preserve messages and fields we need.
+
+syntax = "proto3";
+
+package onnx_partial;
+option swift_prefix = "ONNXPartial";
+
+message Model {
+    Graph graph = 7;
+
+    repeated StringStringEntryProto metadata_props = 14;
+}
+
+message Graph {
+    repeated Node node = 1;
+}
+
+message Node {
+    string name = 3;
+}
+
+message StringStringEntryProto {
+    string key = 1;
+    string value = 2;
+};

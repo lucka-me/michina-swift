@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:Michina/Michina.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:ONNXRuntime">
+   </FileRef>
+   <FileRef
+      location = "group:Magearna">
+   </FileRef>
+   <FileRef
+      location = "group:Tokenizers">
+   </FileRef>
+   <FileRef
+      location = "group:ci_scripts">
+   </FileRef>
+   <FileRef
+      location = "group:README.md">
+   </FileRef>
+</Workspace>

@@ -1,0 +1,3 @@
+[submodule "ONNXRuntime/onnxruntime"]
+	path = ONNXRuntime/onnxruntime
+	url = https://github.com/lucka-me/onnxruntime.git

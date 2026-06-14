@@ -1,0 +1,15 @@
+## User settings
+xcuserdata/
+
+## Xcode Project
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcodeproj/project.xcworkspace/
+!*.xcworkspace/contents.xcworkspacedata
+
+## Finder
+.DS_Store
+
+## ONNXRuntime
+ONNXRuntime/onnxruntime.xcframework

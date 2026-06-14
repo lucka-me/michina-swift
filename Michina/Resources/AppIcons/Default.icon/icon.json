@@ -1,0 +1,84 @@
+{
+  "fill-specializations" : [
+    {
+      "value" : {
+        "linear-gradient" : [
+          "display-p3:0.79216,0.87451,0.89804,1.00000",
+          "srgb:0.65882,0.73333,0.74902,1.00000"
+        ],
+        "orientation" : {
+          "start" : {
+            "x" : 0.5,
+            "y" : 0
+          },
+          "stop" : {
+            "x" : 0.5,
+            "y" : 0.7
+          }
+        }
+      }
+    },
+    {
+      "appearance" : "dark",
+      "value" : "system-dark"
+    }
+  ],
+  "groups" : [
+    {
+      "blur-material" : 0.5,
+      "layers" : [
+        {
+          "fill-specializations" : [
+            {
+              "appearance" : "dark",
+              "value" : {
+                "solid" : "srgb:0.72157,0.69020,0.67843,1.00000"
+              }
+            }
+          ],
+          "image-name" : "Frame.svg",
+          "name" : "Frame"
+        }
+      ],
+      "lighting" : "individual",
+      "name" : "Frame",
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "specular" : true,
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    },
+    {
+      "blur-material" : null,
+      "layers" : [
+        {
+          "image-name" : "Left.svg",
+          "name" : "Left"
+        },
+        {
+          "image-name" : "Right.svg",
+          "name" : "Right"
+        }
+      ],
+      "lighting" : "combined",
+      "name" : "Soul-Heart",
+      "opacity" : 0.8,
+      "shadow" : {
+        "kind" : "none",
+        "opacity" : 0.5
+      },
+      "specular" : false,
+      "translucency" : {
+        "enabled" : false,
+        "value" : 0.8
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "squares" : "shared"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "DownloadError.ErrorDescription %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Download failed, HTTP status code: %lld"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.2"
+}
