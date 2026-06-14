@@ -23,7 +23,25 @@
 		84B77F292FC806D7007E6226 /* onnxruntime.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = onnxruntime.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		848A2A4B2FDEA93200D68349 /* Exceptions for "Configurations" folder in "Michina" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 84949ACF2FBC3D7F0071D768 /* Michina */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		848A2A4A2FDEA92300D68349 /* Configurations */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				848A2A4B2FDEA93200D68349 /* Exceptions for "Configurations" folder in "Michina" target */,
+			);
+			path = Configurations;
+			sourceTree = "<group>";
+		};
 		84949AD22FBC3D7F0071D768 /* Scenes */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Scenes;
@@ -72,6 +90,7 @@
 			isa = PBXGroup;
 			children = (
 				84949AD32FBC3D7F0071D768 /* MichinaApp.swift */,
+				848A2A4A2FDEA92300D68349 /* Configurations */,
 				84949E932FBE35640071D768 /* Frameworks */,
 				84949AD12FBC3D7F0071D768 /* Products */,
 				84949ADE2FBC3EDE0071D768 /* Resources */,
@@ -115,6 +134,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				848A2A4A2FDEA92300D68349 /* Configurations */,
 				84949AD22FBC3D7F0071D768 /* Scenes */,
 				84949ADE2FBC3EDE0071D768 /* Resources */,
 				84949AFB2FBC510A0071D768 /* Services */,
@@ -350,7 +370,9 @@
 				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Configurations/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Michina;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -391,7 +413,9 @@
 				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Configurations/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Michina;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
