@@ -27,7 +27,7 @@ struct WebServiceTab : TabContent {
             .toolbar {
                 toolbarContent
             }
-            .navigationTitle("Web Service")
+            .navigationTitle("WebService")
             .navigationSubtitle(navigationSubtitleKey)
             .inspector(isPresented: $isInspectorPresented) {
                 if
@@ -36,7 +36,7 @@ struct WebServiceTab : TabContent {
                 {
                     ClientMetricView(client: client)
                 } else {
-                    Text("No Selection")
+                    Text("WebServiceTab.NoSelection")
                         .font(.system(.title, weight: .semibold))
                         .foregroundStyle(.secondary)
                 }
@@ -52,7 +52,7 @@ struct WebServiceTab : TabContent {
 }
 
 fileprivate extension WebServiceTab {
-    static let titleKey: LocalizedStringKey = "Web"
+    static let titleKey: LocalizedStringKey = "WebServiceTab"
 }
 
 fileprivate extension WebServiceTab {
@@ -70,7 +70,7 @@ fileprivate extension WebServiceTab {
     var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .primaryAction) {
             Toggle(
-                "Switch Web Service",
+                "WebServiceTab.ServiceToggle",
                 systemImage: "power",
                 isOn: .init(
                     get: { service.status.isRunning },
@@ -81,7 +81,7 @@ fileprivate extension WebServiceTab {
         
         if !service.errors.isEmpty {
             ToolbarItem(placement: .status) {
-                Button("Errors", systemImage: "exclamationmark.triangle") {
+                Button("WebServiceTab.Errors", systemImage: "exclamationmark.triangle") {
                     isErrorsPopoverPresented = true
                 }
                 .badge(service.errors.count)
@@ -112,7 +112,7 @@ fileprivate extension WebServiceTab {
         .contentMargins(.horizontal, 12, for: .scrollContent)
         .contentMargins(.vertical, 8, for: .scrollContent)
         .safeAreaBar(edge: .bottom, alignment: .trailing) {
-            Button("Clear", role: .destructive) {
+            Button("WebServiceTab.Errors.Clear", role: .destructive) {
                 service.clearErrors()
                 isErrorsPopoverPresented = false
             }
@@ -130,19 +130,19 @@ fileprivate extension WebServiceTab {
             ForEach(service.clientMetrics, content: clientItem(_:))
                 .monospaced()
         } header: {
-            Label("Clients", systemImage: "server.rack")
+            Label("WebServiceTab.Clients", systemImage: "server.rack")
         }
     }
     
     @ViewBuilder
     func clientItem(_ client: WebClientMetric) -> some View {
         VStack(alignment: .leading) {
-            Text(client.address ?? "Unknown Client")
+            Text(client.address ?? .init(localized: "WebServiceTab.Clients.Unknown"))
                 .font(.headline)
             
             HStack(alignment: .firstTextBaseline, spacing: 12) {
                 let metric = client.predictRequests[nil]!
-                Text("\(metric.count, format: .number) predict requests")
+                Text("WebServiceTab.Clients.PredictRequests \(metric.count)")
                 Text(metric.contentLength, format: .byteCount(style: .file))
             }
             .font(.caption)
@@ -155,8 +155,8 @@ fileprivate extension WebServiceTab {
 fileprivate extension WebServiceTab {
     var navigationSubtitleKey: LocalizedStringKey {
         switch service.status {
-        case .paused: "Paused"
-        case .running(let port): "Listening on \(port, format: .number.grouping(.never))"
+        case .paused: "WebServiceTab.Subtitle.Paused"
+        case .running(let port): "WebServiceTab.Subtitle.Running \(port, format: .port)"
         }
     }
 }

@@ -11,9 +11,9 @@ import SwiftUI
 extension InferenceModelSuite.Provider : Labelable {
     var titleKey: LocalizedStringKey {
         switch self {
-        case .immichApp: "Immich App"
-        case .rapidOCR: "RapidOCR"
-        case .apple: "Apple"
+        case .immichApp: "InferenceModelSuite.Provider.ImmichApp"
+        case .rapidOCR: "InferenceModelSuite.Provider.RapidOCR"
+        case .apple: "InferenceModelSuite.Provider.Apple"
         }
     }
     

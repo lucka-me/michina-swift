@@ -93,10 +93,10 @@ fileprivate extension FacialRecognitionInferenceTab {
     @Observable
     final class ViewValues {
         private struct Storage {
-            @AppStorage("FacialRecognitionInferenceView.DetectionMinimalConfidence")
+            @AppStorage("FacialRecognitionInferenceTab.DetectionMinimalConfidence")
             var detectionMinimalConfidence = 0.5
             
-            @AppStorage("FacialRecognitionInferenceView.SimilarityMinimalDistance")
+            @AppStorage("FacialRecognitionInferenceTab.SimilarityMinimalDistance")
             var similarityMinimalDistance = 0.5
         }
         
@@ -118,14 +118,20 @@ fileprivate extension FacialRecognitionInferenceTab {
     
     @ViewBuilder
     var modelsSection: some View {
-        Section("Models") {
-            Picker("Detection", selection: $detectionModel) {
+        Section("FacialRecognitionInferenceTab.Inspector.Models") {
+            Picker(
+                InferenceModel.Category.detection.titleKey,
+                selection: $detectionModel
+            ) {
                 ForEach(Self.detectionModels) { model in
                     Text(model.suiteName)
                         .tag(model)
                 }
             }
-            Picker("Recognition", selection: $recognitionModel) {
+            Picker(
+                InferenceModel.Category.recognition.titleKey,
+                selection: $recognitionModel
+            ) {
                 ForEach(Self.recognitionModels) { model in
                     Text(model.suiteName)
                         .tag(model)
@@ -136,7 +142,7 @@ fileprivate extension FacialRecognitionInferenceTab {
     
     @ViewBuilder
     var inputSections: some View {
-        Section("Photo") {
+        Section("FacialRecognitionInferenceTab.Inspector.Input.Photo") {
             if let image = imageData?.image {
                 image
                     .resizable()
@@ -146,10 +152,10 @@ fileprivate extension FacialRecognitionInferenceTab {
             UnifiedPhotoPicker($imageData)
         }
         
-        Section("Parameters") {
+        Section("FacialRecognitionInferenceTab.Inspector.Input.Parameters") {
             VStack {
                 LabeledContent(
-                    "Minimal Confidence for Detection",
+                    "FacialRecognitionInferenceTab.Inspector.Input.Parameters.DetectionMinimalConfidence",
                     value: values.detectionMinimalConfidence,
                     format: .number
                 )
@@ -164,7 +170,7 @@ fileprivate extension FacialRecognitionInferenceTab {
         Section {
             VStack {
                 LabeledContent(
-                    "Minimal Distance for Similarity",
+                    "FacialRecognitionInferenceTab.Inspector.Output.SimilarityMinimalDistance",
                     value: values.similarityMinimalDistance,
                     format: .number
                 )
@@ -172,9 +178,9 @@ fileprivate extension FacialRecognitionInferenceTab {
                     .labelsHidden()
             }
         } header: {
-            Text("Output")
+            Text("FacialRecognitionInferenceTab.Inspector.Output")
         } footer: {
-            Text("Tap a face on photo to check similar faces.")
+            Text("FacialRecognitionInferenceTab.Inspector.Output.Footer")
         }
     }
 }
@@ -188,7 +194,11 @@ fileprivate extension FacialRecognitionInferenceTab {
     var toolbarContent: some ToolbarContent {
         if imageData != nil {
             ToolbarItem(placement: .primaryAction) {
-                Button("Run Inference", systemImage: "play", role: .confirm) {
+                Button(
+                    "FacialRecognitionInferenceTab.Action.RunInference",
+                    systemImage: "play",
+                    role: .confirm
+                ) {
                     alert.whenTrying(runInference)
                 }
                 .disabled(executionProgress != nil)
@@ -204,7 +214,7 @@ fileprivate extension FacialRecognitionInferenceTab {
         if !outputs.isEmpty {
             ToolbarItem(placement: .destructiveAction) {
                 Button(
-                    "Clear Output History",
+                    "FacialRecognitionInferenceTab.Action.ClearOutputHistory",
                     systemImage: "trash",
                     role: .destructive
                 ) {
@@ -301,7 +311,7 @@ fileprivate extension FacialRecognitionInferenceTab {
                 
                 Text(output.elapse, format: .elapse)
                 Divider()
-                Text("\(output.faces.count) faces")
+                Text("FacialRecognitionInferenceTab.Output.FaceCount \(output.faces.count)")
             }
             .monospaced()
         }

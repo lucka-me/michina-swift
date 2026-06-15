@@ -1,0 +1,1667 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "AppIcon.Default" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Default"
+          }
+        }
+      }
+    },
+    "AppSettingsTab" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App"
+          }
+        }
+      }
+    },
+    "AppSettingsTab.Icon.InsertMenuBarExtra" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show Icon in Menu Bar"
+          }
+        }
+      }
+    },
+    "AppSettingsTab.Icon.PresentRegularActivation" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show Icon in Dock"
+          }
+        }
+      }
+    },
+    "AppSettingsTab.Icons.Footer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "These options can't be off at same time, otherwise the app may unable to launch anymore."
+          }
+        }
+      }
+    },
+    "AppSettingsTab.Icons.Footer.PresentRegularActivation" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When the icon is hidden in Dock, macOS will also disable the app menus."
+          }
+        }
+      }
+    },
+    "AppSettingsTab.LaunchAtLogin.Toggle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Launch at Login"
+          }
+        }
+      }
+    },
+    "CharacterRecognitionInferenceTab.Action.ClearOutputHistory" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear Output History"
+          }
+        }
+      }
+    },
+    "CharacterRecognitionInferenceTab.Action.RunInference" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run Inference"
+          }
+        }
+      }
+    },
+    "CharacterRecognitionInferenceTab.Inspector.DetectionMaximalResolution" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maximal Resolution"
+          }
+        }
+      }
+    },
+    "CharacterRecognitionInferenceTab.Inspector.DetectionMinimalConfidence" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimal Confidence for Detection"
+          }
+        }
+      }
+    },
+    "CharacterRecognitionInferenceTab.Inspector.Models" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Models"
+          }
+        }
+      }
+    },
+    "CharacterRecognitionInferenceTab.Inspector.Parameters" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parameters"
+          }
+        }
+      }
+    },
+    "CharacterRecognitionInferenceTab.Inspector.Photo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photo"
+          }
+        }
+      }
+    },
+    "CharacterRecognitionInferenceTab.Inspector.RecognitionMinimalConfidence" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimal Confidence for Recognition"
+          }
+        }
+      }
+    },
+    "CharacterRecognitionInferenceTab.Output.BoxCount %lld" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld character box detected"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld character boxes detected"
+                }
+              },
+              "zero" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "No character box detected"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "CharacterRecognitionInferenceTab.Output.ShapeConfidence %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Box: %@"
+          }
+        }
+      }
+    },
+    "CharacterRecognitionInferenceTab.Output.TextConfidence %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Text: %@"
+          }
+        }
+      }
+    },
+    "ClientMetricView.Glance.Address" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Address"
+          }
+        }
+      }
+    },
+    "ClientMetricView.Glance.Address.Nil" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unknown"
+          }
+        }
+      }
+    },
+    "ClientMetricView.Glance.Creation" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First Request"
+          }
+        }
+      }
+    },
+    "ClientMetricView.Glance.RecentPing" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recent Ping"
+          }
+        }
+      }
+    },
+    "ClientMetricView.Glance.RecentPing.Nil" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Ping"
+          }
+        }
+      }
+    },
+    "ClientMetricView.PredictRequest.ContentLength" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data Received"
+          }
+        }
+      }
+    },
+    "ClientMetricView.PredictRequest.Count" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Requests"
+          }
+        }
+      }
+    },
+    "ClientMetricView.PredictRequest.Total" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total"
+          }
+        }
+      }
+    },
+    "FacialRecognitionInferenceTab.Action.ClearOutputHistory" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear Output History"
+          }
+        }
+      }
+    },
+    "FacialRecognitionInferenceTab.Action.RunInference" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run Inference"
+          }
+        }
+      }
+    },
+    "FacialRecognitionInferenceTab.Inspector.Input.Parameters" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parameters"
+          }
+        }
+      }
+    },
+    "FacialRecognitionInferenceTab.Inspector.Input.Parameters.DetectionMinimalConfidence" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimal Confidence for Detection"
+          }
+        }
+      }
+    },
+    "FacialRecognitionInferenceTab.Inspector.Input.Photo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photo"
+          }
+        }
+      }
+    },
+    "FacialRecognitionInferenceTab.Inspector.Models" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Models"
+          }
+        }
+      }
+    },
+    "FacialRecognitionInferenceTab.Inspector.Output" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Output"
+          }
+        }
+      }
+    },
+    "FacialRecognitionInferenceTab.Inspector.Output.Footer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap a face on photo to check similar faces."
+          }
+        }
+      }
+    },
+    "FacialRecognitionInferenceTab.Inspector.Output.SimilarityMinimalDistance" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimal Distance for Similarity"
+          }
+        }
+      }
+    },
+    "FacialRecognitionInferenceTab.Output.FaceCount %lld" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld face detected"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld faces detected"
+                }
+              },
+              "zero" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "No face detected"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "InferenceModel.Category.Detection" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detection"
+          }
+        }
+      }
+    },
+    "InferenceModel.Category.Recognition" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recognition"
+          }
+        }
+      }
+    },
+    "InferenceModel.Category.Textual" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Textual"
+          }
+        }
+      }
+    },
+    "InferenceModel.Category.Visual" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visual"
+          }
+        }
+      }
+    },
+    "InferenceModel.Compatibility.Compatible" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compatible"
+          }
+        }
+      }
+    },
+    "InferenceModel.Compatibility.Incompatible" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incompatible"
+          }
+        }
+      }
+    },
+    "InferenceModel.Compatibility.Inefficient" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inefficient"
+          }
+        }
+      }
+    },
+    "InferenceModel.Compatibility.Unknown" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unknown"
+          }
+        }
+      }
+    },
+    "InferenceModelSuite.Category.All" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All"
+          }
+        }
+      }
+    },
+    "InferenceModelSuite.Category.CharacterRecognition" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OCR"
+          }
+        }
+      }
+    },
+    "InferenceModelSuite.Category.FacialRecognition" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Facial Recognition"
+          }
+        }
+      }
+    },
+    "InferenceModelSuite.Category.Search" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Smart Search"
+          }
+        }
+      }
+    },
+    "InferenceModelSuite.Provider.Apple" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple"
+          }
+        }
+      }
+    },
+    "InferenceModelSuite.Provider.ImmichApp" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Immich App"
+          }
+        }
+      }
+    },
+    "InferenceModelSuite.Provider.RapidOCR" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "RapidOCR"
+          }
+        }
+      }
+    },
+    "InferenceModelSuiteDetailView.Download" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Download"
+          }
+        }
+      }
+    },
+    "InferenceModelSuiteDetailView.Glance.NotVerified" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not Verified"
+          }
+        }
+      }
+    },
+    "InferenceModelSuiteDetailView.Glance.Provider" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Provided by"
+          }
+        }
+      }
+    },
+    "InferenceModelSuiteDetailView.Glance.Verified" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verified"
+          }
+        }
+      }
+    },
+    "InferenceModelSuiteDetailView.Links.Homepage" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Homepage"
+          }
+        }
+      }
+    },
+    "InferenceModelSuiteDetailView.Links.OpenDirectory" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reveal in Finder"
+          }
+        }
+      }
+    },
+    "InferenceModelSuiteDetailView.Links.RunInference" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run Inference"
+          }
+        }
+      }
+    },
+    "InferenceModelSuiteDetailView.Model.Builtin" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "System Built-in Model"
+          }
+        }
+      }
+    },
+    "InferenceModelSuiteDetailView.Model.Compatibility" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Core ML Compatibility"
+          }
+        }
+      }
+    },
+    "InferenceModelSuiteDetailView.Model.ContentSize" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Size of Files"
+          }
+        }
+      }
+    },
+    "InferenceModelSuiteDetailView.Model.Load" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Load"
+          }
+        }
+      }
+    },
+    "InferenceModelSuiteDetailView.Model.Loaded" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loaded"
+          }
+        }
+      }
+    },
+    "InferenceModelSuiteDetailView.Model.NotLoaded" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not Loaded"
+          }
+        }
+      }
+    },
+    "InferenceModelSuiteDetailView.Model.Unload" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unload"
+          }
+        }
+      }
+    },
+    "InferencePipelineMetricView.Elapse" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elapse"
+          }
+        }
+      }
+    },
+    "InferencePipelineMetricView.Elapse.Average" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Average"
+          }
+        }
+      }
+    },
+    "InferencePipelineMetricView.Elapse.Footer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This elapse covers the whole process of a pipeline, including queuing, model loading, pre-processing and post-processing."
+          }
+        }
+      }
+    },
+    "InferencePipelineMetricView.Elapse.Maximal" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maximal"
+          }
+        }
+      }
+    },
+    "InferencePipelineMetricView.Elapse.Minimal" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimal"
+          }
+        }
+      }
+    },
+    "InferencePipelineMetricView.Output" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Output"
+          }
+        }
+      }
+    },
+    "InferencePipelineMetricView.Output.CharacterBoxCount" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Character Box"
+          }
+        }
+      }
+    },
+    "InferencePipelineMetricView.Output.CharacterCount" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Character"
+          }
+        }
+      }
+    },
+    "InferencePipelineMetricView.Output.faceCount" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Face"
+          }
+        }
+      }
+    },
+    "InferencePipelineMetricView.Output.ImageWithCharactersCount" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Image with Characters Detected"
+          }
+        }
+      }
+    },
+    "InferencePipelineMetricView.Output.ImageWithFacesCount" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Image with Faces Detected"
+          }
+        }
+      }
+    },
+    "InferencePipelineMetricView.Results" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Results"
+          }
+        }
+      }
+    },
+    "InferencePipelineMetricView.Results.TotalCount" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Processed"
+          }
+        }
+      }
+    },
+    "InferenceScene" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inference"
+          }
+        }
+      }
+    },
+    "InferenceService" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inference Service"
+          }
+        }
+      }
+    },
+    "InferenceServiceSettingsTab.Session.ExecutionProviders" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Execution Providers"
+          }
+        }
+      }
+    },
+    "InferenceServiceSettingsTab.Session.ExecutionProviders.Footer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Some models will cause error when running with Core ML, they will always run with CPU."
+          }
+        }
+      }
+    },
+    "InferenceServiceSettingsTab.Session.ExecutionProviders.PreferCoreML" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prefer Core ML"
+          }
+        }
+      }
+    },
+    "InferenceServiceSettingsTab.Session.ExecutionProviders.PreferEfficiency" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run Inefficient Models with CPU"
+          }
+        }
+      }
+    },
+    "InferenceServiceSettingsTab.Session.Optimization" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optimization"
+          }
+        }
+      }
+    },
+    "InferenceServiceSettingsTab.Session.Optimization.Footer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "These files may help reduce elapse of loading and execution, they will be generated during the first load and saved to \".optimizations\" hidden folder alongside the model file.\nPlease notice that, however, these files are usually very large, especially with Core ML."
+          }
+        }
+      }
+    },
+    "InferenceServiceSettingsTab.Session.Optimization.PersistOptimizations" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save Model Optimization Data to Disk"
+          }
+        }
+      }
+    },
+    "InferenceServiceSettingsTab.SessionCache" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In-Memory Cache"
+          }
+        }
+      }
+    },
+    "InferenceServiceSettingsTab.SessionCache.Footer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The model will be unloaded after a period of idle to reduce memory usage."
+          }
+        }
+      }
+    },
+    "InferenceServiceSettingsTab.SessionCache.TimeToLive" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unload After"
+          }
+        }
+      }
+    },
+    "InferenceServiceSettingsTab.SessionCache.TimeToLive.Prompt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seconds"
+          }
+        }
+      }
+    },
+    "InferenceServiceTab" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inference"
+          }
+        }
+      }
+    },
+    "InferenceServiceTab.AverageElapse" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Average Elapse"
+          }
+        }
+      }
+    },
+    "InferenceServiceTab.NoSelection" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Selection"
+          }
+        }
+      }
+    },
+    "InferenceServiceTab.Overall" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Overall"
+          }
+        }
+      }
+    },
+    "InferenceServiceTab.ShowCharts" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toggle Charts"
+          }
+        }
+      }
+    },
+    "MainScene.Services" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Services"
+          }
+        }
+      }
+    },
+    "MenuBarExtraScene.InferenceService" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inference Service"
+          }
+        }
+      }
+    },
+    "MenuBarExtraScene.InferenceService.Picker" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Category"
+          }
+        }
+      }
+    },
+    "MenuBarExtraScene.Links.OpenApp" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open App"
+          }
+        }
+      }
+    },
+    "MenuBarExtraScene.Links.Quit" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quit"
+          }
+        }
+      }
+    },
+    "MenuBarExtraScene.WebService" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Web Service"
+          }
+        }
+      }
+    },
+    "MenuBarExtraScene.WebService.Clients %lld" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld client"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld clients"
+                }
+              },
+              "zero" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "No client"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "MenuBarExtraScene.WebService.Paused" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paused"
+          }
+        }
+      }
+    },
+    "MenuBarExtraScene.WebService.Running %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Port %@"
+          }
+        }
+      }
+    },
+    "MenuBarExtraScene.WebService.Toggle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toggle Web Service"
+          }
+        }
+      }
+    },
+    "ModelsTab" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Models"
+          }
+        }
+      }
+    },
+    "ModelsTab.NoSelection" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Selection"
+          }
+        }
+      }
+    },
+    "ModelsTab.Subtitle %lld" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Loaded %lld model."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Loaded %lld models."
+                }
+              },
+              "zero" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "No model loaded."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "OnboardingFlow.Finish" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finish"
+          }
+        }
+      }
+    },
+    "OnboardingFlow.Introduction" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welcome to Michina"
+          }
+        }
+      }
+    },
+    "OnboardingFlow.Settings" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
+          }
+        }
+      }
+    },
+    "OnboardingIntroductionView.Message.Swift" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Built with Swift"
+          }
+        }
+      }
+    },
+    "OnboardingIntroductionView.Message.Swift.Content" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Native, at full speed. With acceleration like Core ML and vImage, available only on Apple platforms."
+          }
+        }
+      }
+    },
+    "OnboardingIntroductionView.Message.TestModels" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test Models"
+          }
+        }
+      }
+    },
+    "OnboardingIntroductionView.Message.TestModels.Content" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OnboardingIntroductionView.Message.Select a model, tap *Run a Inference* to check if it runs properly and gives results as you expected."
+          }
+        }
+      }
+    },
+    "OnboardingIntroductionView.Message.UI" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Full UI"
+          }
+        }
+      }
+    },
+    "OnboardingIntroductionView.Message.UI.Content" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No command line or Docker stuff. Check status and statistics at real-time. Also available in menu bar icon."
+          }
+        }
+      }
+    },
+    "OnboardingScene" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Onboarding"
+          }
+        }
+      }
+    },
+    "OnboardingSettingsView.Launch" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Launch"
+          }
+        }
+      }
+    },
+    "OnboardingSettingsView.Launch.StartWhenInitialized" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start Web Service When Michina Launches"
+          }
+        }
+      }
+    },
+    "OnboardingSettingsView.More" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More"
+          }
+        }
+      }
+    },
+    "OnboardingSettingsView.More.Footer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Configure app icon and inference preferences in Settings window."
+          }
+        }
+      }
+    },
+    "OnboardingSettingsView.Port" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Port"
+          }
+        }
+      }
+    },
+    "OnboardingSettingsView.Port.TextField" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Listen on"
+          }
+        }
+      }
+    },
+    "OnboardingSettingsView.Subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Most important options."
+          }
+        }
+      }
+    },
+    "OnboardingSettingsView.URL.Footer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In your Immich instance, navigate to Machine Learning Settings and add an URL to this device."
+          }
+        }
+      }
+    },
+    "PipelineCountChart.Rule.Processors" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Processors"
+          }
+        }
+      }
+    },
+    "PipelineCountChart.X" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "instant"
+          }
+        }
+      }
+    },
+    "PipelineCountChart.Y" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pipelines"
+          }
+        }
+      }
+    },
+    "ResultCount.Failure" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failure"
+          }
+        }
+      }
+    },
+    "ResultCount.Success" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Success"
+          }
+        }
+      }
+    },
+    "SearchInferenceTab.Action.ClearOutputHistory" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear Output History"
+          }
+        }
+      }
+    },
+    "SearchInferenceTab.Action.RunInference" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run Inference"
+          }
+        }
+      }
+    },
+    "SearchInferenceTab.Inspector.Input" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Input"
+          }
+        }
+      }
+    },
+    "SearchInferenceTab.Inspector.Input.SearchText" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search Text"
+          }
+        }
+      }
+    },
+    "SearchInferenceTab.Inspector.Model" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Model"
+          }
+        }
+      }
+    },
+    "SearchInferenceTab.Inspector.Model.Category" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Category"
+          }
+        }
+      }
+    },
+    "SearchInferenceTab.Output.DifferentModel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Different Model with Selection"
+          }
+        }
+      }
+    },
+    "UnifiedPhotoPicker.PhotosPicker" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select Photo From Library"
+          }
+        }
+      }
+    },
+    "Version %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ (Build %2$@)"
+          }
+        }
+      }
+    },
+    "WebService" : {
+      "generatesSymbol" : false,
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Web Service"
+          }
+        }
+      }
+    },
+    "WebServiceSettingsTab.Port" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Port"
+          }
+        }
+      }
+    },
+    "WebServiceSettingsTab.Port.Footer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The defualt port is 3003, you need to restart the Web Service to apply the new port."
+          }
+        }
+      }
+    },
+    "WebServiceSettingsTab.StartWhenInitialized" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start When Michina Launches"
+          }
+        }
+      }
+    },
+    "WebServiceSettingsTab.URL" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL"
+          }
+        }
+      }
+    },
+    "WebServiceSettingsTab.URL.Footer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "These URLs are generated from your device's network interface information, and for reference only."
+          }
+        }
+      }
+    },
+    "WebServiceTab" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Web"
+          }
+        }
+      }
+    },
+    "WebServiceTab.Clients" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clients"
+          }
+        }
+      }
+    },
+    "WebServiceTab.Clients.PredictRequests %lld" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld predict request"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld predict requests"
+                }
+              },
+              "zero" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "No predict request"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "WebServiceTab.Clients.Unknown" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unknown Client"
+          }
+        }
+      }
+    },
+    "WebServiceTab.Errors" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Errors"
+          }
+        }
+      }
+    },
+    "WebServiceTab.Errors.Clear" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear"
+          }
+        }
+      }
+    },
+    "WebServiceTab.NoSelection" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Selection"
+          }
+        }
+      }
+    },
+    "WebServiceTab.ServiceToggle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toggle Web Service"
+          }
+        }
+      }
+    },
+    "WebServiceTab.Subtitle.Paused" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paused"
+          }
+        }
+      }
+    },
+    "WebServiceTab.Subtitle.Running %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Listening on %@"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.2"
+}

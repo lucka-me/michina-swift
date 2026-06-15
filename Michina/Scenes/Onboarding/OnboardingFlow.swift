@@ -28,7 +28,7 @@ struct OnboardingFlow : View {
                 if let next {
                     NavigationLink(value: next)
                 } else {
-                    Button("Finish", systemImage: "checkmark") {
+                    Button("OnboardingFlow.Finish", systemImage: "checkmark") {
                         dismissWindow()
                     }
                 }
@@ -56,8 +56,8 @@ extension OnboardingFlow : @MainActor Hashable {
 extension OnboardingFlow : @MainActor Labelable {
     var titleKey: LocalizedStringKey {
         switch storage {
-        case .introduction: "Welcome to Michina"
-        case .settings: "Settings"
+        case .introduction: "OnboardingFlow.Introduction"
+        case .settings: "OnboardingFlow.Settings"
         }
     }
     

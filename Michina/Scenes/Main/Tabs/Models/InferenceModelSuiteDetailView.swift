@@ -26,7 +26,7 @@ struct InferenceModelSuiteDetailView : View {
             linksSection
             
             if let progress = cache.fetchProgresses[suite] {
-                Section("Download") {
+                Section("InferenceModelSuiteDetailView.Download") {
                     ProgressView(progress)
                 }
             }
@@ -49,17 +49,22 @@ fileprivate extension InferenceModelSuiteDetailView {
                 .monospaced()
                 .textSelection(.enabled)
             
-            LabeledContent("Provided by") {
-                Label(suite.provider)
-                    .labelStyle(.titleOnly)
+            LabeledContent("InferenceModelSuiteDetailView.Glance.Provider") {
+                Text(suite.provider.titleKey)
             }
             
             if suite.isVerified {
-                Label("Verified", systemImage: "checkmark.seal")
-                    .foregroundStyle(.green)
+                Label(
+                    "InferenceModelSuiteDetailView.Glance.Verified",
+                    systemImage: "checkmark.seal"
+                )
+                .foregroundStyle(.green)
             } else {
-                Label("Not Verified", systemImage: "exclamationmark.triangle")
-                    .foregroundStyle(.red)
+                Label(
+                    "InferenceModelSuiteDetailView.Glance.NotVerified",
+                    systemImage: "exclamationmark.triangle"
+                )
+                .foregroundStyle(.red)
             }
         }
         .buttonStyle(.link)
@@ -68,17 +73,17 @@ fileprivate extension InferenceModelSuiteDetailView {
     @ViewBuilder
     var linksSection: some View {
         Section {
-            Link("Open Homepage", destination: suite.homepageURL)
+            Link("InferenceModelSuiteDetailView.Links.Homepage", destination: suite.homepageURL)
             if !suite.isBuiltin {
                 let directoryURL = suite.directoryURL(in: cache.cacheDirectory)
                 if FileManager.default.fileExists(at: directoryURL) {
-                    Button("Reveal in Finder") {
+                    Button("InferenceModelSuiteDetailView.Links.OpenDirectory") {
                         NSWorkspace.shared.open(directoryURL)
                     }
                 }
             }
             
-            Button("Run a Inference") {
+            Button("InferenceModelSuiteDetailView.Links.RunInference") {
                 openWindow(
                     value: InferenceScene.Request(
                         category: suite.category,
@@ -96,44 +101,37 @@ fileprivate extension InferenceModelSuiteDetailView {
     func modelSection(_ model: InferenceModel) -> some View {
         Section {
             if model.isBuiltin {
-                Text("Built-in Model")
+                Text("InferenceModelSuiteDetailView.Model.Builtin")
             } else {
                 if let size = model.contentSize(in: cache.cacheDirectory) {
                     LabeledContent(
-                        "Size of Files",
+                        "InferenceModelSuiteDetailView.Model.ContentSize",
                         value: size,
                         format: .byteCount(style: .file)
                     )
                 }
                 
-                if suite.isVerified {
-                    switch model.compatibility {
-                    case .compatible:
-                        Text("Compatible with Core ML")
-                            .foregroundStyle(.green)
-                    case .inefficient:
-                        Text("Inefficient with Core ML")
-                            .foregroundStyle(.orange)
-                    case .incompatible:
-                        Text("Incompatible with Core ML")
-                            .foregroundStyle(.red)
+                LabeledContent("InferenceModelSuiteDetailView.Model.Compatibility") {
+                    if suite.isVerified {
+                        Text(model.compatibility.titleKey)
+                            .foregroundStyle(model.compatibility.color)
+                    } else {
+                        Text("InferenceModel.Compatibility.Unknown")
+                            .foregroundStyle(.yellow)
                     }
-                } else {
-                    Text("Unknown compatibility with Core ML")
-                        .foregroundStyle(.yellow)
                 }
                 
                 if cache.sessions[model] != nil {
-                    LabeledContent("Loaded") {
-                        Button("Unload") {
+                    LabeledContent("InferenceModelSuiteDetailView.Model.Loaded") {
+                        Button("InferenceModelSuiteDetailView.Model.Unload") {
                             cache.unload(for: model)
                         }
                     }
                 } else if let progress = cache.loadProgresses[model] {
                     ProgressView(progress)
                 } else {
-                    LabeledContent("Not Loaded") {
-                        Button("Load") {
+                    LabeledContent("InferenceModelSuiteDetailView.Model.NotLoaded") {
+                        Button("InferenceModelSuiteDetailView.Model.Load") {
                             alert.whenTrying {
                                 let _ = try await cache.load(for: model)
                             }

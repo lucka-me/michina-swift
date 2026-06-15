@@ -24,7 +24,7 @@ struct UnifiedPhotoPicker : View {
         if let loadImageProgress {
             ProgressView(loadImageProgress)
         } else {
-            PhotosPicker("Select Photo From Library", selection: $pickedPhotoItem)
+            PhotosPicker("UnifiedPhotoPicker.PhotosPicker", selection: $pickedPhotoItem)
                 .onDrop(
                     of: [ .image ],
                     isTargeted: nil,

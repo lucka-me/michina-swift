@@ -25,7 +25,7 @@ struct OnboardingScene : Scene {
 
 extension OnboardingScene {
     static let windowId = "Scene.Onboarding"
-    static let titleKey: LocalizedStringKey = "Onboarding"
+    static let titleKey: LocalizedStringKey = "OnboardingScene"
     
-    static var version: String? { nil }
+    static var version: String? { "0" }
 }

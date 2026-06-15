@@ -16,7 +16,6 @@ struct SettingsScene : Scene {
                 InferenceServiceSettingsTab()
             }
             .formStyle(.grouped)
-//            .scenePadding()
             .windowResizeAnchor(.top)
             .alertable()
         }

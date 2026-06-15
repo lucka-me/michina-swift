@@ -81,12 +81,12 @@ fileprivate struct WebServiceBlock : View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(alignment: .top) {
-                Text("Web Service")
+                Text("MenuBarExtraScene.WebService")
                 
                 Spacer()
                 
                 Toggle(
-                    "Toggle Web Service",
+                    "MenuBarExtraScene.WebService.Toggle",
                     isOn: .init(
                         get: { service.status.isRunning },
                         set: { Task(operation: $0 ? service.start : service.stop) }
@@ -100,15 +100,15 @@ fileprivate struct WebServiceBlock : View {
             .foregroundStyle(.secondary)
             
             HStack {
-                Text("\(service.clientMetrics.count) clients")
+                Text("MenuBarExtraScene.WebService.Clients \(service.clientMetrics.count)")
                 
                 Spacer()
                 
                 switch service.status {
                 case .paused:
-                    Text("Paused")
+                    Text("MenuBarExtraScene.WebService.Paused")
                 case .running(let port):
-                    Text("Port \(port, format: .number.grouping(.never))")
+                    Text("MenuBarExtraScene.WebService.Running \(port, format: .port)")
                 }
             }
             .font(.callout)
@@ -126,12 +126,12 @@ fileprivate struct InferenceServiceBlock : View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(alignment: .top) {
-                Text("Inference Service")
+                Text("MenuBarExtraScene.InferenceService")
                 
                 Spacer()
                 
-                Picker("Category", selection: $values.presentCategory) {
-                    Text("All")
+                Picker("MenuBarExtraScene.InferenceService.Picker", selection: $values.presentCategory) {
+                    Text("InferenceModelSuite.Category.All")
                         .tag(InferenceModelSuite.Category?.none)
                     
                     ForEach(InferenceModelSuite.Category.allCases) { category in
@@ -171,13 +171,13 @@ fileprivate struct InferenceServiceBlock : View {
             
             Grid(alignment: .leading, horizontalSpacing: 6) {
                 GridRow {
-                    Text("Success")
+                    Text("ResultCount.Success")
                     Text(pipelineMetric.successCount, format: .number)
                         .gridColumnAlignment(.trailing)
                 }
                 .foregroundStyle(pipelineMetric.successCount > 0 ? .green : .secondary)
                 GridRow {
-                    Text("Failure")
+                    Text("ResultCount.Failure")
                     Text(pipelineMetric.failureCount, format: .number)
                 }
                 .foregroundStyle(pipelineMetric.failureCount > 0 ? .red : .secondary)
@@ -193,7 +193,7 @@ fileprivate struct LinksBlock : View {
     
     var body: some View {
         HStack(alignment: .center) {
-            Button("Open App") {
+            Button("MenuBarExtraScene.Links.OpenApp") {
                 openWindow(id: MainScene.id)
             }
             
@@ -202,7 +202,7 @@ fileprivate struct LinksBlock : View {
             
             Spacer()
             
-            Button("Quit", role: .destructive) {
+            Button("MenuBarExtraScene.Links.Quit", role: .destructive) {
                 NSApplication.shared.terminate(nil)
             }
         }

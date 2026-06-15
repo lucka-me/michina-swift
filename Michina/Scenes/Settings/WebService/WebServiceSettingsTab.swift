@@ -18,15 +18,20 @@ struct WebServiceSettingsTab : TabContent {
         Tab(Self.titleKey, systemImage: Self.systemImage) {
             Form {
                 Toggle(
-                    "Start When App Launches",
+                    "WebServiceSettingsTab.StartWhenInitialized",
                     isOn: $settings.startWhenInitialized
                 )
                 
-                TextField(
-                    "Port",
-                    value: $settings.port,
-                    format: .number.grouping(.never)
-                )
+                Section {
+                    TextField(
+                        "WebServiceSettingsTab.Port",
+                        value: $settings.port,
+                        format: .port
+                    )
+                } footer: {
+                    Text("WebServiceSettingsTab.Port.Footer")
+                }
+                
                 
                 urlsSection
             }
@@ -41,7 +46,7 @@ struct WebServiceSettingsTab : TabContent {
 }
 
 fileprivate extension WebServiceSettingsTab {
-    static let titleKey: LocalizedStringKey = "Web Service"
+    static let titleKey: LocalizedStringKey = "WebService"
     static let systemImage: String = "network"
 }
 
@@ -55,9 +60,9 @@ fileprivate extension WebServiceSettingsTab {
                     .textSelection(.enabled)
             }
         } header: {
-            Text("URL")
+            Text("WebServiceSettingsTab.URL")
         } footer: {
-            Text("These URLs are generated from your device's network interface information, and for reference only.")
+            Text("WebServiceSettingsTab.URL.Footer")
         }
     }
 }

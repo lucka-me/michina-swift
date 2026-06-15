@@ -30,7 +30,7 @@ fileprivate struct MainView : View {
         TabView {
             ModelsTab()
             
-            TabSection("Services") {
+            TabSection("MainScene.Services") {
                 WebServiceTab()
                 
                 InferenceServiceTab()

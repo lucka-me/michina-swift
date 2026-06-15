@@ -43,12 +43,12 @@ struct ModelsTab : TabContent {
             .searchable(text: $searchText, placement: .toolbar)
             .frame(minWidth: 300, minHeight: 400)
             .navigationTitle(Self.titleKey)
-            .navigationSubtitle(navigationSubtitleKey)
+            .navigationSubtitle("ModelsTab.Subtitle \(cache.sessions.count)")
             .inspector(isPresented: $isInspectorPresented) {
                 if let selection {
                     InferenceModelSuiteDetailView(suite: selection)
                 } else {
-                    Text("No Selection")
+                    Text("ModelsTab.NoSelection")
                         .font(.system(.title, weight: .semibold))
                         .foregroundStyle(.secondary)
                 }
@@ -64,7 +64,7 @@ struct ModelsTab : TabContent {
 }
 
 fileprivate extension ModelsTab {
-    static let titleKey: LocalizedStringKey = "Models"
+    static let titleKey: LocalizedStringKey = "ModelsTab"
     static let systemImage: String = "brain"
 }
 
@@ -113,15 +113,5 @@ fileprivate extension ModelsTab {
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
             .background(color.gradient, in: .capsule)
-    }
-}
-
-fileprivate extension ModelsTab {
-    var navigationSubtitleKey: LocalizedStringKey {
-        if cache.sessions.isEmpty {
-            "No model loaded."
-        } else {
-            "Loaded \(cache.sessions.count) models."
-        }
     }
 }

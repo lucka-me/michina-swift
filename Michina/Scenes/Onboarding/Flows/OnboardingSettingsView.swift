@@ -20,23 +20,23 @@ struct OnboardingSettingsView : View {
         Form {
             Section {
                 Toggle(
-                    "Start Web Service When Michina Launches",
+                    "OnboardingSettingsView.Launch.StartWhenInitialized",
                     isOn: $web.startWhenInitialized
                 )
             } header: {
-                Text("Launch")
+                Text("OnboardingSettingsView.Launch")
             }
             
             Section {
                 TextField(
-                    "Listen on Port",
+                    "OnboardingSettingsView.Port.TextField",
                     value: $web.port,
                     format: .port
                 )
             } header: {
-                Text("Port")
+                Text("OnboardingSettingsView.Port")
             } footer: {
-                Text("The defualt port is 3003, you need to restart the Web Service to apply the new port.")
+                Text("WebServiceSettingsTab.Port.Footer")
             }
             
             Section {
@@ -46,23 +46,23 @@ struct OnboardingSettingsView : View {
                         .textSelection(.enabled)
                 }
             } header: {
-                Text("URL")
+                Text("WebServiceSettingsTab.URL")
             } footer: {
-                Text("In your Immich instance, navigate to Machine Learning Settings and add an URL to this device.")
-                Text("These URLs are generated from your device's network interface information, and for reference only.")
+                Text("OnboardingSettingsView.URL.Footer")
+                Text("WebServiceSettingsTab.URL.Footer")
             }
             
             Section {
                 SettingsLink()
                     .buttonStyle(.link)
             } header: {
-                Text("More")
+                Text("OnboardingSettingsView.More")
             } footer: {
-                Text("Configure app icon and inference preferences in Settings window.")
+                Text("OnboardingSettingsView.More.Footer")
             }
         }
         .formStyle(.grouped)
-        .navigationSubtitle("Most important options.")
+        .navigationSubtitle("OnboardingSettingsView.Subtitle")
         .onAppear {
             alert.whenTrying {
                 hostAddresses = try WebServiceSettings.collectHostAddresses()

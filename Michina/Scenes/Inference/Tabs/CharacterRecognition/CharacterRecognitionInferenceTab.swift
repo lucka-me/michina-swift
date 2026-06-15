@@ -123,14 +123,20 @@ fileprivate extension CharacterRecognitionInferenceTab {
     
     @ViewBuilder
     var modelsSection: some View {
-        Section("Models") {
-            Picker("Detection", selection: $detectionModel) {
+        Section("CharacterRecognitionInferenceTab.Inspector.Models") {
+            Picker(
+                InferenceModel.Category.detection.titleKey,
+                selection: $detectionModel
+            ) {
                 ForEach(Self.detectionModels) { model in
                     Text(model.suiteName)
                         .tag(model)
                 }
             }
-            Picker("Recognition", selection: $recognitionModel) {
+            Picker(
+                InferenceModel.Category.recognition.titleKey,
+                selection: $recognitionModel
+            ) {
                 ForEach(Self.recognitionModels) { model in
                     Text(model.suiteName)
                         .tag(model)
@@ -141,7 +147,7 @@ fileprivate extension CharacterRecognitionInferenceTab {
     
     @ViewBuilder
     var inputSections: some View {
-        Section("Photo") {
+        Section("CharacterRecognitionInferenceTab.Inspector.Photo") {
             if let image = imageData?.image {
                 image
                     .resizable()
@@ -151,10 +157,10 @@ fileprivate extension CharacterRecognitionInferenceTab {
             UnifiedPhotoPicker($imageData)
         }
         
-        Section("Parameters") {
+        Section("CharacterRecognitionInferenceTab.Inspector.Parameters") {
             VStack {
                 LabeledContent(
-                    "Minimal Confidence for Detection",
+                    "CharacterRecognitionInferenceTab.Inspector.DetectionMinimalConfidence",
                     value: values.detectionMinimalConfidence,
                     format: .number
                 )
@@ -163,14 +169,14 @@ fileprivate extension CharacterRecognitionInferenceTab {
             }
             
             TextField(
-                "Maximal Resolution",
+                "CharacterRecognitionInferenceTab.Inspector.DetectionMaximalResolution",
                 value: $values.detectionMaximalResolution,
                 format: .number
             )
             
             VStack {
                 LabeledContent(
-                    "Minimal Confidence for Recognition",
+                    "CharacterRecognitionInferenceTab.Inspector.RecognitionMinimalConfidence",
                     value: values.recognitionMinimalConfidence,
                     format: .number
                 )
@@ -190,7 +196,11 @@ fileprivate extension CharacterRecognitionInferenceTab {
     var toolbarContent: some ToolbarContent {
         if imageData != nil {
             ToolbarItem(placement: .primaryAction) {
-                Button("Run Inference", systemImage: "play", role: .confirm) {
+                Button(
+                    "CharacterRecognitionInferenceTab.Action.RunInference",
+                    systemImage: "play",
+                    role: .confirm
+                ) {
                     alert.whenTrying(runInference)
                 }
                 .disabled(executionProgress != nil)
@@ -205,7 +215,11 @@ fileprivate extension CharacterRecognitionInferenceTab {
         
         if !outputs.isEmpty {
             ToolbarItem(placement: .destructiveAction) {
-                Button("Clear History", systemImage: "trash", role: .destructive) {
+                Button(
+                    "CharacterRecognitionInferenceTab.Action.ClearOutputHistory",
+                    systemImage: "trash",
+                    role: .destructive
+                ) {
                     outputs.removeAll()
                 }
             }
@@ -289,7 +303,7 @@ fileprivate extension CharacterRecognitionInferenceTab {
                 
                 Text(output.elapse, format: .elapse)
                 Divider()
-                Text("\(output.boxes.count) Text Boxes")
+                Text("CharacterRecognitionInferenceTab.Output.BoxCount \(output.boxes.count)")
             }
             .monospaced()
         }
@@ -378,8 +392,8 @@ fileprivate extension CharacterRecognitionInferenceTab {
                 }
                 .safeAreaInset(edge: .bottom, spacing: 4) {
                     HStack(spacing: 8) {
-                        Text("Box: \(box.data.shape.confidence, format: .percent.precision(.fractionLength(2)))")
-                        Text("Text: \(box.data.text.confidence, format: .percent.precision(.fractionLength(2)))")
+                        Text("CharacterRecognitionInferenceTab.Output.ShapeConfidence \(box.data.shape.confidence, format: .percent.precision(.fractionLength(2)))")
+                        Text("CharacterRecognitionInferenceTab.Output.TextConfidence \(box.data.text.confidence, format: .percent.precision(.fractionLength(2)))")
                     }
                     .font(.system(.caption, design: .monospaced))
                     .padding(.horizontal, 4)

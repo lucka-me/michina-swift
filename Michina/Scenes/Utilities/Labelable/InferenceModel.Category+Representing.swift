@@ -11,10 +11,10 @@ import SwiftUI
 extension InferenceModel.Category : Labelable {
     var titleKey: LocalizedStringKey {
         switch self {
-        case .detection: "Detection"
-        case .recognition: "Recognition"
-        case .visual: "Visual"
-        case .textual: "Textual"
+        case .detection: "InferenceModel.Category.Detection"
+        case .recognition: "InferenceModel.Category.Recognition"
+        case .visual: "InferenceModel.Category.Visual"
+        case .textual: "InferenceModel.Category.Textual"
         }
     }
     

@@ -89,8 +89,11 @@ fileprivate extension SearchInferenceTab {
 fileprivate extension SearchInferenceTab {
     @ViewBuilder
     var modelSection: some View {
-        Section("Model") {
-            Picker("Category", selection: $category) {
+        Section("SearchInferenceTab.Inspector.Model") {
+            Picker(
+                "SearchInferenceTab.Inspector.Model.Category",
+                selection: $category
+            ) {
                 ForEach(
                     [ InferenceModel.Category.visual, InferenceModel.Category.textual ]
                 ) { category in
@@ -102,10 +105,12 @@ fileprivate extension SearchInferenceTab {
             .labelsHidden()
             
             Picker(
-                "Model",
+                "SearchInferenceTab.Inspector.Model",
                 selection: category == .visual ? $visualModel : $textualModel
             ) {
-                ForEach(category == .visual ? Self.visualModels : Self.textualModels) { model in
+                ForEach(
+                    category == .visual ? Self.visualModels : Self.textualModels
+                ) { model in
                     Text(model.suiteName)
                         .tag(model)
                 }
@@ -116,7 +121,7 @@ fileprivate extension SearchInferenceTab {
     
     @ViewBuilder
     var inputSection: some View {
-        Section("Input") {
+        Section("SearchInferenceTab.Inspector.Input") {
             if category == .visual {
                 if let image = imageData?.image {
                     image
@@ -126,7 +131,7 @@ fileprivate extension SearchInferenceTab {
                 
                 UnifiedPhotoPicker($imageData)
             } else {
-                TextField("Search Text", text: $searchText)
+                TextField("SearchInferenceTab.Inspector.Input.SearchText", text: $searchText)
             }
         }
     }
@@ -140,7 +145,11 @@ fileprivate extension SearchInferenceTab {
     var toolbarContent: some ToolbarContent {
         if isReadyToRun {
             ToolbarItem(placement: .primaryAction) {
-                Button("Run Inference", systemImage: "play", role: .confirm) {
+                Button(
+                    "SearchInferenceTab.Action.RunInference",
+                    systemImage: "play",
+                    role: .confirm
+                ) {
                     if category == .visual {
                         alert.whenTrying(runVisualInference)
                     } else {
@@ -159,7 +168,11 @@ fileprivate extension SearchInferenceTab {
         
         if !outputs.isEmpty {
             ToolbarItem(placement: .destructiveAction) {
-                Button("Clear History", systemImage: "trash", role: .destructive) {
+                Button(
+                    "SearchInferenceTab.Action.ClearOutputHistory",
+                    systemImage: "trash",
+                    role: .destructive
+                ) {
                     selection = nil
                     outputs.removeAll()
                 }
@@ -295,7 +308,7 @@ fileprivate extension SearchInferenceTab {
                             format: .number.precision(.fractionLength(4))
                         )
                     } else {
-                        Text("Different Model with Selection")
+                        Text("SearchInferenceTab.Output.DifferentModel")
                     }
                 }
             }

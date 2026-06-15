@@ -25,14 +25,14 @@ struct PipelineCountChart : View {
         Chart {
             ForEach(counts, id: \.instant) { item in
                 LineMark(
-                    x: .value("Instant", item.instant),
-                    y: .value("Pipelines", item.count)
+                    x: .value("PipelineCountChart.X", item.instant),
+                    y: .value("PipelineCountChart.Y", item.count)
                 )
                 .foregroundStyle(Color.accentColor)
                 
                 AreaMark(
-                    x: .value("Instant", item.instant),
-                    y: .value("Pipelines", item.count)
+                    x: .value("PipelineCountChart.X", item.instant),
+                    y: .value("PipelineCountChart.Y", item.count)
                 )
                 .foregroundStyle(
                     LinearGradient(
@@ -46,12 +46,12 @@ struct PipelineCountChart : View {
             
             if style == .regular {
                 RuleMark(
-                    y: .value("Processors", ProcessInfo.processInfo.processorCount)
+                    y: .value("PipelineCountChart.Y", ProcessInfo.processInfo.processorCount)
                 )
                 .foregroundStyle(.gray.opacity(0.6))
                 .lineStyle(.init(dash: [ 4, 2 ]))
                 .annotation(position: .bottom, alignment: .leading) {
-                    Text("Processors")
+                    Text("PipelineCountChart.Rule.Processors")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }

@@ -29,17 +29,20 @@ fileprivate extension ClientMetricView {
     @ViewBuilder
     var glanceSection: some View {
         Section {
-            LabeledContent("Address", value: client.address ?? "Unknown")
+            LabeledContent(
+                "ClientMetricView.Glance.Address",
+                value: client.address ?? .init(localized: "ClientMetricView.Glance.Address.Nil")
+            )
             
-            LabeledContent("First Request") {
+            LabeledContent("ClientMetricView.Glance.Creation") {
                 Text(client.creation, style: .timer)
             }
             
-            LabeledContent("Recent Ping") {
+            LabeledContent("ClientMetricView.Glance.RecentPing") {
                 if let recentPing = client.recentPing {
                     Text(recentPing, style: .timer)
                 } else {
-                    Text("No Pings")
+                    Text("ClientMetricView.Glance.RecentPing.Nil")
                 }
             }
         }
@@ -62,12 +65,12 @@ fileprivate extension ClientMetricView {
     ) -> some View {
         Section {
             LabeledContent(
-                "Requests",
+                "ClientMetricView.PredictRequest.Count",
                 value: metric.count,
                 format: .number
             )
             LabeledContent(
-                "Data Received",
+                "ClientMetricView.PredictRequest.ContentLength",
                 value: metric.contentLength,
                 format: .byteCount(style: .file)
             )
@@ -75,7 +78,7 @@ fileprivate extension ClientMetricView {
             if let category {
                 Label(category)
             } else {
-                Label("Total", systemImage: "rectangle.stack")
+                Label("ClientMetricView.PredictRequest.Total", systemImage: "rectangle.stack")
             }
         }
     }

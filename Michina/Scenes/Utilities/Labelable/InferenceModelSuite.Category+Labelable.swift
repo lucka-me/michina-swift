@@ -11,9 +11,9 @@ import SwiftUI
 extension InferenceModelSuite.Category : Labelable {
     var titleKey: LocalizedStringKey {
         switch self {
-        case .facialRecognition: "Facial Recognition"
-        case .search: "Smart Search"
-        case .characterRecognition: "OCR"
+        case .facialRecognition: "InferenceModelSuite.Category.FacialRecognition"
+        case .search: "InferenceModelSuite.Category.Search"
+        case .characterRecognition: "InferenceModelSuite.Category.CharacterRecognition"
         }
     }
     

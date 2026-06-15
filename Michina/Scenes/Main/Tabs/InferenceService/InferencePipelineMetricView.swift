@@ -44,24 +44,24 @@ fileprivate extension InferencePipelineMetricView {
     var resultsSection: some View {
         Section {
             LabeledContent(
-                "Processed",
+                "InferencePipelineMetricView.Results.TotalCount",
                 value: metric.totalCount,
                 format: .number
             )
             
             LabeledContent(
-                "Success",
+                "ResultCount.Success",
                 value: metric.successCount,
                 format: .number
             )
             
             LabeledContent(
-                "Failure",
+                "ResultCount.Failure",
                 value: metric.failureCount,
                 format: .number
             )
         } header: {
-            Text("Results")
+            Text("InferencePipelineMetricView.Results")
         }
     }
     
@@ -69,26 +69,26 @@ fileprivate extension InferencePipelineMetricView {
     var elapsesSection: some View {
         Section {
             LabeledContent(
-                "Average",
+                "InferencePipelineMetricView.Elapse.Average",
                 value: metric.averageElapse,
                 format: .elapse
             )
             
             LabeledContent(
-                "Maximal",
+                "InferencePipelineMetricView.Elapse.Maximal",
                 value: metric.maximalElapse,
                 format: .elapse
             )
             
             LabeledContent(
-                "Minimal",
+                "InferencePipelineMetricView.Elapse.Minimal",
                 value: metric.minimalElapse,
                 format: .elapse
             )
         } header: {
-            Text("Elapse")
+            Text("InferencePipelineMetricView.Elapse")
         } footer: {
-            Text("This elapse covers the whole process of a pipeline...")
+            Text("InferencePipelineMetricView.Elapse.Footer")
         }
     }
 }
@@ -96,7 +96,7 @@ fileprivate extension InferencePipelineMetricView {
 fileprivate extension InferencePipelineMetricView {
     @ViewBuilder
     func outputSection(output: InferencePipelineOutputMetric) -> some View {
-        Section("Output") {
+        Section("InferencePipelineMetricView.Output") {
             switch output {
             case .facialRecognition(let metric):
                 outputSectionContent(metric: metric)
@@ -110,17 +110,37 @@ fileprivate extension InferencePipelineMetricView {
     func outputSectionContent(
         metric: InferencePipelineOutputMetric.FacialRecognition
     ) -> some View {
-        LabeledContent("Image with Face", value: metric.imageWithFacesCount, format: .number)
-        LabeledContent("Face", value: metric.faceCount, format: .number)
+        LabeledContent(
+            "InferencePipelineMetricView.Output.ImageWithFacesCount",
+            value: metric.imageWithFacesCount,
+            format: .number
+        )
+        LabeledContent(
+            "InferencePipelineMetricView.Output.faceCount",
+            value: metric.faceCount,
+            format: .number
+        )
     }
     
     @ViewBuilder
     func outputSectionContent(
         metric: InferencePipelineOutputMetric.CharacterRecognition
     ) -> some View {
-        LabeledContent("Image with Character", value: metric.imageWithCharactersCount, format: .number)
-        LabeledContent("Character Box", value: metric.characterBoxCount, format: .number)
-        LabeledContent("Character", value: metric.characterCount, format: .number)
+        LabeledContent(
+            "InferencePipelineMetricView.Output.ImageWithCharactersCount",
+            value: metric.imageWithCharactersCount,
+            format: .number
+        )
+        LabeledContent(
+            "InferencePipelineMetricView.Output.CharacterBoxCount",
+            value: metric.characterBoxCount,
+            format: .number
+        )
+        LabeledContent(
+            "InferencePipelineMetricView.Output.CharacterCount",
+            value: metric.characterCount,
+            format: .number
+        )
     }
 }
 

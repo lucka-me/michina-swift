@@ -39,7 +39,7 @@ extension AppIcon {
     
     var titleKey: LocalizedStringKey {
         switch self {
-        case .default: "Default"
+        case .default: "AppIcon.Default"
         }
     }
 }

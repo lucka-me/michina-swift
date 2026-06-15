@@ -21,7 +21,7 @@ struct OnboardingIntroductionView : View {
                     let shortVersionString = Bundle.main.shortVersionString,
                     let version = Bundle.main.version
                 {
-                    Text("\(shortVersionString) (\(version))")
+                    Text("Version \(shortVersionString) \(version)")
                         .font(.callout)
                         .foregroundStyle(.secondary)
                 }
@@ -67,20 +67,20 @@ fileprivate extension Message {
     @ArrayBuilder<Self>
     static var all: [ Self ] {
         Message(
-            titleKey: "Built with Swift",
-            contentKey: "Native, at full speed. With acceleration like Core ML and vImage, available only on Apple platforms.",
+            titleKey: "OnboardingIntroductionView.Message.Swift",
+            contentKey: "OnboardingIntroductionView.Message.Swift.Content",
             systemImage: "swift",
             tint: .orange
         )
         Message(
-            titleKey: "Full UI",
-            contentKey: "No command line or Docker stuff. Check status and statistics at real-time. Also available in menu bar icon.",
+            titleKey: "OnboardingIntroductionView.Message.UI",
+            contentKey: "OnboardingIntroductionView.Message.UI.Content",
             systemImage: "macwindow",
             tint: .accentColor
         )
         Message(
-            titleKey: "Test Models",
-            contentKey: "Select a model, tap *Run a Inference* to check if it runs properly and gives results as you expected.",
+            titleKey: "OnboardingIntroductionView.Message.TestModels",
+            contentKey: "OnboardingIntroductionView.Message.TestModels.Content",
             systemImage: "play.diamond",
             tint: .green
         )

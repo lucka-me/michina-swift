@@ -15,7 +15,6 @@ struct InferenceServiceSettingsTab : TabContent {
         Tab(Self.titleKey, systemImage: Self.systemImage) {
             Form {
                 sessionSections
-                onnxRuntimeSection
             }
             .frame(minWidth: 300, maxWidth: 400)
         }
@@ -23,7 +22,7 @@ struct InferenceServiceSettingsTab : TabContent {
 }
 
 fileprivate extension InferenceServiceSettingsTab {
-    static let titleKey: LocalizedStringKey = "Inference Service"
+    static let titleKey: LocalizedStringKey = "InferenceService"
     static let systemImage: String = "rectangle.stack"
 }
 
@@ -33,57 +32,44 @@ fileprivate extension InferenceServiceSettingsTab {
         @Bindable var settings = settings.session
         
         Section {
-            Toggle("Prefer Core ML", isOn: $settings.preferCoreML)
+            Toggle(
+                "InferenceServiceSettingsTab.Session.ExecutionProviders.PreferCoreML",
+                isOn: $settings.preferCoreML
+            )
             if settings.preferCoreML {
                 Toggle(
-                    "Run Inefficient Models with CPU",
+                    "InferenceServiceSettingsTab.Session.ExecutionProviders.PreferEfficiency",
                     isOn: $settings.preferEfficiency
                 )
             }
         } header: {
-            Text("Execution Providers")
+            Text("InferenceServiceSettingsTab.Session.ExecutionProviders")
         } footer: {
-            Text("Some models will cause error when running with Core ML, they will always run with CPU.")
+            Text("InferenceServiceSettingsTab.Session.ExecutionProviders.Footer")
         }
         
         Section {
-            Toggle("Save Model Optimization Data on Disk", isOn: $settings.persistOptimizations)
+            Toggle(
+                "InferenceServiceSettingsTab.Session.Optimization.PersistOptimizations",
+                isOn: $settings.persistOptimizations
+            )
         } header: {
-            Text("Optimization")
+            Text("InferenceServiceSettingsTab.Session.Optimization")
         } footer: {
-            Text("These files may help reduce elapse of loading and execution, they will be generated during the first load and saved to \".optimizations\" hidden folder alongside the model file.")
-            Text("Please notice that, however, these files are usually very large, especially with Core ML.")
+            Text("InferenceServiceSettingsTab.Session.Optimization.Footer")
         }
         
         Section {
             TextField(
-                "Unload After",
+                "InferenceServiceSettingsTab.SessionCache.TimeToLive",
                 value: $settings.timeToLive,
                 format: .number.grouping(.never),
-                prompt: Text("Seconds")
+                prompt: Text("InferenceServiceSettingsTab.SessionCache.TimeToLive.Prompt")
             )
         } header: {
-            Text("In-Memory Cache")
+            Text("InferenceServiceSettingsTab.SessionCache")
         } footer: {
-            Text("The model will be unloaded after a period of idle to reduce memory usage.")
-        }
-    }
-}
-
-fileprivate extension InferenceServiceSettingsTab {
-    @ViewBuilder
-    var onnxRuntimeSection: some View {
-        Section("ONNX Runtime") {
-            LabeledContent("Supports CoreML Provider") {
-                if ORTIsCoreMLExecutionProviderAvailable() {
-                    Text("Yes")
-                        .foregroundStyle(.green)
-                } else {
-                    Text("No")
-                        .foregroundStyle(.red)
-                }
-            }
-            LabeledContent("Version", value: ORTVersion() ?? "Unknown")
+            Text("InferenceServiceSettingsTab.SessionCache.Footer")
         }
     }
 }

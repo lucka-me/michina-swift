@@ -28,12 +28,12 @@ struct InferenceServiceTab : TabContent {
             .toolbar {
                 toolbarContent
             }
-            .navigationTitle("Inference Service")
+            .navigationTitle("InferenceService")
             .inspector(isPresented: $isInspectorPresented) {
                 if case let .category(category) = selection {
                     InferencePipelineMetricView(metric: metrics.pipelines[category]!)
                 } else {
-                    Text("No Selection")
+                    Text("InferenceServiceTab.NoSelection")
                         .font(.system(.title, weight: .semibold))
                         .foregroundStyle(.secondary)
                 }
@@ -48,7 +48,7 @@ struct InferenceServiceTab : TabContent {
 }
 
 fileprivate extension InferenceServiceTab {
-    static let titleKey: LocalizedStringKey = "Inference"
+    static let titleKey: LocalizedStringKey = "InferenceServiceTab"
     static let systemImage: String = "sparkles.rectangle.stack"
 }
 
@@ -76,7 +76,7 @@ fileprivate extension InferenceServiceTab {
     var toolbarContent: some ToolbarContent {
         ToolbarItem {
             Toggle(
-                "Show Charts",
+                "InferenceServiceTab.ShowCharts",
                 systemImage: "chart.xyaxis.line",
                 isOn: $values.showCharts
             )
@@ -101,7 +101,7 @@ fileprivate extension InferenceServiceTab {
             if let category {
                 Label(category)
             } else {
-                Label("Overall", systemImage: "rectangle.stack")
+                Label("InferenceServiceTab.Overall", systemImage: "rectangle.stack")
             }
         }
     }
@@ -117,13 +117,13 @@ fileprivate extension InferenceServiceTab {
             
             Grid(alignment: .leading, horizontalSpacing: 6) {
                 GridRow {
-                    Text("Success")
+                    Text("ResultCount.Success")
                     Text(pipelineMetric.successCount, format: .number)
                         .gridColumnAlignment(.trailing)
                 }
                 .foregroundStyle(pipelineMetric.successCount > 0 ? .green : .secondary)
                 GridRow {
-                    Text("Failure")
+                    Text("ResultCount.Failure")
                     Text(pipelineMetric.failureCount, format: .number)
                 }
                 .foregroundStyle(pipelineMetric.failureCount > 0 ? .red : .secondary)
@@ -133,7 +133,7 @@ fileprivate extension InferenceServiceTab {
             Spacer()
             
             VStack(alignment: .trailing) {
-                Text("Average Elapse")
+                Text("InferenceServiceTab.AverageElapse")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 Text(pipelineMetric.averageElapse, format: .elapse)

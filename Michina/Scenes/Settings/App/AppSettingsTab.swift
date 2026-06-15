@@ -25,7 +25,7 @@ struct AppSettingsTab : TabContent {
 }
 
 extension AppSettingsTab {
-    static let titleKey: LocalizedStringKey = "App"
+    static let titleKey: LocalizedStringKey = "AppSettingsTab"
     static let systemImage: String = "rectangle.badge.sparkles"
 }
 
@@ -34,7 +34,7 @@ fileprivate extension AppSettingsTab {
     var launchAtLoginSection: some View {
         Section {
             Toggle(
-                "Launch at Login",
+                "AppSettingsTab.LaunchAtLogin.Toggle",
                 isOn: .init(
                     get: { SMAppService.mainApp.status == .enabled },
                     set: {
@@ -52,12 +52,18 @@ fileprivate extension AppSettingsTab {
     @ViewBuilder
     var iconsSection: some View {
         Section {
-            Toggle("Show Icon in Dock", isOn: $settings.presentRegularActivation)
-            Toggle("Show Icon in Menu Bar", isOn: $settings.insertMenuBarExtra)
+            Toggle(
+                "AppSettingsTab.Icon.PresentRegularActivation",
+                isOn: $settings.presentRegularActivation
+            )
+            Toggle(
+                "AppSettingsTab.Icon.InsertMenuBarExtra",
+                isOn: $settings.insertMenuBarExtra
+            )
         } footer: {
-            Text("These options can't be off at same time, otherwise the app may unable to launch anymore.")
+            Text("AppSettingsTab.Icons.Footer")
             if !settings.presentRegularActivation {
-                Text("When the icon is hidden in Dock, macOS will also disable the app menus.")
+                Text("AppSettingsTab.Icons.Footer.PresentRegularActivation")
             }
         }
     }

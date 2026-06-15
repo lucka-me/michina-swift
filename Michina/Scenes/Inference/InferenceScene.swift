@@ -10,7 +10,7 @@ import SwiftUI
 
 struct InferenceScene : Scene {
     var body: some Scene {
-        WindowGroup("Inference", for: Request.self) { $request in
+        WindowGroup(Self.titleKey, for: Request.self) { $request in
             InferenceView(request: request)
                 .alertable()
                 .presentedWindowToolbarStyle(.expanded)
@@ -19,6 +19,8 @@ struct InferenceScene : Scene {
 }
 
 extension InferenceScene {
+    static let titleKey: LocalizedStringKey = "InferenceScene"
+    
     struct Request : Codable, Hashable {
         let category: InferenceModelSuite.Category
         let suiteName: String
