@@ -1,1 +1,7 @@
 Welcome to Michina.
+
+Build #9
+- Added: Show URL candidates in Onboarding - Settings view and Web Service Settings view
+
+Build #8
+This is the first build for public TestFlight.
