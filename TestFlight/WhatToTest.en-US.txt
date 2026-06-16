@@ -4,6 +4,7 @@ Build #9
 - Added: Show URL candidates in Onboarding - Settings view and Web Service Settings view
 - Changed: Tweak some text in app, and prepare for Localization (no plan yet though)
 - Changed: In Inference window, the output text of OCR will displayed below the box to prevent being truncated
+- Changed: All mobile RapidOCR models are verified, they are compatible with Core ML
 - Fixed: Error when loading multiple models in parallel at the first time after launch
 - Fixed: Pre-processing of Visual Smart Search is incorrect, which leads to incorrect result
 

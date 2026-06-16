@@ -99,8 +99,8 @@ public extension InferenceModelSuite {
             // Failed to parse the model specification. Error: Unable to parse ML Program: in
             // operation MaxPool.0: ceil_mode must be False when pad_type is equal to same
             rapidOCR(compatibility: .incompatible) { "PP-OCRv5_server" }
-            rapidOCR { "PP-OCRv5_mobile" }
-            rapidOCR(areVerified: false) {
+            rapidOCR {
+                "PP-OCRv5_mobile"
                 "EN__PP-OCRv5_mobile"
                 "EL__PP-OCRv5_mobile"
                 "KOREAN__PP-OCRv5_mobile"
