@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		848E4AB52FD1353E0049E3F7 /* ONNXRuntimeExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = 848E4AB42FD1353E0049E3F7 /* ONNXRuntimeExtensions */; };
 		84949AD42FBC3D7F0071D768 /* MichinaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84949AD32FBC3D7F0071D768 /* MichinaApp.swift */; };
 		8494A2D82FC4685A0071D768 /* ONNXRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 8494A2D72FC4685A0071D768 /* ONNXRuntime */; };
 		84AC7EA12FDBF08D004F972F /* Hummingbird in Frameworks */ = {isa = PBXBuildFile; productRef = 84AC7EA02FDBF08D004F972F /* Hummingbird */; };
@@ -77,7 +76,6 @@
 				84AC7EA12FDBF08D004F972F /* Hummingbird in Frameworks */,
 				8494A2D82FC4685A0071D768 /* ONNXRuntime in Frameworks */,
 				84B77DD52FC6D9A6007E6226 /* Tokenizers in Frameworks */,
-				848E4AB52FD1353E0049E3F7 /* ONNXRuntimeExtensions in Frameworks */,
 				84AC7EA42FDC0BB9004F972F /* MultipartKit in Frameworks */,
 				84AD9B452FD95FFC00114195 /* Magearna in Frameworks */,
 			);
@@ -145,7 +143,6 @@
 			packageProductDependencies = (
 				8494A2D72FC4685A0071D768 /* ONNXRuntime */,
 				84B77DD42FC6D9A6007E6226 /* Tokenizers */,
-				848E4AB42FD1353E0049E3F7 /* ONNXRuntimeExtensions */,
 				84AD9B442FD95FFC00114195 /* Magearna */,
 				84AC7EA02FDBF08D004F972F /* Hummingbird */,
 				84AC7EA32FDC0BB9004F972F /* MultipartKit */,
@@ -483,10 +480,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		848E4AB42FD1353E0049E3F7 /* ONNXRuntimeExtensions */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = ONNXRuntimeExtensions;
-		};
 		8494A2D72FC4685A0071D768 /* ONNXRuntime */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ONNXRuntime;

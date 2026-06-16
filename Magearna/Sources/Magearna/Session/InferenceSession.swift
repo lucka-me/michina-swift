@@ -6,7 +6,6 @@
 //
 
 @preconcurrency import ONNXRuntime
-import ONNXRuntimeExtensions
 
 public final class InferenceSession : Sendable {
     public let model: InferenceModel
@@ -27,9 +26,6 @@ public final class InferenceSession : Sendable {
         
         let sessionOptions = try ORTSessionOptions()
         try sessionOptions.setGraphOptimizationLevel(.all)
-        try sessionOptions.registerCustomOps(
-            functionPointer: OrtExt.getRegisterCustomOpsFunctionPointer()
-        )
         
         try sessionOptions.addConfigEntry(
             withKey: "session.enable_cpu_mem_arena",
@@ -105,9 +101,12 @@ public final class InferenceSession : Sendable {
             }
         }
         
-        // Random (?) error:
-        // Trying to add a domain to DomainToVersion map, but the domain is already exist with
-        // version range (1, 1000). domain: "ai.onnx.contrib"
+        // Error: Trying to add a domain to DomainToVersion map, but the domain is already exist
+        // with version range (1, 1000). domain: "ai.onnx.contrib"
+        //
+        // Occurs when load multiple models in parallel at first time after launch, likely caused
+        // by sessionOptions.registerCustomOps(functionPointer:). The immich implementation
+        // doesn't use onnxruntime_extension, so do we.
         self.session = try ORTSession(
             env: .shared,
             modelPath: model.modelFileURL(in: cacheDirectory).path(percentEncoded: false),
