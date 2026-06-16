@@ -5,6 +5,7 @@ Build #9
 - Changed: Tweak some text in app, and prepare for Localization (no plan yet though)
 - Changed: In Inference window, the output text of OCR will displayed below the box to prevent being truncated
 - Fixed: Error when loading multiple models in parallel at the first time after launch
+- Fixed: Pre-processing of Visual Smart Search is incorrect, which leads to incorrect result
 
 Build #8
 This is the first build for public TestFlight.

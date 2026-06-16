@@ -15,8 +15,8 @@ struct VisualSearchSidecar : Sendable {
     let resizeMode: ResizeMode
     let interpolation: Interpolation
     
-    let decodeMean: Float
-    let decodeScale: Float
+    let decodeMeans: [ 3 of Float ]
+    let decodeScales: [ 3 of Float ]
     
     init(model: InferenceModel, cacheDirectory: URL) throws {
         let preprocessConfigurationURL = model.directoryURL(in: cacheDirectory)
@@ -55,8 +55,9 @@ struct VisualSearchSidecar : Sendable {
         self.resizeMode = resizeMode
         self.interpolation = interpolation
         
-        self.decodeMean = preprocessConfiguration.mean[0]
-        self.decodeScale = 1 / preprocessConfiguration.std[0]
+        // In OpenClipVisualEncoder.transform, the to_numpy already normalized to [0, 1]
+        self.decodeMeans = .init { preprocessConfiguration.mean[$0] * 255 }
+        self.decodeScales = .init { 1 / preprocessConfiguration.std[$0] / 255 }
     }
 }
 

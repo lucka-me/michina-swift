@@ -57,8 +57,8 @@ public actor VisualSearchInferencePipeline : InferencePipeline {
                 .process(image: input.image)
             let data = try processedImage
                 .decodeForONNX(
-                    mean: sidecar.decodeMean,
-                    scale: sidecar.decodeScale
+                    means: sidecar.decodeMeans,
+                    scales: sidecar.decodeScales
                 )
             let inputShape = sidecar.inputShape
             precondition(
