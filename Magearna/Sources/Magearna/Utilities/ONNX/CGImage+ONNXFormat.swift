@@ -11,8 +11,8 @@ extension CGImage {
     func decodeForONNX(mean: Float, scale: Float) throws -> Data {
         var imageFormat = vImage_CGImageFormat(
             bitsPerComponent: 32,
-            bitsPerPixel: 32 * Self.pixelFormat.channelCount,
-            colorSpace: .init(name: CGColorSpace.sRGB)!,
+            bitsPerPixel: 32 * Self.decodePixelFormat.channelCount,
+            colorSpace: self.colorSpace ?? Self.defaultColorSpace,
             bitmapInfo: .init(
                 alpha: .none,
                 component: .float,
@@ -23,7 +23,7 @@ extension CGImage {
         let imageBuffer = try vImage.PixelBuffer(
             cgImage: self,
             cgImageFormat: &imageFormat,
-            pixelFormat: Self.pixelFormat
+            pixelFormat: Self.decodePixelFormat
         )
         
         // cv2.dnn.blobFromImage(image, scale, size, (mean, mean, mean), swapRB=True)
@@ -52,8 +52,8 @@ extension CGImage {
     func decodeForONNX(means: [ 3 of Float], scales: [ 3 of Float]) throws -> Data {
         var imageFormat = vImage_CGImageFormat(
             bitsPerComponent: 32,
-            bitsPerPixel: 32 * Self.pixelFormat.channelCount,
-            colorSpace: .init(name: CGColorSpace.sRGB)!,
+            bitsPerPixel: 32 * Self.decodePixelFormat.channelCount,
+            colorSpace: self.colorSpace ?? Self.defaultColorSpace,
             bitmapInfo: .init(
                 alpha: .none,
                 component: .float,
@@ -64,7 +64,7 @@ extension CGImage {
         let imageBuffer = try vImage.PixelBuffer(
             cgImage: self,
             cgImageFormat: &imageFormat,
-            pixelFormat: Self.pixelFormat
+            pixelFormat: Self.decodePixelFormat
         )
         
         return imageBuffer
@@ -89,5 +89,6 @@ extension CGImage {
 }
 
 fileprivate extension CGImage {
-    static let pixelFormat = vImage.InterleavedFx3.self
+    static let defaultColorSpace = CGColorSpace(name: CGColorSpace.sRGB)!
+    static let decodePixelFormat = vImage.InterleavedFx3.self
 }

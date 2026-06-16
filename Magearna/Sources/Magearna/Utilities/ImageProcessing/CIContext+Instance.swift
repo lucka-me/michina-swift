@@ -9,6 +9,10 @@ import CoreImage
 
 extension CIContext {
     static let pipelineShared = CIContext(
-        options: [ .useSoftwareRenderer : false ]
+        options: [
+            .outputColorSpace : CGColorSpace(name: CGColorSpace.sRGB)!,
+            .useSoftwareRenderer : false,
+            .workingColorSpace: NSNull(),
+        ]
     )
 }

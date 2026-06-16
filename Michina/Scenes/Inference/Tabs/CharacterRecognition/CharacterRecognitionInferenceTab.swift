@@ -190,8 +190,6 @@ fileprivate extension CharacterRecognitionInferenceTab {
 fileprivate extension CharacterRecognitionInferenceTab {
     typealias Pipeline = CharacterRecognitionInferencePipeline
     
-    static let imageContext = CIContext()
-    
     @ToolbarContentBuilder
     var toolbarContent: some ToolbarContent {
         if imageData != nil {

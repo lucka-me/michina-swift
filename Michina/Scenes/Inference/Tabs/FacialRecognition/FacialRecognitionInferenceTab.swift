@@ -188,8 +188,6 @@ fileprivate extension FacialRecognitionInferenceTab {
 fileprivate extension FacialRecognitionInferenceTab {
     typealias Pipeline = FacialRecognitionInferencePipeline
     
-    static let imageContext = CIContext()
-    
     @ToolbarContentBuilder
     var toolbarContent: some ToolbarContent {
         if imageData != nil {
