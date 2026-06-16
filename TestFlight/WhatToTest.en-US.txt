@@ -3,6 +3,7 @@ Welcome to Michina.
 Build #9
 - Added: Show URL candidates in Onboarding - Settings view and Web Service Settings view
 - Changed: Tweak some text in app, and prepare for Localization (no plan yet though)
+- Changed: In Inference window, the output text of OCR will displayed below the box to prevent being truncated
 - Fixed: Error when loading multiple models in parallel at the first time after launch
 
 Build #8

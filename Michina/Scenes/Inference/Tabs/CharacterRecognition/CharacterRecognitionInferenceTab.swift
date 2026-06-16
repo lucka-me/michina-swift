@@ -368,17 +368,6 @@ fileprivate extension CharacterRecognitionInferenceTab {
                     height: box.data.shape.item.boundingBox.height * scale
                 )
                 .opacity(opacity)
-                .overlay {
-                    if hovering == box.id {
-                        Text(box.data.text.item)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(
-                                .background.opacity(0.8),
-                                in: .rect(cornerRadius: 6)
-                            )
-                    }
-                }
                 .contentShape(
                     .rect(cornerRadius: 6)
                     .rotation(box.data.shape.item.rotationAngle, anchor: .center)
@@ -391,17 +380,27 @@ fileprivate extension CharacterRecognitionInferenceTab {
                     }
                 }
                 .safeAreaInset(edge: .bottom, spacing: 4) {
-                    HStack(spacing: 8) {
-                        Text("CharacterRecognitionInferenceTab.Output.ShapeConfidence \(box.data.shape.confidence, format: .percent.precision(.fractionLength(2)))")
-                        Text("CharacterRecognitionInferenceTab.Output.TextConfidence \(box.data.text.confidence, format: .percent.precision(.fractionLength(2)))")
+                    VStack(spacing: 4) {
+                        Text(box.data.text.item)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(
+                                .background.opacity(0.8),
+                                in: .rect(cornerRadius: 6)
+                            )
+                        
+                        HStack(spacing: 8) {
+                            Text("CharacterRecognitionInferenceTab.Output.ShapeConfidence \(box.data.shape.confidence, format: .percent.precision(.fractionLength(2)))")
+                            Text("CharacterRecognitionInferenceTab.Output.TextConfidence \(box.data.text.confidence, format: .percent.precision(.fractionLength(2)))")
+                        }
+                        .font(.system(.caption, design: .monospaced))
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 2)
+                        .background(frameColor, in: .rect(cornerRadius: 6))
                     }
-                    .font(.system(.caption, design: .monospaced))
-                    .padding(.horizontal, 4)
-                    .padding(.vertical, 2)
                     .onGeometryChange(for: CGFloat.self, of: \.size.height) {
                         captionHeight = $0
                     }
-                    .background(frameColor, in: .rect(cornerRadius: 6))
                     .opacity(hovering == box.id ? 1 : 0)
                 }
                 .zIndex(zIndex)
