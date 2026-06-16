@@ -1208,7 +1208,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Native, at full speed. With acceleration like Core ML and vImage, available only on Apple platforms."
+            "value" : "Native, at full speed. With acceleration like Core ML and vImage, only available on Apple platforms."
           }
         }
       }
@@ -1228,7 +1228,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "OnboardingIntroductionView.Message.Select a model, tap *Run a Inference* to check if it runs properly and gives results as you expected."
+            "value" : "Select a model, tap *Run Inference* to check if it runs properly and gives results as you expected."
           }
         }
       }
