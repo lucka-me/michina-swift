@@ -3,6 +3,7 @@ Welcome to Michina.
 Build #10
 - Added: Support more Visual Smart Search models's configuration file structure
 - Changed: Tokenizer feature is now provided by Immich's Rust implementation, which supports more Textual Smart Search models
+- Changed: Verified ResNet (RN50 / RN101) Smart Search models
 
 Build #9
 - Added: Show URL candidates in Onboarding - Settings view and Web Service Settings view

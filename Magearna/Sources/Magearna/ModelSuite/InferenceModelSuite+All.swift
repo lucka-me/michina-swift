@@ -21,8 +21,7 @@ public extension InferenceModelSuite {
             )
         },
         .search: Array {
-            immichApp(in: .search, areVerified: false) {
-                // TODO: Verify all models...
+            immichApp(in: .search) {
                 "RN101__openai"
                 "RN101__yfcc15m"
                 "RN50__cc12m"
@@ -31,7 +30,9 @@ public extension InferenceModelSuite {
                 "RN50x16__openai"
                 "RN50x4__openai"
                 "RN50x64__openai"
-                
+            }
+            immichApp(in: .search, areVerified: false) {
+                // TODO: Verify all models...
                 "ViT-B-16-SigLIP-256__webli"
                 "ViT-B-16-SigLIP-384__webli"
                 "ViT-B-16-SigLIP-512__webli"
@@ -80,7 +81,7 @@ public extension InferenceModelSuite {
                 "ViT-SO400M-14-SigLIP2__webli"
                 "ViT-SO400M-16-SigLIP2-256__webli"
             }
-            immichApp(in: .search, areVerified: true, compatibility: .inefficient) {
+            immichApp(in: .search, compatibility: .inefficient) {
                 "ViT-SO400M-16-SigLIP2-384__webli"
             }
             immichApp(in: .search, areVerified: false) {
@@ -146,7 +147,7 @@ fileprivate extension InferenceModelSuite {
     @ArrayBuilder<Self>
     static func immichApp(
         in category: Category,
-        areVerified: Bool = false,
+        areVerified: Bool = true,
         compatibility: InferenceModel.Compatibility = .compatible,
         @ArrayBuilder<String> names: () -> [ String ]
     ) -> [ Self ] {
