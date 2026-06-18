@@ -2,31 +2,29 @@
 
 set -e
 
-if [ -z PYTHON_EXECUTABLE ]
+if [ -z $PYTHON_EXECUTABLE ]
 then
     PYTHON_EXECUTABLE=$(which python3)
 fi
 echo "Use Python from $PYTHON_EXECUTABLE"
 
-XCODE_CODE_SIGNING_ARGUMENTS=()
-if [ ! -z $SIGNING_TEAM_ID ]
-then
-    XCODE_CODE_SIGNING_ARGUMENTS+=(--xcode_code_signing_team_id $SIGNING_TEAM_ID)
-fi
-if [ ! -z $SIGNING_IDENTITY ]
-then
-    XCODE_CODE_SIGNING_ARGUMENTS+=(--xcode_code_signing_identity $SIGNING_IDENTITY)
-fi
-
-UPDATE_ARGUMENTS=()
-if [ ! -z UPDATE_CMAKE ]
-then
-    UPDATE_ARGUMENTS+=(--update)
-fi
-
 if [ -z $ORT_BUILD_CONFIG ]
 then
     ORT_BUILD_CONFIG=Release
+fi
+
+buildArguments=()
+if [ ! -z $UPDATE_CMAKE ]
+then
+    buildArguments+=(--update)
+fi
+if [ ! -z $SIGNING_TEAM_ID ]
+then
+    buildArguments+=(--xcode_code_signing_team_id $SIGNING_TEAM_ID)
+fi
+if [ ! -z $SIGNING_IDENTITY ]
+then
+    buildArguments+=(--xcode_code_signing_identity $SIGNING_IDENTITY)
 fi
 
 repositoryPath=$(realpath $(dirname $0)/../onnxruntime)
@@ -39,7 +37,6 @@ $PYTHON_EXECUTABLE                                  \
     $repositoryPath/tools/ci_build/build.py         \
     --build_dir $buildPath                          \
     --config $ORT_BUILD_CONFIG                      \
-    ${UPDATE_ARGUMENTS[@]}                          \
     --build                                         \
     --parallel                                      \
     --compile_no_warning_as_error                   \
@@ -53,13 +50,13 @@ $PYTHON_EXECUTABLE                                  \
     --skip_tests                                    \
     --macos MacOSX                                  \
     --apple_sysroot macosx                          \
-    ${XCODE_CODE_SIGNING_ARGUMENTS[@]}              \
     --use_xcode                                     \
     --osx_arch arm64                                \
     --apple_deploy_target 26.0                      \
     --build_objc                                    \
     --enable_arm_neon_nchwc                         \
-    --use_coreml
+    --use_coreml                                    \
+    ${buildArguments[@]}
 
 buildOutputPath=$buildPath/$ORT_BUILD_CONFIG/$ORT_BUILD_CONFIG
 

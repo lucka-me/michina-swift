@@ -5,16 +5,23 @@ import PackageDescription
 
 let package = Package(
     name: "Tokenizers",
-    platforms: [.iOS(.v16), .macOS(.v13)],
+    platforms: [
+        .macOS(.v13)
+    ],
     products: [
-        .library(
-            name: "Tokenizers",
-            targets: ["Tokenizers"]
-        ),
+        .library(name: "Tokenizers", targets: [ "Tokenizers" ]),
     ],
     targets: [
-        .target(name: "Hub"),
-        .target(name: "Tokenizers", dependencies: [ .target(name: "Hub") ]),
+        .target(
+            name: "Tokenizers",
+            dependencies: [
+                .target(name: "TokenizersRust")
+            ]
+        ),
+        .binaryTarget(
+            name: "TokenizersRust",
+            path: "Rust/target/release/tokenizers.xcframework"
+        )
     ],
-    swiftLanguageModes: [.v6]
+    cxxLanguageStandard: .cxx17
 )

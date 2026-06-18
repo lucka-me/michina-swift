@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Hub
 import Tokenizers
 
 struct TextualSearchSidecar : Sendable {
@@ -24,8 +23,8 @@ struct TextualSearchSidecar : Sendable {
         let directoryURL = model.directoryURL(in: cacheDirectory)
         let decoder = JSONDecoder()
         
-        let modelSuiteConfig = try decoder.decode(
-            Config.self,
+        let modelSuiteConfigurations = try decoder.decode(
+            ModelSuiteConfigurations.self,
             from: .init(
                 contentsOf: directoryURL
                     .deletingLastPathComponent()
@@ -33,36 +32,47 @@ struct TextualSearchSidecar : Sendable {
                     .appendingPathExtension("json")
             )
         )
-        self.contextLength = modelSuiteConfig["text_cfg"]["context_length"].integer(or: 77) // Why 77
-        self.shouldCanonicalize = modelSuiteConfig["tokenizer_kwargs"]["clean"].string(or: "") == "canonicalize"
+        self.contextLength = modelSuiteConfigurations.text_cfg.context_length ?? 77 // Why 77
+        self.shouldCanonicalize = modelSuiteConfigurations.tokenizer_kwargs?.clean == "canonicalize"
+        self.tokenizer = try .init(
+            fromPath: directoryURL
+                .appending(component: "tokenizer")
+                .appendingPathExtension("json")
+                .path(percentEncoded: false)
+        )
         
-        let tokenizerConfig = try decoder.decode(
-            Config.self,
+        let tokenizerConfigurations = try decoder.decode(
+            TokenizerConfigurations.self,
             from: .init(
                 contentsOf: directoryURL
                     .appending(component: "tokenizer_config")
                     .appendingPathExtension("json")
             )
         )
-        
-        self.tokenizer = try AutoTokenizer.from(
-            tokenizerConfig: tokenizerConfig,
-            tokenizerData: try decoder.decode(
-                Config.self,
-                from: .init(
-                    contentsOf: directoryURL
-                        .appending(component: "tokenizer")
-                        .appendingPathExtension("json")
-                )
-            )
-        )
         self.paddingTokenID = if
-            let token = tokenizerConfig["pad_token"].string(),
-            let id = self.tokenizer.convertTokenToId(token)
+            let token = tokenizerConfigurations.pad_token,
+            let id = try self.tokenizer.encodeText(token).ids.first
         {
-            .init(id)
+            .init(id.uint32Value)
         } else {
             nil
         }
     }
+}
+
+struct ModelSuiteConfigurations : Decodable {
+    struct TextConfigurations : Decodable {
+        var context_length: Int?
+    }
+    
+    struct TokenizerArguments : Decodable {
+        var clean: String?
+    }
+    
+    var text_cfg: TextConfigurations
+    var tokenizer_kwargs: TokenizerArguments?
+}
+
+struct TokenizerConfigurations : Decodable {
+    var pad_token: String?
 }

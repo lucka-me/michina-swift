@@ -1,0 +1,15 @@
+[package]
+name = "tokenizers-bridge"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "tokenizers"
+crate-type = ["staticlib"]
+
+[dependencies]
+cxx = "1.0.194"
+tokenizers = "0.23.1"
+
+[build-dependencies]
+cxx-build = "1.0.194"

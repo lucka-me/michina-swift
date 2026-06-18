@@ -24,8 +24,9 @@ This Xcode Workspace contains following local packages, READMEs are available.
 
 - [Magearna](./Magearna): Core component of Michina, provides basic inference features.
 - [ONNXRuntime](./ONNXRuntime): The fundamental library to run models.
-- [Tokenizers](./Tokenizers): Tokenize text for textual smart search.
+- [Tokenizers](./Tokenizers): Tokenize text for Textual Smart Search, bridged from Rust.
 
 ## Build
 
-Please check the README.md in [ONNXRuntime](./ONNXRuntime) and build `onnxruntime.xcframework` before everything.
+Binary targets `onnxruntime.xcframework` and `tokenizers.xcframework` should be built before resolving dependencies,
+please check the README.md in [ONNXRuntime](./ONNXRuntime) and [Tokenizers](./Tokenizers) for details of building.

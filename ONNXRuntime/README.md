@@ -10,17 +10,17 @@ the XCFramework from source.
 
 ## Preprocess
 
-Before resolving the package, the `onnxruntime.xcframework` should be built.
+One of the target of this package requires `onnxruntime.xcframework` , which is built from source in
+[onnxruntime](./onnxruntime).
 
-Building ONNXRuntime requires Python 3.10+ and CMake, they will be used as building tools. It's recommended to install
-them with Homebrew:
+Python 3.10+ and CMake are used as building tools. It's recommended to install them with Homebrew:
 
 ```shell
 brew install python3
 brew install cmake
 ```
 
-Then use the script to build the onnxruntime and generate XCFramework:
+Then run the script to build the onnxruntime and generate XCFramework:
 
 ```shell
 ./Scripts/build-onnxruntime.sh

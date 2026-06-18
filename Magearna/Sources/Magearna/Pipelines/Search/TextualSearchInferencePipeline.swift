@@ -49,7 +49,7 @@ public actor TextualSearchInferencePipeline : InferencePipeline {
         }
         
         let elapse = try ContinuousClock().measure {
-            let ids = sidecar.encode(text: input.text, language: input.language)
+            let ids = try sidecar.encode(text: input.text, language: input.language)
             let inputValue = try ORTValue(
                 tensorData: .init(data: ids.withUnsafeBufferPointer { .init(buffer: $0) }),
                 elementType: .int32,
@@ -147,7 +147,7 @@ fileprivate extension TextualSearchSidecar {
         "zh-TW": "zho_Hant",
     ]
     
-    func encode(text: String, language: String) -> [ Int32 ] {
+    func encode(text: String, language: String) throws -> [ Int32 ] {
         var cleanText = clear(text: text)
         if shouldSpecifyLanguage {
             let floresCode: String
@@ -163,7 +163,8 @@ fileprivate extension TextualSearchSidecar {
             }
             cleanText = floresCode + cleanText
         }
-        let tokens = tokenizer.encode(text: cleanText).map { Int32($0) }
+        let encoding = try tokenizer.encodeText(cleanText)
+        let tokens = encoding.ids.map { Int32($0.uint32Value) }
         return postprocess(tokens: tokens)
     }
     

@@ -1,5 +1,8 @@
 Welcome to Michina.
 
+Build #10
+- Changed: Tokenizer feature is now provided by Immich's Rust implementation, which supports more Textual Smart Search models
+
 Build #9
 - Added: Show URL candidates in Onboarding - Settings view and Web Service Settings view
 - Changed: Tweak some text in app, and prepare for Localization (no plan yet though)
