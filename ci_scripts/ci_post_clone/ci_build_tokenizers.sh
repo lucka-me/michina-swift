@@ -4,14 +4,11 @@ set -e
 
 packagePath=$CI_PRIMARY_REPOSITORY_PATH/Tokenizers
 
-if [ $CI_XCODE_CLOUD = 'TRUE' ]
-then
-    echo 'Installing Rust'
-    brew install -q rust
+echo 'Installing Rust'
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --target aarch64-apple-darwin
 
-    echo 'Installing cxxbridge-cmd'
-    cargo install cxxbridge-cmd
-fi
+echo 'Installing cxxbridge-cmd'
+cargo install cxxbridge-cmd
 
 echo 'Building tokenizers framework'
 $packagePath/Scripts/build_tokenizers.sh

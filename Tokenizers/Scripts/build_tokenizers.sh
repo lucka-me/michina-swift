@@ -9,7 +9,7 @@ fi
 
 if [ -z $CXXBRIDGE_EXECUTABLE ]
 then
-    CXXBRIDGE_EXECUTABLE=~/.cargo/bin/cxxbridge
+    CXXBRIDGE_EXECUTABLE=$(dirname $CARGO_EXECUTABLE)/cxxbridge
 fi
 
 if [ -z $MACOSX_DEPLOYMENT_TARGET ]
@@ -32,12 +32,14 @@ fi
 $CXXBRIDGE_EXECUTABLE $rustPath/src/lib.rs --header -o $targetPath/tokenizers-bridge.rs.h
 $CXXBRIDGE_EXECUTABLE $rustPath/src/lib.rs -o $targetPath/tokenizers-bridge.rs.cc
 
-rustOutputPath=$rustPath/target/release
+rustTargetPath=$rustPath/target
 
-xcframeworkPath=$rustOutputPath/tokenizers.xcframework
+xcframeworkPath=$rustTargetPath/tokenizers.xcframework
 if [ -d $xcframeworkPath ]
 then
     rm -r $xcframeworkPath
 fi
 
-xcodebuild -create-xcframework -library $rustOutputPath/libtokenizers.a -output $xcframeworkPath
+xcodebuild -create-xcframework                                              \
+    -library $rustTargetPath/aarch64-apple-darwin/release/libtokenizers.a   \
+    -output $xcframeworkPath
