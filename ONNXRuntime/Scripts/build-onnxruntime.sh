@@ -23,14 +23,12 @@ then
     buildArguments+=(--xcode_code_signing_identity $SIGNING_IDENTITY)
 fi
 
-repositoryPath=$(realpath $(dirname $0)/../onnxruntime)
+projectPath=$(realpath $(dirname $0)/../onnxruntime)
 
-cd $repositoryPath
+buildPath=$projectPath/build
 
-buildPath=$repositoryPath/build
-
-$PYTHON_EXECUTABLE                                  \
-    $repositoryPath/tools/ci_build/build.py         \
+cd $projectPath && $PYTHON_EXECUTABLE               \
+    $projectPath/tools/ci_build/build.py            \
     --build_dir $buildPath                          \
     --config $ORT_BUILD_CONFIG                      \
     --update                                        \

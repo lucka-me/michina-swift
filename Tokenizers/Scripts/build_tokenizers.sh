@@ -12,14 +12,18 @@ then
     CXXBRIDGE_EXECUTABLE=~/.cargo/bin/cxxbridge
 fi
 
-repositoryPath=$(realpath $(dirname $0)/..)
-rustPath=$repositoryPath/Rust
+if [ -z $MACOSX_DEPLOYMENT_TARGET ]
+then
+    export MACOSX_DEPLOYMENT_TARGET=26.0
+fi
 
-export MACOSX_DEPLOYMENT_TARGET=26.0
+packagePath=$(realpath $(dirname $0)/..)
+
+rustPath=$packagePath/Rust
 
 cd $rustPath && $CARGO_EXECUTABLE build --release
 
-targetPath=$repositoryPath/Sources/Tokenizers
+targetPath=$packagePath/Sources/Tokenizers
 
 if [ ! -f $targetPath/bridge.rs.h ]
 then
@@ -28,10 +32,12 @@ fi
 $CXXBRIDGE_EXECUTABLE $rustPath/src/lib.rs --header -o $targetPath/tokenizers-bridge.rs.h
 $CXXBRIDGE_EXECUTABLE $rustPath/src/lib.rs -o $targetPath/tokenizers-bridge.rs.cc
 
-xcframeworkPath=$rustPath/target/release/tokenizers.xcframework
+rustOutputPath=$rustPath/target/release
+
+xcframeworkPath=$rustOutputPath/tokenizers.xcframework
 if [ -d $xcframeworkPath ]
 then
     rm -r $xcframeworkPath
 fi
 
-xcodebuild -create-xcframework -library $rustPath/target/release/libtokenizers.a -output $xcframeworkPath
+xcodebuild -create-xcframework -library $rustOutputPath/libtokenizers.a -output $xcframeworkPath

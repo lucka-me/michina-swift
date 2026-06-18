@@ -2,7 +2,7 @@
 
 set -e
 
-repositoryPath=$(realpath $(dirname $0)/..)
+packagePath=$CI_PRIMARY_REPOSITORY_PATH/Tokenizers
 
 if [ $CI_XCODE_CLOUD = 'TRUE' ]
 then
@@ -14,4 +14,4 @@ then
 fi
 
 echo 'Building tokenizers framework'
-$repositoryPath/Tokenizers/Scripts/build_tokenizers.sh
+$packagePath/Scripts/build_tokenizers.sh
