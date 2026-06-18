@@ -14,10 +14,6 @@ then
 fi
 
 buildArguments=()
-if [ ! -z $UPDATE_CMAKE ]
-then
-    buildArguments+=(--update)
-fi
 if [ ! -z $SIGNING_TEAM_ID ]
 then
     buildArguments+=(--xcode_code_signing_team_id $SIGNING_TEAM_ID)
@@ -37,6 +33,7 @@ $PYTHON_EXECUTABLE                                  \
     $repositoryPath/tools/ci_build/build.py         \
     --build_dir $buildPath                          \
     --config $ORT_BUILD_CONFIG                      \
+    --update                                        \
     --build                                         \
     --parallel                                      \
     --compile_no_warning_as_error                   \
