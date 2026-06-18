@@ -19,41 +19,23 @@ struct VisualSearchSidecar : Sendable {
     let decodeScales: [ 3 of Float ]
     
     init(model: InferenceModel, cacheDirectory: URL) throws {
-        let preprocessConfigurationURL = model.directoryURL(in: cacheDirectory)
-            .appending(component: "preprocess_cfg")
-            .appendingPathExtension("json")
         let preprocessConfiguration = try JSONDecoder()
             .decode(
                 PreprocessConfiguration.self,
-                from: .init(contentsOf: preprocessConfigurationURL)
+                from: .init(
+                    contentsOf: model.directoryURL(in: cacheDirectory)
+                        .appending(component: "preprocess_cfg")
+                        .appendingPathExtension("json")
+                )
             )
-        
-        guard
-            let resizeMode = ResizeMode(
-                rawValue: preprocessConfiguration.resize_mode
-            )
-        else {
-            fatalError(
-                "Unsupported resize mode: \(preprocessConfiguration.resize_mode)"
-            )
-        }
-        guard
-            let interpolation = Interpolation(
-                rawValue: preprocessConfiguration.interpolation
-            )
-        else {
-            fatalError(
-                "Unsupported intermolation: \(preprocessConfiguration.interpolation)"
-            )
-        }
         
         self.inputSize = .init(
             width: preprocessConfiguration.size[0],
             height: preprocessConfiguration.size[1]
         )
         
-        self.resizeMode = resizeMode
-        self.interpolation = interpolation
+        self.resizeMode = preprocessConfiguration.resizeMode
+        self.interpolation = preprocessConfiguration.interpolation
         
         // In OpenClipVisualEncoder.transform, the to_numpy already normalized to [0, 1]
         self.decodeMeans = .init { preprocessConfiguration.mean[$0] * 255 }
@@ -62,27 +44,77 @@ struct VisualSearchSidecar : Sendable {
 }
 
 extension VisualSearchSidecar {
-    enum Interpolation: String, Sendable {
+    enum Interpolation: String, Decodable, Sendable {
         case bicubic
         case lanczos
     }
     
-    enum ResizeMode: String, Sendable {
+    enum ResizeMode: String, Decodable, Sendable {
+        case shortest
         case squash
     }
 }
 
-fileprivate struct PreprocessConfiguration : Decodable {
-    var size: [ Int ]
-    var mean: [ Float ]
-    var std: [ Float ]
+fileprivate struct PreprocessConfiguration {
+    var size: [ 2 of Int ]
+    var mean: [ 3 of Float ]
+    var std: [ 3 of Float ]
     
     // nearest, box, bilinear, hamming, bicubic, lanczos
     // immich-ml doesn't use it, the resize_pil uses bicubic
     // CIFilter provides bicubicScaleTransform() and lanczosScaleTransform()
-    var interpolation: String
+    var interpolation: VisualSearchSidecar.Interpolation
     
     // squash: scale and stretch to fill the inputSize
     // shortest: Don't know what it is
-    var resize_mode: String
+    var resizeMode: VisualSearchSidecar.ResizeMode
+}
+
+extension PreprocessConfiguration : Decodable {
+    enum CodingKeys: CodingKey {
+        case size
+        case mean
+        case std
+        case interpolation
+        case resize_mode
+    }
+    
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        do {
+            let size = try container.decode(Int.self, forKey: .size)
+            self.size = [ size, size ]
+        } catch let error as DecodingError {
+            guard case .typeMismatch(_, _) = error else {
+                throw error
+            }
+            self.size = try container.decode(forKey: .size)
+        }
+        
+        self.mean = try container.decode(forKey: .mean)
+        self.std = try container.decode(forKey: .std)
+        
+        self.interpolation = try container.decode(VisualSearchSidecar.Interpolation.self, forKey: .interpolation)
+        self.resizeMode = try container.decode(VisualSearchSidecar.ResizeMode.self, forKey: .resize_mode)
+    }
+}
+
+fileprivate extension KeyedDecodingContainer {
+    func decode<let count: Int, Element: Decodable>(forKey key: Key) throws -> [ count of Element ] {
+        var container = try self.nestedUnkeyedContainer(forKey: key)
+        let result: [ count of Element ] = try .init { span in
+            for _ in 0 ..< count {
+                span.append(try container.decode(Element.self))
+            }
+        }
+        guard container.isAtEnd else {
+            throw DecodingError.dataCorruptedError(
+                forKey: key,
+                in: self,
+                debugDescription: "Expected \(count) elements, but contains more."
+            )
+        }
+        return result
+    }
 }

@@ -127,6 +127,13 @@ fileprivate extension VisualSearchSidecar {
         case .squash:
             scale = inputSize.height / imageSize.height
             aspectRatio = (inputSize.width / imageSize.width) / scale
+        case .shortest:
+            scale = if imageSize.ratio > inputSize.ratio {
+                inputSize.width / imageSize.width
+            } else {
+                inputSize.height / imageSize.height
+            }
+            aspectRatio = 1
         }
         
         let scaledImage: CIImage?
