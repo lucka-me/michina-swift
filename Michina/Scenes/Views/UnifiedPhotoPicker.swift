@@ -8,27 +8,31 @@
 import PhotosUI
 import SwiftUI
 
-struct UnifiedPhotoPicker : View {
+struct UnifiedPhotoPicker<Label: View> : View {
     @Environment(\.alert) private var alert
     
-    @Binding private var imageData: ImageData?
+    @Binding private var selection: ImageData?
 
     @State private var pickedPhotoItem: PhotosPickerItem? = nil
     @State private var loadImageProgress: Progress? = nil
     
-    init(_ imageData: Binding<ImageData?>) {
-        self._imageData = imageData
+    private let label: () -> Label
+    
+    init(
+        selection: Binding<ImageData?>,
+        @ViewBuilder label: @escaping () -> Label
+    ) {
+        self._selection = selection
+        self.label = label
     }
     
     var body: some View {
-        if let loadImageProgress {
-            ProgressView(loadImageProgress)
-        } else {
-            PhotosPicker("UnifiedPhotoPicker.PhotosPicker", selection: $pickedPhotoItem)
+        ZStack {
+            PhotosPicker(selection: $pickedPhotoItem, label: label)
                 .onDrop(
                     of: [ .image ],
                     isTargeted: nil,
-                    perform: handleDrop(images:)
+                    perform: handleDrop(items:)
                 )
                 .onChange(of: pickedPhotoItem) {
                     guard let pickedPhotoItem else {
@@ -40,38 +44,37 @@ struct UnifiedPhotoPicker : View {
                         completionHandler: handle(result:)
                     )
                 }
+                .disabled(loadImageProgress != nil)
+                .opacity(loadImageProgress != nil ? 0 : 1)
+            
+            if let loadImageProgress {
+                ProgressView(loadImageProgress)
+                    .progressViewStyle(.circular)
+            }
         }
     }
 }
 
-extension UnifiedPhotoPicker {
-    struct ImageData : Transferable {
-        static var transferRepresentation: some TransferRepresentation {
-            DataRepresentation(importedContentType: .image) { data in
-                guard let image = NSImage(data: data) else {
-                    throw .runtime("Unable to decode the image.")
-                }
-                
-                return .init(
-                    data: data,
-                    image: .init(nsImage: image),
-                    size: image.size
-                )
-            }
+extension UnifiedPhotoPicker where Label == Text {
+    init(_ titleKey: LocalizedStringKey, selection: Binding<ImageData?>) {
+        self.init(selection: selection) {
+            Text(titleKey)
         }
-        
-        let data: Data
-        let image: Image
-        let size: CGSize
+    }
+    
+    init(selection: Binding<ImageData?>) {
+        self.init(selection: selection) {
+            Text("UnifiedPhotoPicker.DefaultLabel")
+        }
     }
 }
 
 fileprivate extension UnifiedPhotoPicker {
-    func handleDrop(images: [ NSItemProvider ]) -> Bool {
-        guard let image = images.first else {
+    func handleDrop(items: [ NSItemProvider ]) -> Bool {
+        guard let item = items.first else {
             return false
         }
-        self.loadImageProgress = image.loadTransferable(
+        self.loadImageProgress = item.loadTransferable(
             type: ImageData.self,
             completionHandler: handle(result:)
         )
@@ -82,7 +85,7 @@ fileprivate extension UnifiedPhotoPicker {
         DispatchQueue.main.async {
             switch result {
             case .success(let imageData):
-                self.imageData = imageData
+                self.selection = imageData
             case .failure(let error):
                 alert(error)
             }
@@ -94,25 +97,11 @@ fileprivate extension UnifiedPhotoPicker {
         DispatchQueue.main.async {
             switch result {
             case .success(let imageData):
-                self.imageData = imageData
+                self.selection = imageData
             case .failure(let error):
                 alert(error)
             }
             self.loadImageProgress = nil
         }
-    }
-}
-
-fileprivate struct RuntimeError : Error {
-    let reason: String
-    
-    var localizedDescription: String {
-        reason
-    }
-}
-
-fileprivate extension Error where Self == RuntimeError {
-    static func runtime(_ reason: String) -> RuntimeError {
-        .init(reason: reason)
     }
 }

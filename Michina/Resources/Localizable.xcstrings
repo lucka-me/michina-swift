@@ -1403,56 +1403,6 @@
         }
       }
     },
-    "SearchInferenceTab.Action.RunInference" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Run Inference"
-          }
-        }
-      }
-    },
-    "SearchInferenceTab.Inspector.Input" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Input"
-          }
-        }
-      }
-    },
-    "SearchInferenceTab.Inspector.Input.SearchText" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Search Text"
-          }
-        }
-      }
-    },
-    "SearchInferenceTab.Inspector.Model" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Model"
-          }
-        }
-      }
-    },
-    "SearchInferenceTab.Inspector.Model.Category" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Category"
-          }
-        }
-      }
-    },
     "SearchInferenceTab.Output.DifferentModel" : {
       "localizations" : {
         "en" : {
@@ -1463,12 +1413,92 @@
         }
       }
     },
-    "UnifiedPhotoPicker.PhotosPicker" : {
+    "SearchInferenceTab.Textual.Applied" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Select Photo From Library"
+            "value" : "Applied"
+          }
+        }
+      }
+    },
+    "SearchInferenceTab.Textual.Apply" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apply"
+          }
+        }
+      }
+    },
+    "SearchInferenceTab.Textual.Input" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Textual Smart Search"
+          }
+        }
+      }
+    },
+    "SearchInferenceTab.Textual.Input.Model" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Model"
+          }
+        }
+      }
+    },
+    "SearchInferenceTab.Textual.Input.Run" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add"
+          }
+        }
+      }
+    },
+    "SearchInferenceTab.Textual.Input.SearchText" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search Text"
+          }
+        }
+      }
+    },
+    "SearchInferenceTab.Visual.Input.Model" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Model"
+          }
+        }
+      }
+    },
+    "SearchInferenceTab.Visual.Input.Run" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run Inference"
+          }
+        }
+      }
+    },
+    "UnifiedPhotoPicker.DefaultLabel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select Photo From Library or Drop Image File"
           }
         }
       }

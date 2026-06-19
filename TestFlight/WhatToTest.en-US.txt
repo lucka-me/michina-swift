@@ -1,6 +1,9 @@
 Welcome to Michina.
 
-Build #10
+Build #14
+- Changed: Re-designed Smart Search Inference view
+
+Build #13
 - Added: Support more Visual Smart Search models's configuration file structure
 - Changed: Tokenizer feature is now provided by Immich's Rust implementation, which supports more Textual Smart Search models
 - Changed: Verified ResNet (RN50 / RN101) Smart Search models

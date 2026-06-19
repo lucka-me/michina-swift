@@ -18,7 +18,7 @@ struct CharacterRecognitionInferenceTab : TabContent {
     @State private var detectionModel: InferenceModel
     @State private var recognitionModel: InferenceModel
     
-    @State private var imageData: UnifiedPhotoPicker.ImageData? = nil
+    @State private var imageData: ImageData? = nil
     
     @State private var executionProgress: Progress? = nil
     @State private var outputs: [ Output ] = [ ]
@@ -154,7 +154,7 @@ fileprivate extension CharacterRecognitionInferenceTab {
                     .aspectRatio(contentMode: .fit)
             }
             
-            UnifiedPhotoPicker($imageData)
+            UnifiedPhotoPicker(selection: $imageData)
         }
         
         Section("CharacterRecognitionInferenceTab.Inspector.Parameters") {
@@ -258,7 +258,7 @@ fileprivate extension CharacterRecognitionInferenceTab {
             .init(
                 index: self.outputs.count,
                 input: imageData.image,
-                inputSize: imageData.size,
+                inputSize: image.extent.size,
                 elapse: elapse,
                 boxes: output.characterBoxes.map { .init(data: $0) }
             )

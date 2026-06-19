@@ -15,7 +15,7 @@ struct FacialRecognitionInferenceTab : TabContent {
     
     @State private var detectionModel: InferenceModel
     @State private var recognitionModel: InferenceModel
-    @State private var imageData: UnifiedPhotoPicker.ImageData? = nil
+    @State private var imageData: ImageData? = nil
     
     @State private var executionProgress: Progress? = nil
     
@@ -149,7 +149,7 @@ fileprivate extension FacialRecognitionInferenceTab {
                     .aspectRatio(contentMode: .fit)
             }
             
-            UnifiedPhotoPicker($imageData)
+            UnifiedPhotoPicker(selection: $imageData)
         }
         
         Section("FacialRecognitionInferenceTab.Inspector.Input.Parameters") {
@@ -256,7 +256,7 @@ fileprivate extension FacialRecognitionInferenceTab {
             .init(
                 index: self.outputs.count,
                 inputImage: imageData.image,
-                inputImageSize: imageData.size,
+                inputImageSize: image.extent.size,
                 recognitionModel: recognitionModel,
                 elapse: elapse,
                 faces: output.faces.enumerated().map { (index, face) in
