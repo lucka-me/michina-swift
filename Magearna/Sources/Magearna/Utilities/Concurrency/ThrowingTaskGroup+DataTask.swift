@@ -65,7 +65,10 @@ fileprivate enum DataGroupTaskError : LocalizedError {
     var errorDescription: String? {
         switch self {
         case .unsuccessful(let status):
-            .init(localized: "DataGroupTaskError.Unsuccessful.Description \(status.code)")
+            .init(
+                localized: "DataGroupTaskError.Unsuccessful.Description \(status.code)",
+                bundle: #bundle
+            )
         }
     }
     

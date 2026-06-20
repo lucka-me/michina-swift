@@ -68,9 +68,15 @@ fileprivate enum DownloadGroupTaskError : LocalizedError {
     var errorDescription: String? {
         switch self {
         case .failedToConvertResponse:
-            .init(localized: "DownloadGroupTaskError.FailedToConvertResponse.Description")
+            .init(
+                localized: "DownloadGroupTaskError.FailedToConvertResponse.Description",
+                bundle: #bundle
+            )
         case .unsuccessful(let status):
-            .init(localized: "DownloadGroupTaskError.Unsuccessful.Description \(status.code)")
+            .init(
+                localized: "DownloadGroupTaskError.Unsuccessful.Description \(status.code)",
+                bundle: #bundle
+            )
         }
     }
     
