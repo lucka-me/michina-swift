@@ -3,6 +3,7 @@ Welcome to Michina.
 Build #14
 - Changed: Re-designed Smart Search Inference view
 - Changed: Download progress is now tracked with file size instead of file count
+- Changed: Verified ViT-B-16 Smart Search models
 
 Build #13
 - Added: Support more Visual Smart Search models's configuration file structure

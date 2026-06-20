@@ -24,25 +24,30 @@ public extension InferenceModelSuite {
             immichApp(in: .search) {
                 "RN101__openai"
                 "RN101__yfcc15m"
+                
                 "RN50__cc12m"
                 "RN50__openai"
                 "RN50__yfcc15m"
                 "RN50x16__openai"
                 "RN50x4__openai"
                 "RN50x64__openai"
-            }
-            immichApp(in: .search, areVerified: false) {
-                // TODO: Verify all models...
+                
                 "ViT-B-16-SigLIP-256__webli"
                 "ViT-B-16-SigLIP-384__webli"
                 "ViT-B-16-SigLIP-512__webli"
                 "ViT-B-16-SigLIP-i18n-256__webli"
                 "ViT-B-16-SigLIP__webli"
+                
                 "ViT-B-16-plus-240__laion400m_e31"
                 "ViT-B-16-plus-240__laion400m_e32"
+                
                 "ViT-B-16__laion400m_e31"
                 "ViT-B-16__laion400m_e32"
+                
                 "ViT-B-16__openai"
+            }
+            immichApp(in: .search, areVerified: false) {
+                // TODO: Verify all models...
                 "ViT-B-32__laion2b-s34b-b79k"
                 "ViT-B-32__laion2b_e16"
                 "ViT-B-32__laion400m_e31"
@@ -70,8 +75,11 @@ public extension InferenceModelSuite {
                 "nllb-clip-base-siglip__v1"
                 "nllb-clip-large-siglip__mrl"
                 "nllb-clip-large-siglip__v1"
-                
+            }
+            immichApp(in: .search) {
                 "ViT-B-16-SigLIP2__webli"
+            }
+            immichApp(in: .search, areVerified: false) {
                 "ViT-B-32-SigLIP2-256__webli"
                 "ViT-L-16-SigLIP2-256__webli"
                 "ViT-L-16-SigLIP2-384__webli"
