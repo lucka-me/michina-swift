@@ -12,7 +12,6 @@ extension ThrowingTaskGroup where ChildTaskResult == Void, Failure == Error {
     mutating func addDownloadTask(
         from url: URL,
         to destination: URL,
-        with sessionConfiguration: URLSessionConfiguration = .default,
         reporting progress: Progress?
     ) throws {
         guard !FileManager.default.fileExists(at: destination) else {
@@ -38,9 +37,9 @@ extension ThrowingTaskGroup where ChildTaskResult == Void, Failure == Error {
                 )
                 
                 let session = URLSession(
-                    configuration: sessionConfiguration,
+                    configuration: .default,
                     delegate: delegate,
-                    delegateQueue: nil
+                    delegateQueue: URLSession.shared.delegateQueue
                 )
                 
                 let task = session.downloadTask(with: .init(url: url))
