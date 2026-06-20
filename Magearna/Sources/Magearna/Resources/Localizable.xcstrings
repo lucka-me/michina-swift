@@ -1,12 +1,32 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "DownloadError.ErrorDescription %lld" : {
+    "DataGroupTaskError.Unsuccessful.Description %lld" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Download failed, HTTP status code: %lld"
+            "value" : "Fetch data failed, HTTP status code: %lld."
+          }
+        }
+      }
+    },
+    "DownloadGroupTaskError.FailedToConvertResponse.Description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Download failed, unable to convert the response to HTTP response."
+          }
+        }
+      }
+    },
+    "DownloadGroupTaskError.Unsuccessful.Description %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Download failed, HTTP status code: %lld."
           }
         }
       }

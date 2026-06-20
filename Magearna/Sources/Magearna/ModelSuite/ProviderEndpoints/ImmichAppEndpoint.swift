@@ -15,60 +15,95 @@ enum ImmichAppEndpoint : InferenceModelSuiteProviderEndpoint {
         to cacheDirectory: URL,
         reporting progress: Progress?
     ) async throws {
-        let information = try await modelInformation(
-            namespace: Self.namespace,
-            name: suite.name
-        )
+        progress?.kind = .file
+        progress?.fileOperationKind = .downloading
         
-        var filenames = information.siblings
-            .compactMap { sibling -> String? in
+        let information = try await withThrowingTaskGroup(
+            of: ModelsInformation.self
+        ) { group in
+            group.addDataTask(
+                from: url
+                    .appending(components: "api", "models")
+                    .appending(components: namespace, suite.name)
+            )
+            return try await group.first { _ in true }!
+        }
+        
+        var sources: [ Source ]
+        
+        if progress == nil {
+            sources = information.siblings.compactMap { sibling in
                 guard
                     !sibling.rfilename.hasSuffix(".armnn"),
                     !sibling.rfilename.hasSuffix(".rknn")
                 else {
                     return nil
                 }
-                
-                return sibling.rfilename
+                return .init(
+                    repository: suite.name,
+                    revision: information.sha,
+                    path: sibling.rfilename,
+                    size: 1
+                )
             }
-        let modelFilenamesStartIndex = filenames.partition {
-            $0.hasSuffix("model.onnx")
+        } else {
+            // Collect sizes for reporting progress
+            sources = try await withThrowingTaskGroup { group in
+                for sibling in information.siblings {
+                    guard
+                        !sibling.rfilename.hasSuffix(".armnn"),
+                        !sibling.rfilename.hasSuffix(".rknn")
+                    else {
+                        continue
+                    }
+                    
+                    group.addDataTask(
+                        from: url
+                            .appending(components: "api", "models")
+                            .appending(components: namespace, suite.name)
+                            .appending(components: "treesize", information.sha)
+                            .appending(path: sibling.rfilename)
+                    ) { data, _ in
+                        let treeSize = try JSONDecoder()
+                            .decode(TreeSize.self, from: data)
+                        return Source(
+                            repository: suite.name,
+                            revision: information.sha,
+                            path: sibling.rfilename,
+                            size: treeSize.size
+                        )
+                    }
+                }
+                
+                return try await group.reduce(into: [ ]) { $0.append($1) }
+            }
         }
         
-        let totalFileCount = Int64(filenames.count)
+        let modelStartIndex = sources.partition(by: \.isModelFile)
         
+        progress?.fileTotalCount = sources.count
         progress?.completedUnitCount = 0
-        progress?.totalUnitCount = totalFileCount
+        progress?.totalUnitCount = sources.reduce(0) { $0 + $1.size }
         
         let directoryURL = suite.directoryURL(in: cacheDirectory)
         
-        try await withThrowingTaskGroup(of: Void.self) { group in
-            for filename in filenames[..<modelFilenamesStartIndex] {
+        try await withThrowingTaskGroup { group in
+            for source in sources[..<modelStartIndex] {
                 try group.addDownloadTask(
-                    from: Self.downloadURL(
-                        namespace: Self.namespace,
-                        repository: suite.name,
-                        revision: information.sha,
-                        filename: filename
-                    ),
-                    to: directoryURL.appending(path: filename),
-                    reporting: progress
+                    from: source.resolvingURL,
+                    to: directoryURL.appending(path: source.path),
+                    reporting: progress?.addChild(for: source.size, as: source.size)
                 )
             }
             
             try await group.waitForAll()
             
             // Download model.onnx files after all other files.
-            for filename in filenames[modelFilenamesStartIndex...] {
+            for source in sources[modelStartIndex...] {
                 try group.addDownloadTask(
-                    from: Self.downloadURL(
-                        namespace: Self.namespace,
-                        repository: suite.name,
-                        revision: information.sha,
-                        filename: filename
-                    ),
-                    to: directoryURL.appending(path: filename),
-                    reporting: progress
+                    from: source.resolvingURL,
+                    to: directoryURL.appending(path: source.path),
+                    reporting: progress?.addChild(for: source.size, as: source.size)
                 )
             }
             
@@ -94,35 +129,6 @@ fileprivate extension ImmichAppEndpoint {
 }
 
 fileprivate extension ImmichAppEndpoint {
-    static func downloadURL(
-        namespace: String,
-        repository: String,
-        revision: String,
-        filename: String
-    ) -> URL {
-        url
-            .appending(components: namespace, repository)
-            .appending(components: "resolve", revision)
-            .appending(path: filename)
-    }
-    
-    static func modelInformation(
-        namespace: String,
-        name: String
-    ) async throws -> ModelInformation {
-        let (body, _) = try await URLSession.shared.data(
-            for: HTTPRequest(
-                url: url
-                    .appending(components: "api", "models")
-                    .appending(components: namespace, name)
-            )
-        )
-        
-        return try JSONDecoder().decode(ModelInformation.self, from: body)
-    }
-}
-
-fileprivate extension ImmichAppEndpoint {
     static func addBatchDimension(for model: InferenceModel, in cacheDirectory: URL) throws {
         let fileURL = model.modelFileURL(in: cacheDirectory)
         var modelProto = try ONNXModelProto(serializedBytes: Data(contentsOf: fileURL))
@@ -132,11 +138,40 @@ fileprivate extension ImmichAppEndpoint {
     }
 }
 
-fileprivate struct ModelInformation : Decodable {
+fileprivate struct ModelsInformation : Decodable {
     struct Sibling : Decodable {
         var rfilename: String
     }
     
     var sha: String
     var siblings: [ Sibling ]
+}
+
+fileprivate struct TreeSize : Decodable {
+    var size: Int64
+}
+
+fileprivate struct Source {
+    let repository: String
+    let revision: String
+    let path: String
+    let size: Int64
+    
+    init(repository: String, revision: String, path: String, size: Int64) {
+        self.repository = repository
+        self.revision = revision
+        self.path = path
+        self.size = size
+    }
+    
+    var isModelFile: Bool {
+        path.hasSuffix("model.onnx")
+    }
+    
+    var resolvingURL: URL {
+        ImmichAppEndpoint.url
+            .appending(components: ImmichAppEndpoint.namespace, repository)
+            .appending(components: "resolve", revision)
+            .appending(path: path)
+    }
 }

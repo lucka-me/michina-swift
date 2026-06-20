@@ -12,11 +12,12 @@ extension ThrowingTaskGroup where ChildTaskResult == Void, Failure == Error {
     mutating func addDownloadTask(
         from url: URL,
         to destination: URL,
-        reporting parentProgress: Progress?
+        with sessionConfiguration: URLSessionConfiguration = .default,
+        reporting progress: Progress?
     ) throws {
-        let progress = parentProgress?.addChild(for: 1, as: 1)
         guard !FileManager.default.fileExists(at: destination) else {
-            progress?.completedUnitCount = 1
+            progress?.totalUnitCount = 100
+            progress?.completedUnitCount = 100
             return
         }
         try FileManager.default.createDirectory(
@@ -25,16 +26,28 @@ extension ThrowingTaskGroup where ChildTaskResult == Void, Failure == Error {
         )
         
         addTask(priority: .background) {
-            let (temporaryURL, response) = try await URLSession.shared.download(
-                for: HTTPRequest(url: url)
-            )
-            guard response.status.kind == .successful else {
-                try FileManager.default.removeItem(at: temporaryURL)
-                throw DownloadError(status: response.status)
+            var sessionInstance: URLSession? = nil
+            defer {
+                sessionInstance?.invalidateAndCancel()
             }
-            
-            try FileManager.default.moveItem(at: temporaryURL, to: destination)
-            progress?.completedUnitCount = 1
+            try await withCheckedThrowingContinuation { continuation in
+                let delegate = DownloadDelegate(
+                    continuation: continuation,
+                    destination: destination,
+                    progress: progress
+                )
+                
+                let session = URLSession(
+                    configuration: sessionConfiguration,
+                    delegate: delegate,
+                    delegateQueue: nil
+                )
+                
+                let task = session.downloadTask(with: .init(url: url))
+                
+                sessionInstance = session
+                task.resume()
+            }
         } retryWhen: { condition, error in
             guard condition.attempts <= 3 else {
                 return false
@@ -48,57 +61,96 @@ extension ThrowingTaskGroup where ChildTaskResult == Void, Failure == Error {
     }
 }
 
-fileprivate extension ThrowingTaskGroup where ChildTaskResult == Void, Failure == Error {
-    mutating func addTask(
-        priority: TaskPriority? = nil,
-        operation: sending @Sendable @escaping () async throws -> ChildTaskResult,
-        retryWhen: sending @Sendable @escaping (
-            _ condition: (attempts: Int, elapse: Duration),
-            _ error: any Error
-        ) async throws -> Bool
-    ) {
-        addTask(priority: priority) {
-            let startTime = ContinuousClock.now
-            
-            var retry = false
-            var attempts = 0
-            var finalResult: Swift.Result<ChildTaskResult, Failure>? = nil
-            
-            repeat {
-                attempts += 1
-                do {
-                    finalResult = .success(try await operation())
-                    retry = false
-                } catch let error as CancellationError {
-                    finalResult = .failure(error)
-                    retry = false
-                } catch {
-                    finalResult = .failure(error)
-                    retry = try await retryWhen(
-                        (attempts, ContinuousClock.now - startTime),
-                        error
-                    )
-                }
-            } while retry
-            
-            switch finalResult! {
-            case .success(let result):
-                return result
-            case .failure(let error):
-                throw error
-            }
+fileprivate enum DownloadGroupTaskError : LocalizedError {
+    case failedToConvertResponse
+    case unsuccessful(status: HTTPResponse.Status)
+    
+    var errorDescription: String? {
+        switch self {
+        case .failedToConvertResponse:
+            .init(localized: "DownloadGroupTaskError.FailedToConvertResponse.Description")
+        case .unsuccessful(let status):
+            .init(localized: "DownloadGroupTaskError.Unsuccessful.Description \(status.code)")
+        }
+    }
+    
+    var failureReason: String? {
+        switch self {
+        case .unsuccessful(let status): status.reasonPhrase
+        default: nil
         }
     }
 }
 
-fileprivate struct DownloadError : LocalizedError {
-    let status: HTTPResponse.Status
+fileprivate final class DownloadDelegate : NSObject, URLSessionDownloadDelegate {
+    private let continuation: CheckedContinuation<Void, Error>
+    private let destination: URL
+    private let progress: Progress?
     
-    var errorDescription: String? {
-        .init(localized: "DownloadError.ErrorDescription \(status.code)")
+    init(
+        continuation: CheckedContinuation<Void, Error>,
+        destination: URL,
+        progress: Progress?
+    ) {
+        self.continuation = continuation
+        self.destination = destination
+        self.progress = progress
+        
+        super.init()
     }
     
-    var failureReason: String? {
-        status.reasonPhrase
+    func urlSession(
+        _ session: URLSession,
+        task: URLSessionTask,
+        didCompleteWithError error: (any Error)?
+    ) {
+        if let error {
+            continuation.resume(throwing: error)
+        }
+    }
+    
+    func urlSession(
+        _ session: URLSession,
+        downloadTask: URLSessionDownloadTask,
+        didFinishDownloadingTo location: URL
+    ) {
+        let result: Result<Void, Error>
+        defer {
+            continuation.resume(with: result)
+        }
+        
+        guard
+            let response = (downloadTask.response as? HTTPURLResponse)?.httpResponse
+        else {
+            result = .failure(DownloadGroupTaskError.failedToConvertResponse)
+            return
+        }
+        guard response.status.kind == .successful else {
+            result = .failure(
+                DownloadGroupTaskError.unsuccessful(status: response.status)
+            )
+            return
+        }
+        
+        do {
+            try FileManager.default.moveItem(at: location, to: destination)
+            result = .success(())
+        } catch {
+            result = .failure(error)
+        }
+    }
+    
+    func urlSession(
+        _ session: URLSession,
+        downloadTask: URLSessionDownloadTask,
+        didWriteData bytesWritten: Int64,
+        totalBytesWritten: Int64,
+        totalBytesExpectedToWrite: Int64
+    ) {
+        guard totalBytesWritten != NSURLSessionTransferSizeUnknown else {
+            return
+        }
+        progress?.totalUnitCount = totalBytesExpectedToWrite
+        progress?.completedUnitCount = totalBytesWritten
     }
 }
