@@ -28,7 +28,7 @@ extension ThrowingTaskGroup where ChildTaskResult == Void, Failure == Error {
         addTask(priority: .background) {
             var sessionInstance: URLSession? = nil
             defer {
-                sessionInstance?.invalidateAndCancel()
+                sessionInstance?.finishTasksAndInvalidate()
             }
             try await withCheckedThrowingContinuation { continuation in
                 let delegate = DownloadDelegate(
