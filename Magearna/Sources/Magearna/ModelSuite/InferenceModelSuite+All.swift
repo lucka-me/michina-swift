@@ -45,15 +45,15 @@ public extension InferenceModelSuite {
                 "ViT-B-16__laion400m_e32"
                 
                 "ViT-B-16__openai"
-            }
-            immichApp(in: .search, areVerified: false) {
-                // TODO: Verify all models...
+                
                 "ViT-B-32__laion2b-s34b-b79k"
                 "ViT-B-32__laion2b_e16"
                 "ViT-B-32__laion400m_e31"
                 "ViT-B-32__laion400m_e32"
                 "ViT-B-32__openai"
-                
+            }
+            immichApp(in: .search, areVerified: false) {
+                // TODO: Verify all models...
                 "ViT-H-14-378-quickgelu__dfn5b"
                 "ViT-H-14-quickgelu__dfn5b"
                 "ViT-H-14__laion2b-s32b-b79k"
@@ -78,9 +78,9 @@ public extension InferenceModelSuite {
             }
             immichApp(in: .search) {
                 "ViT-B-16-SigLIP2__webli"
+                "ViT-B-32-SigLIP2-256__webli"
             }
             immichApp(in: .search, areVerified: false) {
-                "ViT-B-32-SigLIP2-256__webli"
                 "ViT-L-16-SigLIP2-256__webli"
                 "ViT-L-16-SigLIP2-384__webli"
                 "ViT-L-16-SigLIP2-512__webli"
