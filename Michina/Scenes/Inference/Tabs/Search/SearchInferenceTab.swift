@@ -173,8 +173,8 @@ fileprivate extension SearchInferenceTab {
             }
             .animation(.bouncy, value: selection)
         }
-        .contentMargins(.vertical, 8, for: .scrollContent)
-        .contentMargins(.horizontal, 12, for: .scrollContent)
+        .contentMargins(.top, 8, for: .scrollContent)
+        .contentMargins([ .horizontal, .bottom ], 12, for: .scrollContent)
     }
     
     @ViewBuilder
@@ -407,6 +407,7 @@ fileprivate extension SearchInferenceTab {
                 data: output
             )
         )
+        self.selection = self.textualOutputs.last
     }
 }
 
