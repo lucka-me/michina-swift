@@ -15,6 +15,7 @@ struct InferenceServiceSettingsTab : TabContent {
         Tab(Self.titleKey, systemImage: Self.systemImage) {
             Form {
                 sessionSections
+                cacheSection
             }
             .frame(minWidth: 300, maxWidth: 400)
         }
@@ -58,18 +59,25 @@ fileprivate extension InferenceServiceSettingsTab {
         } footer: {
             Text("InferenceServiceSettingsTab.Session.Optimization.Footer")
         }
+    }
+}
+
+fileprivate extension InferenceServiceSettingsTab {
+    @ViewBuilder
+    var cacheSection: some View {
+        @Bindable var settings = settings.cache
         
         Section {
             TextField(
-                "InferenceServiceSettingsTab.SessionCache.TimeToLive",
+                "InferenceServiceSettingsTab.Cache.TimeToLive",
                 value: $settings.timeToLive,
                 format: .number.grouping(.never),
-                prompt: Text("InferenceServiceSettingsTab.SessionCache.TimeToLive.Prompt")
+                prompt: Text("InferenceServiceSettingsTab.Cache.TimeToLive.Prompt")
             )
         } header: {
-            Text("InferenceServiceSettingsTab.SessionCache")
+            Text("InferenceServiceSettingsTab.Cache")
         } footer: {
-            Text("InferenceServiceSettingsTab.SessionCache.Footer")
+            Text("InferenceServiceSettingsTab.Cache.Footer")
         }
     }
 }

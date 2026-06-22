@@ -837,6 +837,46 @@
         }
       }
     },
+    "InferenceServiceSettingsTab.Cache" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In-Memory Cache"
+          }
+        }
+      }
+    },
+    "InferenceServiceSettingsTab.Cache.Footer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The model will be unloaded after a period of idle to reduce memory usage."
+          }
+        }
+      }
+    },
+    "InferenceServiceSettingsTab.Cache.TimeToLive" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unload After"
+          }
+        }
+      }
+    },
+    "InferenceServiceSettingsTab.Cache.TimeToLive.Prompt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seconds"
+          }
+        }
+      }
+    },
     "InferenceServiceSettingsTab.Session.ExecutionProviders" : {
       "localizations" : {
         "en" : {
@@ -903,46 +943,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Save Model Optimization Data to Disk"
-          }
-        }
-      }
-    },
-    "InferenceServiceSettingsTab.SessionCache" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In-Memory Cache"
-          }
-        }
-      }
-    },
-    "InferenceServiceSettingsTab.SessionCache.Footer" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The model will be unloaded after a period of idle to reduce memory usage."
-          }
-        }
-      }
-    },
-    "InferenceServiceSettingsTab.SessionCache.TimeToLive" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Unload After"
-          }
-        }
-      }
-    },
-    "InferenceServiceSettingsTab.SessionCache.TimeToLive.Prompt" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seconds"
           }
         }
       }

@@ -13,6 +13,7 @@ import SwiftUI
 @Observable
 final class InferenceServiceSettings {
     let session = SessionSettings()
+    let cache = CacheSettings()
     
     private let storage = Storage()
     
@@ -22,6 +23,22 @@ final class InferenceServiceSettings {
 
 extension InferenceServiceSettings {
     static let shared = InferenceServiceSettings()
+}
+
+extension InferenceServiceSettings {
+    @MainActor
+    @Observable
+    final class CacheSettings {
+        var timeToLive: Int {
+            didSet { storage.timeToLive = timeToLive }
+        }
+        
+        private let storage = Storage()
+        
+        fileprivate init() {
+            self.timeToLive = storage.timeToLive
+        }
+    }
 }
 
 extension InferenceServiceSettings {
@@ -40,17 +57,12 @@ extension InferenceServiceSettings {
             didSet { storage.preferEfficiency = preferEfficiency }
         }
         
-        var timeToLive: Int {
-            didSet { storage.timeToLive = timeToLive }
-        }
-        
         private let storage = Storage()
         
         fileprivate init() {
             self.persistOptimizations = storage.persistOptimizations
             self.preferCoreML = storage.preferCoreML
             self.preferEfficiency = storage.preferEfficiency
-            self.timeToLive = storage.timeToLive
         }
     }
 }
@@ -69,6 +81,12 @@ fileprivate extension InferenceServiceSettings {
     }
 }
 
+fileprivate extension InferenceServiceSettings.CacheSettings {
+    struct Storage {
+        @AppStorage("InferenceSession.Cache.TimeToLive") var timeToLive = 300
+    }
+}
+
 fileprivate extension InferenceServiceSettings.SessionSettings {
     struct Storage {
         @AppStorage("InferenceSession.Session.PersistOptimizations")
@@ -79,8 +97,6 @@ fileprivate extension InferenceServiceSettings.SessionSettings {
         
         @AppStorage("InferenceSession.Session.PreferEfficiency")
         var preferEfficiency = true
-        
-        @AppStorage("InferenceSession.Session.TimeToLive") var timeToLive = 300
     }
     
     var executionProviderPreference: InferenceSession.Options.ExecutionProviderPreference {

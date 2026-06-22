@@ -31,7 +31,7 @@ final class InferenceSessionCache {
     
     private let touchContinuation: AsyncStream<InferenceModel>.Continuation
     
-    private let settings = InferenceServiceSettings.shared.session
+    private let settings = InferenceServiceSettings.shared
     
     init(
         cacheDirectory: URL = .applicationSupportDirectory.appending(component: "Models")
@@ -85,7 +85,7 @@ extension InferenceSessionCache {
                 try await fetch(suite: model.suite)
             }
             
-            let options = settings.inferenceSessionOptions
+            let options = settings.session.inferenceSessionOptions
             let taskName = model.id.replacingOccurrences(of: "/", with: ".")
             session = try await Task
                 .detached(name: "InferenceSession.\(taskName)", priority: .utility) {
@@ -152,8 +152,8 @@ fileprivate extension InferenceSessionCache {
     func handle(touchStream: AsyncStream<InferenceModel>) async throws {
         for await _ in touchStream {
             while let oldestInstant = touchInstants.min(by: { $0.value < $1.value })?.value {
-                try await Task.sleep(until: oldestInstant + .seconds(settings.timeToLive))
-                let deadline = ContinuousClock.now - .seconds(settings.timeToLive)
+                try await Task.sleep(until: oldestInstant + .seconds(settings.cache.timeToLive))
+                let deadline = ContinuousClock.now - .seconds(settings.cache.timeToLive)
                 unload(
                     for: touchInstants
                         .filter { $0.value < deadline }
