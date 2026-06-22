@@ -93,7 +93,7 @@ fileprivate extension SearchInferenceTab.VisualGrid {
             .overlay(alignment: .bottom) {
                 inputContent
                     .padding(8)
-                    .background(.thinMaterial.opacity(0.6))
+                    .background(.thinMaterial.opacity(0.8))
             }
             .clipShape(.rect(cornerRadius: 12))
     }
@@ -103,11 +103,17 @@ fileprivate extension SearchInferenceTab.VisualGrid {
         UnifiedPhotoPicker(selection: $imageData) {
             if let imageData {
                 imageData.image
-                    .resizable()
                     .scaledToFill()
             } else {
-                Label("UnifiedPhotoPicker.DefaultLabel", systemImage: "plus.viewfinder")
-                    .padding(24)
+                Color.clear
+                    .overlay(alignment: .top) {
+                        Label(
+                            "UnifiedPhotoPicker.DefaultLabel",
+                            systemImage: "plus.viewfinder"
+                        )
+                        .padding(24)
+                    }
+                    .contentShape(.rect)
             }
         }
         .buttonStyle(.plain)
@@ -127,13 +133,16 @@ fileprivate extension SearchInferenceTab.VisualGrid {
             }
             .labelsHidden()
             
-            if let progress {
-                ProgressView(progress)
-            } else {
+            ZStack(alignment: .leading) {
                 Button("SearchInferenceTab.VisualGrid.Input.Run") {
                     alert.whenTrying(runInference)
                 }
-                .disabled(imageData == nil)
+                .disabled(imageData == nil || progress != nil)
+                .opacity(progress == nil ? 1 : 0)
+                
+                if let progress {
+                    ProgressView(progress)
+                }
             }
         }
     }
@@ -185,7 +194,6 @@ fileprivate extension SearchInferenceTab.VisualGrid {
             .aspectRatio(1, contentMode: .fit)
             .overlay {
                 output.output.input
-                    .resizable()
                     .scaledToFill()
             }
             .overlay(alignment: .bottom) {
@@ -214,7 +222,7 @@ fileprivate extension SearchInferenceTab.VisualGrid {
                     }
                 }
                 .padding(8)
-                .background(.thinMaterial.opacity(0.6))
+                .background(.thinMaterial.opacity(0.8))
             }
             .clipShape(.rect(cornerRadius: 12))
     }

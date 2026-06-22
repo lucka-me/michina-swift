@@ -150,7 +150,6 @@ fileprivate extension CharacterRecognitionInferenceTab {
         Section("CharacterRecognitionInferenceTab.Inspector.Photo") {
             if let image = imageData?.image {
                 image
-                    .resizable()
                     .aspectRatio(contentMode: .fit)
             }
             
@@ -320,7 +319,6 @@ fileprivate extension CharacterRecognitionInferenceTab {
         
         var body: some View {
             output.input
-                .resizable()
                 .scaledToFit()
                 .clipShape(.rect(cornerRadius: 12))
                 .overlay {

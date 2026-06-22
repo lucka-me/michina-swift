@@ -145,7 +145,6 @@ fileprivate extension FacialRecognitionInferenceTab {
         Section("FacialRecognitionInferenceTab.Inspector.Input.Photo") {
             if let image = imageData?.image {
                 image
-                    .resizable()
                     .aspectRatio(contentMode: .fit)
             }
             
@@ -331,7 +330,6 @@ fileprivate extension FacialRecognitionInferenceTab {
         
         var body: some View {
             output.inputImage
-                .resizable()
                 .scaledToFit()
                 .onTapGesture {
                     selection = nil

@@ -34,30 +34,30 @@ fileprivate extension InferenceServiceSettingsTab {
         
         Section {
             Toggle(
-                "InferenceServiceSettingsTab.Session.ExecutionProviders.PreferCoreML",
+                "InferenceServiceSettingsTab.ExecutionProviders.PreferCoreML",
                 isOn: $settings.preferCoreML
             )
             if settings.preferCoreML {
                 Toggle(
-                    "InferenceServiceSettingsTab.Session.ExecutionProviders.PreferEfficiency",
+                    "InferenceServiceSettingsTab.ExecutionProviders.PreferEfficiency",
                     isOn: $settings.preferEfficiency
                 )
             }
         } header: {
-            Text("InferenceServiceSettingsTab.Session.ExecutionProviders")
+            Text("InferenceServiceSettingsTab.ExecutionProviders")
         } footer: {
-            Text("InferenceServiceSettingsTab.Session.ExecutionProviders.Footer")
+            Text("InferenceServiceSettingsTab.ExecutionProviders.Footer")
         }
         
         Section {
             Toggle(
-                "InferenceServiceSettingsTab.Session.Optimization.PersistOptimizations",
+                "InferenceServiceSettingsTab.Optimization.PersistOptimizations",
                 isOn: $settings.persistOptimizations
             )
         } header: {
-            Text("InferenceServiceSettingsTab.Session.Optimization")
+            Text("InferenceServiceSettingsTab.Optimization")
         } footer: {
-            Text("InferenceServiceSettingsTab.Session.Optimization.Footer")
+            Text("InferenceServiceSettingsTab.Optimization.Footer")
         }
     }
 }

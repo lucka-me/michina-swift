@@ -18,6 +18,8 @@ struct ImageData : Transferable {
             return .init(
                 data: data,
                 image: .init(nsImage: image)
+                    .antialiased(true)
+                    .resizable()
             )
         }
     }

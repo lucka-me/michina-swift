@@ -877,7 +877,7 @@
         }
       }
     },
-    "InferenceServiceSettingsTab.Session.ExecutionProviders" : {
+    "InferenceServiceSettingsTab.ExecutionProviders" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -887,7 +887,7 @@
         }
       }
     },
-    "InferenceServiceSettingsTab.Session.ExecutionProviders.Footer" : {
+    "InferenceServiceSettingsTab.ExecutionProviders.Footer" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -897,7 +897,7 @@
         }
       }
     },
-    "InferenceServiceSettingsTab.Session.ExecutionProviders.PreferCoreML" : {
+    "InferenceServiceSettingsTab.ExecutionProviders.PreferCoreML" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -907,7 +907,7 @@
         }
       }
     },
-    "InferenceServiceSettingsTab.Session.ExecutionProviders.PreferEfficiency" : {
+    "InferenceServiceSettingsTab.ExecutionProviders.PreferEfficiency" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -917,7 +917,7 @@
         }
       }
     },
-    "InferenceServiceSettingsTab.Session.Optimization" : {
+    "InferenceServiceSettingsTab.Optimization" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -927,7 +927,7 @@
         }
       }
     },
-    "InferenceServiceSettingsTab.Session.Optimization.Footer" : {
+    "InferenceServiceSettingsTab.Optimization.Footer" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -937,7 +937,7 @@
         }
       }
     },
-    "InferenceServiceSettingsTab.Session.Optimization.PersistOptimizations" : {
+    "InferenceServiceSettingsTab.Optimization.PersistOptimizations" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
