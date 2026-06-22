@@ -1443,6 +1443,26 @@
         }
       }
     },
+    "SearchInferenceTab.TextualForm.Input.Model.LanguageCode" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Language"
+          }
+        }
+      }
+    },
+    "SearchInferenceTab.TextualForm.Input.Model.LanguageCode.Unspecified" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(Unspecified)"
+          }
+        }
+      }
+    },
     "SearchInferenceTab.TextualForm.Input.Run" : {
       "localizations" : {
         "en" : {

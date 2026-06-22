@@ -15,6 +15,9 @@ extension SearchInferenceTab {
         @Binding private var selection: Output?
         
         @Environment(\.alert) private var alert
+        @Environment(\.locale) private var locale
+        
+        @State private var values = ViewValues()
         
         @State private var searchText: String = ""
         @State private var progress: Progress? = nil
@@ -56,7 +59,8 @@ extension SearchInferenceTab.TextualForm {
         let id = UUID()
         let index: Int
         
-        let input: String
+        let searchText: String
+        let languageCode: String
         let modelSuiteName: String
         
         let elapse: Duration
@@ -69,6 +73,86 @@ extension SearchInferenceTab.TextualForm {
 }
 
 fileprivate extension SearchInferenceTab.TextualForm {
+    @MainActor
+    @Observable
+    final class ViewValues {
+        private struct Storage {
+            @AppStorage("SearchInferenceTab.TextualForm.LanguageCode")
+            var languageCode = ""
+        }
+        
+        var languageCode: String {
+            didSet { storage.languageCode = languageCode }
+        }
+        
+        private let storage = Storage()
+        
+        init() {
+            self.languageCode = storage.languageCode
+        }
+    }
+}
+
+fileprivate extension SearchInferenceTab.TextualForm {
+    static let languageCodes: [ String ] = [
+        "af",
+        "ar",
+        "az",
+        "be",
+        "bg",
+        "ca",
+        "cs",
+        "da",
+        "de",
+        "el",
+        "en",
+        "es",
+        "et",
+        "fa",
+        "fi",
+        "fr",
+        "he",
+        "hi",
+        "hr",
+        "hu",
+        "hy",
+        "id",
+        "it",
+        "ja",
+        "kmr",
+        "ko",
+        "lb",
+        "lt",
+        "lv",
+        "mfa",
+        "mk",
+        "mn",
+        "mr",
+        "ms",
+        "nb-NO",
+        "nn",
+        "nl",
+        "pl",
+        "pt-BR",
+        "pt",
+        "ro",
+        "ru",
+        "sk",
+        "sl",
+        "sr-Cyrl",
+        "sv",
+        "ta",
+        "te",
+        "th",
+        "tr",
+        "uk",
+        "ur",
+        "vi",
+        "zh-CN",
+        "zh-Hans",
+        "zh-TW",
+    ]
+    
     @ViewBuilder
     var inputSection: some View {
         Section("SearchInferenceTab.TextualForm.Input") {
@@ -82,6 +166,21 @@ fileprivate extension SearchInferenceTab.TextualForm {
                 }
             }
             .labelsHidden()
+            
+            if model.suiteName.hasPrefix("nllb") {
+                Picker(
+                    "SearchInferenceTab.TextualForm.Input.Model.LanguageCode",
+                    selection: $values.languageCode
+                ) {
+                    Text("SearchInferenceTab.TextualForm.Input.Model.LanguageCode.Unspecified")
+                        .tag(String())
+                    
+                    ForEach(Self.languageCodes, id: \.self) { code in
+                        Text(locale.localizedString(forIdentifier: code) ?? code)
+                            .tag(code)
+                    }
+                }
+            }
             
             TextField("SearchInferenceTab.TextualForm.Input.SearchText", text: $searchText)
                 .onSubmit(of: .text) {
@@ -116,10 +215,11 @@ fileprivate extension SearchInferenceTab.TextualForm {
         }
         
         let model = self.model
+        let languageCode = values.languageCode
         
         let input = Pipeline.Input(
             model: model,
-            language: "",
+            language: values.languageCode,
             text: searchText
         )
         
@@ -133,7 +233,8 @@ fileprivate extension SearchInferenceTab.TextualForm {
         self.outputs.append(
             .init(
                 index: self.outputs.count,
-                input: searchText,
+                searchText: searchText,
+                languageCode: languageCode,
                 modelSuiteName: model.suiteName,
                 elapse: elapse,
                 data: output
@@ -158,7 +259,7 @@ fileprivate extension SearchInferenceTab.TextualForm {
                         .buttonStyle(.link)
                     }
                 } label: {
-                    Text(output.input)
+                    Text(output.searchText)
                         .monospaced()
                         .textSelection(.enabled)
                 }
