@@ -13,21 +13,17 @@ enum ImmichAppEndpoint : InferenceModelSuiteProviderEndpoint {
     static func fetch(
         suite: InferenceModelSuite,
         to cacheDirectory: URL,
+        with taskScheduling: some ConstrainedTaskScheduling,
         reporting progress: Progress?
     ) async throws {
         progress?.kind = .file
         progress?.fileOperationKind = .downloading
         
-        let information = try await withThrowingTaskGroup(
-            of: ModelsInformation.self
-        ) { group in
-            group.addDataTask(
-                from: url
-                    .appending(components: "api", "models")
-                    .appending(components: namespace, suite.name)
-            )
-            return try await group.first { _ in true }!
-        }
+        let information: ModelsInformation = try await taskScheduling.addDataTask(
+            from: url
+                .appending(components: "api", "models")
+                .appending(components: namespace, suite.name)
+        )
         
         var sources: [ Source ]
         
@@ -57,21 +53,35 @@ enum ImmichAppEndpoint : InferenceModelSuiteProviderEndpoint {
                         continue
                     }
                     
-                    group.addDataTask(
-                        from: url
-                            .appending(components: "api", "models")
-                            .appending(components: namespace, suite.name)
-                            .appending(components: "treesize", information.sha)
+                    group.addTask {
+                        let destination = suite
+                            .directoryURL(in: cacheDirectory)
                             .appending(path: sibling.rfilename)
-                    ) { data, _ in
-                        let treeSize = try JSONDecoder()
-                            .decode(TreeSize.self, from: data)
-                        return Source(
-                            repository: suite.name,
-                            revision: information.sha,
-                            path: sibling.rfilename,
-                            size: treeSize.size
-                        )
+                        return if let fileSize = destination.fileSize {
+                            Source(
+                                repository: suite.name,
+                                revision: information.sha,
+                                path: sibling.rfilename,
+                                size: fileSize
+                            )
+                        } else {
+                            try await taskScheduling.addDataTask(
+                                from: url
+                                    .appending(components: "api", "models")
+                                    .appending(components: namespace, suite.name)
+                                    .appending(components: "treesize", information.sha)
+                                    .appending(path: sibling.rfilename)
+                            ) { data, _ in
+                                let treeSize = try JSONDecoder()
+                                    .decode(TreeSize.self, from: data)
+                                return Source(
+                                    repository: suite.name,
+                                    revision: information.sha,
+                                    path: sibling.rfilename,
+                                    size: treeSize.size
+                                )
+                            }
+                        }
                     }
                 }
                 
@@ -89,22 +99,26 @@ enum ImmichAppEndpoint : InferenceModelSuiteProviderEndpoint {
         
         try await withThrowingTaskGroup { group in
             for source in sources[..<modelStartIndex] {
-                try group.addDownloadTask(
-                    from: source.resolvingURL,
-                    to: directoryURL.appending(path: source.path),
-                    reporting: progress?.addChild(for: source.size, as: source.size)
-                )
+                group.addTask {
+                    try await taskScheduling.addDownloadTask(
+                        from: source.resolvingURL,
+                        to: directoryURL.appending(path: source.path),
+                        reporting: progress?.addChild(for: source.size, as: source.size)
+                    )
+                }
             }
             
             try await group.waitForAll()
             
             // Download model.onnx files after all other files.
             for source in sources[modelStartIndex...] {
-                try group.addDownloadTask(
-                    from: source.resolvingURL,
-                    to: directoryURL.appending(path: source.path),
-                    reporting: progress?.addChild(for: source.size, as: source.size)
-                )
+                group.addTask {
+                    try await taskScheduling.addDownloadTask(
+                        from: source.resolvingURL,
+                        to: directoryURL.appending(path: source.path),
+                        reporting: progress?.addChild(for: source.size, as: source.size)
+                    )
+                }
             }
             
             try await group.waitForAll()

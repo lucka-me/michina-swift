@@ -10,7 +10,7 @@ extension ConstrainedTaskGroup where ContinuationResult == Duration {
         name: String? = nil,
         priority: TaskPriority? = nil,
         cooldown: Duration,
-        operation: sending @escaping @isolated(any) () async throws -> (Result)
+        operation: sending @escaping @isolated(any) () async throws -> Result
     ) async throws -> Result {
         try await self.addTask(name: name, priority: priority) { cooldownRemaining in
             if let cooldownRemaining, cooldownRemaining > .zero {
@@ -31,7 +31,7 @@ extension ConstrainedTaskGroup where ContinuationResult == Duration {
         name: String? = nil,
         priority: TaskPriority? = nil,
         cooldown: Duration,
-        operation: sending @escaping @isolated(any) () async -> (Result)
+        operation: sending @escaping @isolated(any) () async -> Result
     ) async throws -> Result {
         try await self.addTask(name: name, priority: priority) { cooldownRemaining in
             if let cooldownRemaining, cooldownRemaining > .zero {

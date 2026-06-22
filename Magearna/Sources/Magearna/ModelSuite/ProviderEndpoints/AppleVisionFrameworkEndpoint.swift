@@ -11,6 +11,7 @@ enum AppleVisionFrameworkEndpoint : InferenceModelSuiteProviderEndpoint {
     static func fetch(
         suite: InferenceModelSuite,
         to cacheDirectory: URL,
+        with taskScheduling: some ConstrainedTaskScheduling,
         reporting progress: Progress?
     ) async throws {
         

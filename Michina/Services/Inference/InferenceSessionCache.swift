@@ -27,6 +27,8 @@ final class InferenceSessionCache {
     @ObservationIgnored
     private var touchInstants: [ InferenceModel : ContinuousClock.Instant ] = [ : ]
     
+    private let fetchTaskGroup: ConstrainedTaskGroup<Void> = .init()
+    
     private let touchContinuation: AsyncStream<InferenceModel>.Continuation
     
     private let settings = InferenceServiceSettings.shared.session
@@ -181,7 +183,11 @@ fileprivate extension InferenceSessionCache {
         }
         
         do {
-            try await suite.fatch(to: cacheDirectory, reporting: progress)
+            try await suite.fatch(
+                to: cacheDirectory,
+                with: fetchTaskGroup,
+                reporting: progress
+            )
             fetchContinuations[suite]!.forEach { $0.resume() }
         } catch {
             fetchContinuations[suite]!.forEach { $0.resume(throwing: error) }

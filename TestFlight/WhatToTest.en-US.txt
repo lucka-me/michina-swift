@@ -4,6 +4,7 @@ Build #14
 - Changed: Re-designed Smart Search Inference view
 - Changed: Download progress is now tracked with file size instead of file count
 - Changed: Verified ViT-B-16 and ViT-B-32 Smart Search models
+- Fixed: App freezing when download models with too many files
 
 Build #13
 - Added: Support more Visual Smart Search models's configuration file structure

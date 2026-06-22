@@ -39,7 +39,7 @@ extension ConstrainedTaskGroup where ContinuationResult == Duration {
         priority: TaskPriority? = nil,
         in taskGroup: inout ThrowingTaskGroup<Result, any Error>,
         cooldown: Duration,
-        operation: sending @escaping @isolated(any) () async throws -> (Result)
+        operation: sending @escaping @isolated(any) () async throws -> Result
     ) {
         taskGroup.addTask {
             try await self.addTask(

@@ -12,6 +12,7 @@ enum RapidOCREndpoint : InferenceModelSuiteProviderEndpoint {
     static func fetch(
         suite: InferenceModelSuite,
         to cacheDirectory: URL,
+        with taskScheduling: some ConstrainedTaskScheduling,
         reporting progress: Progress?
     ) async throws {
         progress?.kind = .file
@@ -33,18 +34,33 @@ enum RapidOCREndpoint : InferenceModelSuiteProviderEndpoint {
             // Collect sizes for reporting progress
             items = try await withThrowingTaskGroup { group in
                 for category in ModelSuiteNameComponents.Category.allCases {
-                    group.addDataTask(
-                        for: .init(url: components.modelRawDataQueryURL(of: category))
-                    ) { data, _ in
-                        let rawData = try JSONDecoder()
-                            .decode(ModelRawData.self, from: data)
-                         
-                        return DownloadItem(
-                            source: components.modelDownloadURL(of: category),
-                            destination: suite.models[category.modelCategory]!
-                                .modelFileURL(in: cacheDirectory),
-                            size: rawData.Data.MetaContent.Size
-                        )
+                    group.addTask {
+                        let source = components.modelRawDataQueryURL(of: category)
+                        let destination = suite.models[category.modelCategory]!
+                            .modelFileURL(in: cacheDirectory)
+                        
+                        return if let fileSize = destination.fileSize {
+                            DownloadItem(
+                                source: source,
+                                destination: destination,
+                                size: fileSize
+                            )
+                        } else {
+                            try await taskScheduling.addDataTask(
+                                for: .init(
+                                    url: components.modelRawDataQueryURL(of: category)
+                                )
+                            ) { data, _ in
+                                let rawData = try JSONDecoder()
+                                    .decode(ModelRawData.self, from: data)
+                                 
+                                return DownloadItem(
+                                    source: source,
+                                    destination: destination,
+                                    size: rawData.Data.MetaContent.Size
+                                )
+                            }
+                        }
                     }
                 }
                 
@@ -58,11 +74,13 @@ enum RapidOCREndpoint : InferenceModelSuiteProviderEndpoint {
         
         try await withThrowingTaskGroup(of: Void.self) { group in
             for item in items {
-                try group.addDownloadTask(
-                    from: item.source,
-                    to: item.destination,
-                    reporting: progress?.addChild(for: item.size, as: item.size)
-                )
+                group.addTask {
+                    try await taskScheduling.addDownloadTask(
+                        from: item.source,
+                        to: item.destination,
+                        reporting: progress?.addChild(for: item.size, as: item.size)
+                    )
+                }
             }
             
             try await group.waitForAll()

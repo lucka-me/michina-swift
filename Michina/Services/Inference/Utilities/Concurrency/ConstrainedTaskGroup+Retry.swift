@@ -6,12 +6,17 @@
 //
 
 import Foundation
+import Magearna
+
+extension ConstrainedTaskGroup : ConstrainedTaskScheduling {
+    
+}
 
 extension ConstrainedTaskGroup {
     @inlinable func addTask<Result: Sendable>(
         name: String? = nil,
         priority: TaskPriority? = nil,
-        operation: sending @escaping @isolated(any) () async throws -> (Result),
+        operation: sending @escaping @isolated(any) () async throws -> Result,
         retryWhen: sending @escaping @isolated(any) (
             _ condition: (attempts: Int, elapse: Duration),
             _ error: any Error
@@ -54,7 +59,7 @@ extension ConstrainedTaskGroup {
         name: String? = nil,
         priority: TaskPriority? = nil,
         in taskGroup: inout ThrowingTaskGroup<Result, any Error>,
-        operation: sending @Sendable @escaping @isolated(any) () async throws -> (Result),
+        operation: sending @Sendable @escaping @isolated(any) () async throws -> Result,
         retryWhen: sending @Sendable @escaping @isolated(any) (
             _ condition: (attempts: Int, elapse: Duration),
             _ error: any Error
@@ -76,7 +81,7 @@ extension ConstrainedTaskGroup where ContinuationResult == Duration {
         name: String? = nil,
         priority: TaskPriority? = nil,
         cooldown: Duration,
-        operation: sending @escaping @isolated(any) () async throws -> (Result),
+        operation: sending @escaping @isolated(any) () async throws -> Result,
         retryWhen: sending @escaping @isolated(any) (
             _ condition: (attempts: Int, elapse: Duration),
             _ error: any Error
@@ -120,7 +125,7 @@ extension ConstrainedTaskGroup where ContinuationResult == Duration {
         priority: TaskPriority? = nil,
         in taskGroup: inout ThrowingTaskGroup<Result, any Error>,
         cooldown: Duration,
-        operation: sending @Sendable @escaping @isolated(any) () async throws -> (Result),
+        operation: sending @Sendable @escaping @isolated(any) () async throws -> Result,
         retryWhen: sending @Sendable @escaping @isolated(any) (
             _ condition: (attempts: Int, elapse: Duration),
             _ error: any Error

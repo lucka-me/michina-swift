@@ -34,8 +34,17 @@ public extension InferenceModelSuite {
         provider.endpoint.homepageURL(of: self)
     }
     
-    func fatch(to cacheDirectory: URL, reporting progress: Progress? = nil) async throws {
-        try await provider.endpoint.fetch(suite: self, to: cacheDirectory, reporting: progress)
+    func fatch(
+        to cacheDirectory: URL,
+        with taskScheduling: some ConstrainedTaskScheduling,
+        reporting progress: Progress? = nil
+    ) async throws {
+        try await provider.endpoint.fetch(
+            suite: self,
+            to: cacheDirectory,
+            with: taskScheduling,
+            reporting: progress
+        )
     }
 }
 
@@ -50,8 +59,10 @@ extension InferenceModelSuite.Provider {
 }
 
 protocol InferenceModelSuiteProviderEndpoint {
-    static func fetch(suite: InferenceModelSuite,
+    static func fetch(
+        suite: InferenceModelSuite,
         to cacheDirectory: URL,
+        with taskScheduling: some ConstrainedTaskScheduling,
         reporting progress: Progress?
     ) async throws
     

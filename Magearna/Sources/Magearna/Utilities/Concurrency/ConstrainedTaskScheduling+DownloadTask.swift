@@ -1,5 +1,5 @@
 //
-//  ThrowingTaskGroup+DownloadTask.swift
+//  ConstrainedTaskScheduling+DownloadTask.swift
 //  Magearna
 //
 //  Created by Lucka on 2026-06-10.
@@ -8,12 +8,12 @@
 import Foundation
 import HTTPTypesFoundation
 
-extension ThrowingTaskGroup where ChildTaskResult == Void, Failure == Error {
-    mutating func addDownloadTask(
+extension ConstrainedTaskScheduling {
+    func addDownloadTask(
         from url: URL,
         to destination: URL,
         reporting progress: Progress?
-    ) throws {
+    ) async throws {
         guard !FileManager.default.fileExists(at: destination) else {
             progress?.totalUnitCount = 100
             progress?.completedUnitCount = 100
@@ -24,7 +24,7 @@ extension ThrowingTaskGroup where ChildTaskResult == Void, Failure == Error {
             withIntermediateDirectories: true
         )
         
-        addTask(priority: .background) {
+        try await addURLTask(priority: .background) {
             var sessionInstance: URLSession? = nil
             defer {
                 sessionInstance?.finishTasksAndInvalidate()
@@ -39,7 +39,7 @@ extension ThrowingTaskGroup where ChildTaskResult == Void, Failure == Error {
                 let session = URLSession(
                     configuration: .default,
                     delegate: delegate,
-                    delegateQueue: URLSession.shared.delegateQueue
+                    delegateQueue: nil
                 )
                 
                 let task = session.downloadTask(with: .init(url: url))
@@ -47,15 +47,6 @@ extension ThrowingTaskGroup where ChildTaskResult == Void, Failure == Error {
                 sessionInstance = session
                 task.resume()
             }
-        } retryWhen: { condition, error in
-            guard condition.attempts <= 3 else {
-                return false
-            }
-            if let error = error as? URLError, error.code == .cancelled {
-                return false
-            }
-            try await Task.sleep(for: .milliseconds(100) * condition.attempts)
-            return true
         }
     }
 }
@@ -152,10 +143,15 @@ fileprivate final class DownloadDelegate : NSObject, URLSessionDownloadDelegate 
         totalBytesWritten: Int64,
         totalBytesExpectedToWrite: Int64
     ) {
-        guard totalBytesWritten != NSURLSessionTransferSizeUnknown else {
+        guard
+            totalBytesWritten != NSURLSessionTransferSizeUnknown,
+            let progress = self.progress
+        else {
             return
         }
-        progress?.totalUnitCount = totalBytesExpectedToWrite
-        progress?.completedUnitCount = totalBytesWritten
+        DispatchQueue.main.async {
+            progress.totalUnitCount = totalBytesExpectedToWrite
+            progress.completedUnitCount = totalBytesWritten
+        }
     }
 }
