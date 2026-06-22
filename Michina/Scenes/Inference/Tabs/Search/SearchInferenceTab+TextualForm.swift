@@ -45,7 +45,7 @@ extension SearchInferenceTab {
 
 extension SearchInferenceTab.TextualForm {
     static let models = InferenceModelSuite.all[.search]!
-        .compactMap { $0.models[.visual] }
+        .compactMap { $0.models[.textual] }
 }
 
 extension SearchInferenceTab.TextualForm {

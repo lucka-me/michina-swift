@@ -1,6 +1,9 @@
 Welcome to Michina.
 
-Build #14
+Build #16
+- Fixed: App crash when run Textual Smart Search inference in Inference window
+
+Build #15
 - Changed: Re-designed Smart Search Inference view
 - Changed: Download progress is now tracked with file size instead of file count
 - Changed: Verified ViT-B-16 and ViT-B-32 Smart Search models
