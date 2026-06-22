@@ -1393,27 +1393,17 @@
         }
       }
     },
-    "SearchInferenceTab.Action.ClearOutputHistory" : {
+    "SearchInferenceTab.Action.ClearOutputs" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Clear Output History"
+            "value" : "Clear Outputs"
           }
         }
       }
     },
-    "SearchInferenceTab.Output.DifferentModel" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Different Model with Selection"
-          }
-        }
-      }
-    },
-    "SearchInferenceTab.Textual.Applied" : {
+    "SearchInferenceTab.TextualForm.Applied" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1423,7 +1413,7 @@
         }
       }
     },
-    "SearchInferenceTab.Textual.Apply" : {
+    "SearchInferenceTab.TextualForm.Apply" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1433,17 +1423,17 @@
         }
       }
     },
-    "SearchInferenceTab.Textual.Input" : {
+    "SearchInferenceTab.TextualForm.Input" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Textual Smart Search"
+            "value" : "New Textual Search"
           }
         }
       }
     },
-    "SearchInferenceTab.Textual.Input.Model" : {
+    "SearchInferenceTab.TextualForm.Input.Model" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1453,7 +1443,7 @@
         }
       }
     },
-    "SearchInferenceTab.Textual.Input.Run" : {
+    "SearchInferenceTab.TextualForm.Input.Run" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1463,7 +1453,7 @@
         }
       }
     },
-    "SearchInferenceTab.Textual.Input.SearchText" : {
+    "SearchInferenceTab.TextualForm.Input.SearchText" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1473,7 +1463,7 @@
         }
       }
     },
-    "SearchInferenceTab.Visual.Input.Model" : {
+    "SearchInferenceTab.VisualGrid.Input.Model" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1483,12 +1473,22 @@
         }
       }
     },
-    "SearchInferenceTab.Visual.Input.Run" : {
+    "SearchInferenceTab.VisualGrid.Input.Run" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Run Inference"
+          }
+        }
+      }
+    },
+    "SearchInferenceTab.VisualGrid.Output.DifferentModel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Different Model with Selection"
           }
         }
       }
