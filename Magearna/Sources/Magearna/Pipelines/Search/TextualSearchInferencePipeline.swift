@@ -159,7 +159,7 @@ fileprivate extension TextualSearchSidecar {
             {
                 floresCode = code
             } else {
-                floresCode = "eng_Latn"
+                floresCode = Self.floresCodes["en"]!
             }
             cleanText = floresCode + cleanText
         }
