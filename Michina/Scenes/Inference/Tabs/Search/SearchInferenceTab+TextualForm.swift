@@ -37,6 +37,8 @@ extension SearchInferenceTab {
         var body: some View {
             Form {
                 inputSection
+                
+                outputSections
             }
             .formStyle(.grouped)
         }

@@ -2,6 +2,7 @@ Welcome to Michina.
 
 Build #16
 - Fixed: App crash when run Textual Smart Search inference in Inference window
+- Fixed: Textual Smart Search outputs are not displayed
 
 Build #15
 - Changed: Re-designed Smart Search Inference view
