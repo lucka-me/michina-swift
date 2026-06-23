@@ -149,7 +149,8 @@ fileprivate extension TextualSearchSidecar {
     
     func encode(text: String, language: String) throws -> [ Int32 ] {
         var cleanText = clear(text: text)
-        if shouldSpecifyLanguage {
+        let indexOffsets: (start: Int, end: Int)
+        if shouldPrependLanguage {
             let floresCode: String
             if let code = Self.floresCodes[language] {
                 floresCode = code
@@ -162,9 +163,16 @@ fileprivate extension TextualSearchSidecar {
                 floresCode = Self.floresCodes["en"]!
             }
             cleanText = floresCode + cleanText
+            
+            indexOffsets = (1, 0)
+        } else {
+            indexOffsets = (0, 0)
         }
         let encoding = try tokenizer.encodeText(cleanText)
-        return encoding.ids.map { Int32($0.uint32Value) }
+        return encoding.ids[
+            encoding.ids.startIndex + indexOffsets.start ..<
+            encoding.ids.endIndex + indexOffsets.end
+        ].map { Int32($0.uint32Value) }
     }
     
     private func clear(text: String) -> String {

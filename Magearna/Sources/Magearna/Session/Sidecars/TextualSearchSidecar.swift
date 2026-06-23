@@ -12,10 +12,14 @@ struct TextualSearchSidecar : Sendable {
     let tokenizer: Tokenizer
     
     let shouldCanonicalize: Bool
-    let shouldSpecifyLanguage: Bool
+    
+    // For NLLB model and tokenizer, the tokenizer will always prepend the id of English to the
+    // encoded ids, but we (following immich) will also prepend the language token to the text, so
+    // we add 1 to the fixed length, and drop the first id before input to model.
+    let shouldPrependLanguage: Bool
     
     init(model: InferenceModel, cacheDirectory: URL) throws {
-        self.shouldSpecifyLanguage = model.suiteName.hasPrefix("nllb")
+        self.shouldPrependLanguage = model.suiteName.hasPrefix("nllb")
         
         let directoryURL = model.directoryURL(in: cacheDirectory)
         let decoder = JSONDecoder()
@@ -29,7 +33,6 @@ struct TextualSearchSidecar : Sendable {
                     .appendingPathExtension("json")
             )
         )
-        let contextLength = modelSuiteConfigurations.text_cfg.context_length ?? 77 // Why 77
         self.shouldCanonicalize = modelSuiteConfigurations.tokenizer_kwargs?.clean == "canonicalize"
         self.tokenizer = try .init(
             fromPath: directoryURL
@@ -47,9 +50,10 @@ struct TextualSearchSidecar : Sendable {
             )
         )
         
+        let length = modelSuiteConfigurations.text_cfg.context_length ?? 77 // Why 77
         if let token = tokenizerConfigurations.pad_token {
             try self.tokenizer.enableFixingLength(
-                contextLength,
+                length + (shouldPrependLanguage ? 1 : 0),
                 withPaddingToken: token
             )
         }
