@@ -62,7 +62,7 @@ extension SearchInferenceTab.TextualForm {
         let index: Int
         
         let searchText: String
-        let languageCode: String
+        let languageCode: String?
         let modelSuiteName: String
         
         let elapse: Duration
@@ -80,10 +80,10 @@ fileprivate extension SearchInferenceTab.TextualForm {
     final class ViewValues {
         private struct Storage {
             @AppStorage("SearchInferenceTab.TextualForm.LanguageCode")
-            var languageCode = ""
+            var languageCode: String?
         }
         
-        var languageCode: String {
+        var languageCode: String? {
             didSet { storage.languageCode = languageCode }
         }
         
@@ -175,11 +175,11 @@ fileprivate extension SearchInferenceTab.TextualForm {
                     selection: $values.languageCode
                 ) {
                     Text("SearchInferenceTab.TextualForm.Input.Model.LanguageCode.Unspecified")
-                        .tag(String())
+                        .tag(String?.none)
                     
                     ForEach(Self.languageCodes, id: \.self) { code in
                         Text(locale.localizedString(forIdentifier: code) ?? code)
-                            .tag(code)
+                            .tag(String?.some(code))
                     }
                 }
             }

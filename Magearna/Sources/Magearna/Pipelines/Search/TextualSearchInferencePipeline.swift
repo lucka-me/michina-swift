@@ -75,11 +75,11 @@ public extension TextualSearchInferencePipeline {
     struct Input : Sendable {
         let model: InferenceModel
         
-        let language: String
+        let language: String?
         
         let text: String
         
-        public init(model: InferenceModel, language: String, text: String) {
+        public init(model: InferenceModel, language: String?, text: String) {
             self.model = model
             self.language = language
             self.text = text
@@ -147,24 +147,28 @@ fileprivate extension TextualSearchSidecar {
         "zh-TW": "zho_Hant",
     ]
     
-    func encode(text: String, language: String) throws -> [ Int32 ] {
+    func encode(text: String, language: String?) throws -> [ Int32 ] {
         var cleanText = clear(text: text)
         let indexOffsets: (start: Int, end: Int)
         if shouldPrependLanguage {
-            let floresCode: String
-            if let code = Self.floresCodes[language] {
-                floresCode = code
-            } else if
-                let prefix = language.split(separator: "-").first,
-                let code = Self.floresCodes[.init(prefix)]
-            {
-                floresCode = code
+            if let language {
+                let floresCode: String
+                if let code = Self.floresCodes[language] {
+                    floresCode = code
+                } else if
+                    let prefix = language.split(separator: "-").first,
+                    let code = Self.floresCodes[.init(prefix)]
+                {
+                    floresCode = code
+                } else {
+                    floresCode = Self.floresCodes["en"]!
+                }
+                cleanText = floresCode + cleanText
+                
+                indexOffsets = (1, 0)
             } else {
-                floresCode = Self.floresCodes["en"]!
+                indexOffsets = (0, -1)
             }
-            cleanText = floresCode + cleanText
-            
-            indexOffsets = (1, 0)
         } else {
             indexOffsets = (0, 0)
         }

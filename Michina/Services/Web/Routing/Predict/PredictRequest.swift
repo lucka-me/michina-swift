@@ -77,9 +77,6 @@ extension PredictRequest : Decodable {
                     )
                 )
             } else if let textual = taskEntries[ModelCategory.textual] {
-                guard let language = textual.options?.language else {
-                    throw HTTPError(.badRequest, message: "The clip doesn't contains required entries.")
-                }
                 self = .textualSearch(
                     input: try .init(
                         model: Self.findModel(
@@ -87,7 +84,7 @@ extension PredictRequest : Decodable {
                             suiteName: textual.modelName,
                             modelCategory: .textual
                         ),
-                        language: language,
+                        language: textual.options?.language,
                         text: container.decode(String.self, forKey: .text)
                     )
                 )
