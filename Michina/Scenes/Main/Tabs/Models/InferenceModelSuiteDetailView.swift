@@ -33,7 +33,7 @@ struct InferenceModelSuiteDetailView : View {
             
             ForEach(InferenceModel.Category.allCases) { category in
                 if let model = suite.models[category] {
-                    modelSection(model)
+                    section(model: model)
                 }
             }
         }
@@ -98,7 +98,7 @@ fileprivate extension InferenceModelSuiteDetailView {
 
 fileprivate extension InferenceModelSuiteDetailView {
     @ViewBuilder
-    func modelSection(_ model: InferenceModel) -> some View {
+    func section(model: InferenceModel) -> some View {
         Section {
             if model.isBuiltin {
                 Text("InferenceModelSuiteDetailView.Model.Builtin")

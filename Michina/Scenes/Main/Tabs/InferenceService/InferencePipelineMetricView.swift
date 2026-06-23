@@ -24,13 +24,13 @@ struct InferencePipelineMetricView : View {
             }
             
             if let output = metric.output {
-                outputSection(output: output)
+                section(output: output)
             }
             
             if metric.category != nil {
                 ForEach(InferenceModel.Category.allCases) { category in
                     if let metrics = metric.models[category] {
-                        modelSection(category: category, metrics: metrics)
+                        section(category: category, metrics: metrics)
                     }
                 }
             }
@@ -95,19 +95,19 @@ fileprivate extension InferencePipelineMetricView {
 
 fileprivate extension InferencePipelineMetricView {
     @ViewBuilder
-    func outputSection(output: InferencePipelineOutputMetric) -> some View {
+    func section(output: InferencePipelineOutputMetric) -> some View {
         Section("InferencePipelineMetricView.Output") {
             switch output {
             case .facialRecognition(let metric):
-                outputSectionContent(metric: metric)
+                sectionContent(metric: metric)
             case .characterRecognition(let metric):
-                outputSectionContent(metric: metric)
+                sectionContent(metric: metric)
             }
         }
     }
     
     @ViewBuilder
-    func outputSectionContent(
+    func sectionContent(
         metric: InferencePipelineOutputMetric.FacialRecognition
     ) -> some View {
         LabeledContent(
@@ -123,7 +123,7 @@ fileprivate extension InferencePipelineMetricView {
     }
     
     @ViewBuilder
-    func outputSectionContent(
+    func sectionContent(
         metric: InferencePipelineOutputMetric.CharacterRecognition
     ) -> some View {
         LabeledContent(
@@ -146,7 +146,7 @@ fileprivate extension InferencePipelineMetricView {
 
 fileprivate extension InferencePipelineMetricView {
     @ViewBuilder
-    func modelSection(
+    func section(
         category: InferenceModel.Category,
         metrics: [ InferenceModelMetric ]
     ) -> some View {

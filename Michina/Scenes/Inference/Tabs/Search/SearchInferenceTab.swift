@@ -62,9 +62,7 @@ struct SearchInferenceTab : TabContent {
                 selection: selection
             )
             .frame(minWidth: 300)
-            .toolbar {
-                toolbarContent
-            }
+            .toolbar(content: toolbarContent)
             .inspector(isPresented: $isInspectorPresented) {
                 TextualForm(
                     model: $textualModel,
@@ -82,7 +80,7 @@ extension SearchInferenceTab {
 
 fileprivate extension SearchInferenceTab {
     @ToolbarContentBuilder
-    var toolbarContent: some ToolbarContent {
+    func toolbarContent() -> some ToolbarContent {
         if !visualOutputs.isEmpty || !textualOutputs.isEmpty {
             ToolbarItem(placement: .destructiveAction) {
                 Button(

@@ -55,16 +55,15 @@ struct FacialRecognitionInferenceTab : TabContent {
             value: Self.category
         ) {
             List {
-                ForEach(outputs) { output in
-                    section(for: output)
-                }
+                ForEach(outputs, content: section(output:))
             }
-            .environment(\.similarityMinimalDistance, .init(values.similarityMinimalDistance))
+            .environment(
+                \.similarityMinimalDistance,
+                 .init(values.similarityMinimalDistance)
+            )
             .listStyle(.inset)
             .frame(minWidth: 300)
-            .toolbar {
-                toolbarContent
-            }
+            .toolbar(content: toolbarContent)
             .inspector(isPresented: $isInspectorPresented) {
                 Form {
                     modelsSection
@@ -188,7 +187,7 @@ fileprivate extension FacialRecognitionInferenceTab {
     typealias Pipeline = FacialRecognitionInferencePipeline
     
     @ToolbarContentBuilder
-    var toolbarContent: some ToolbarContent {
+    func toolbarContent() -> some ToolbarContent {
         if imageData != nil {
             ToolbarItem(placement: .primaryAction) {
                 Button(
@@ -293,7 +292,7 @@ fileprivate extension FacialRecognitionInferenceTab {
     }
     
     @ViewBuilder
-    func section(for output: Output) -> some View {
+    func section(output: Output) -> some View {
         Section {
             OutputView(output: output, selection: $selection)
         } header: {

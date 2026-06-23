@@ -20,27 +20,20 @@ struct WebServiceTab : TabContent {
     var body: some TabContent<Never> {
         Tab(Self.titleKey, systemImage: systemImage) {
             List(selection: $selection) {
-                clientsSection
+                Section {
+                    ForEach(service.clientMetrics, content: row(client:))
+                        .monospaced()
+                } header: {
+                    Label("WebServiceTab.Clients", systemImage: "server.rack")
+                        .listRowSeparator(.hidden)
+                }
             }
             .listStyle(.inset)
             .frame(minWidth: 200, minHeight: 400)
-            .toolbar {
-                toolbarContent
-            }
+            .toolbar(content: toolbarContent)
             .navigationTitle("WebService")
             .navigationSubtitle(navigationSubtitleKey)
-            .inspector(isPresented: $isInspectorPresented) {
-                if
-                    case let .client(address) = selection,
-                    let client = service.clientMetrics.first(where: { $0.address == address })
-                {
-                    ClientMetricView(client: client)
-                } else {
-                    Text("WebServiceTab.NoSelection")
-                        .font(.system(.title, weight: .semibold))
-                        .foregroundStyle(.secondary)
-                }
-            }
+            .inspector(isPresented: $isInspectorPresented, content: inspectorContent)
             .onChange(of: selection) {
                 if selection != nil {
                     isInspectorPresented = true
@@ -67,7 +60,7 @@ fileprivate extension WebServiceTab {
 
 fileprivate extension WebServiceTab {
     @ToolbarContentBuilder
-    var toolbarContent: some ToolbarContent {
+    func toolbarContent() -> some ToolbarContent {
         ToolbarItem(placement: .primaryAction) {
             Toggle(
                 "WebServiceTab.ServiceToggle",
@@ -88,16 +81,15 @@ fileprivate extension WebServiceTab {
                 .popover(
                     isPresented: $isErrorsPopoverPresented,
                     attachmentAnchor: .rect(.bounds),
-                    arrowEdge: .bottom
-                ) {
-                    errorsPopoverContent
-                }
+                    arrowEdge: .bottom,
+                    content: errorsPopoverContent
+                )
             }
         }
     }
     
     @ViewBuilder
-    var errorsPopoverContent: some View {
+    func errorsPopoverContent() -> some View {
         ScrollView(.vertical) {
             Grid(alignment: .leading) {
                 ForEach(service.errors) { error in
@@ -125,17 +117,23 @@ fileprivate extension WebServiceTab {
 
 fileprivate extension WebServiceTab {
     @ViewBuilder
-    var clientsSection: some View {
-        Section {
-            ForEach(service.clientMetrics, content: clientItem(_:))
-                .monospaced()
-        } header: {
-            Label("WebServiceTab.Clients", systemImage: "server.rack")
+    func inspectorContent() -> some View {
+        if
+            case let .client(address) = selection,
+            let client = service.clientMetrics.first(where: { $0.address == address })
+        {
+            ClientMetricView(client: client)
+        } else {
+            Text("WebServiceTab.NoSelection")
+                .font(.system(.title, weight: .semibold))
+                .foregroundStyle(.secondary)
         }
     }
-    
+}
+
+fileprivate extension WebServiceTab {
     @ViewBuilder
-    func clientItem(_ client: WebClientMetric) -> some View {
+    func row(client: WebClientMetric) -> some View {
         VStack(alignment: .leading) {
             Text(client.address ?? .init(localized: "WebServiceTab.Clients.Unknown"))
                 .font(.headline)

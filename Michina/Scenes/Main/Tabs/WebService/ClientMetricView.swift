@@ -52,15 +52,15 @@ fileprivate extension ClientMetricView {
 fileprivate extension ClientMetricView {
     @ViewBuilder
     var predictRequestsSections: some View {
-        predictRequestsSection(nil, metric: client.predictRequests[nil]!)
+        section(category: nil, metric: client.predictRequests[nil]!)
         ForEach(InferenceModelSuite.Category.allCases) { category in
-            predictRequestsSection(category, metric: client.predictRequests[category]!)
+            section(category: category, metric: client.predictRequests[category]!)
         }
     }
     
     @ViewBuilder
-    func predictRequestsSection(
-        _ category: InferenceModelSuite.Category?,
+    func section(
+        category: InferenceModelSuite.Category?,
         metric: WebClientMetric.PredictRequestMetric
     ) -> some View {
         Section {

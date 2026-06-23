@@ -39,7 +39,7 @@ extension SearchInferenceTab {
                     ForEach(
                         sortedOutputs,
                         id: \.output.id,
-                        content: outputCell(of:)
+                        content: cell(output:)
                     )
                     .monospaced()
                 }
@@ -189,7 +189,7 @@ fileprivate extension SearchInferenceTab.VisualGrid {
 
 fileprivate extension SearchInferenceTab.VisualGrid {
     @ViewBuilder
-    func outputCell(of output: (output: Output, distance: Float?)) -> some View {
+    func cell(output: (output: Output, distance: Float?)) -> some View {
         Color.clear
             .aspectRatio(1, contentMode: .fit)
             .overlay {

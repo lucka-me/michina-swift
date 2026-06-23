@@ -54,15 +54,11 @@ struct CharacterRecognitionInferenceTab : TabContent {
             value: Self.category
         ) {
             List {
-                ForEach(outputs) { output in
-                    section(for: output)
-                }
+                ForEach(outputs, content: section(output:))
             }
             .listStyle(.inset)
             .frame(minWidth: 300)
-            .toolbar {
-                toolbarContent
-            }
+            .toolbar(content: toolbarContent)
             .inspector(isPresented: $isInspectorPresented) {
                 Form {
                     modelsSection
@@ -190,7 +186,7 @@ fileprivate extension CharacterRecognitionInferenceTab {
     typealias Pipeline = CharacterRecognitionInferencePipeline
     
     @ToolbarContentBuilder
-    var toolbarContent: some ToolbarContent {
+    func toolbarContent() -> some ToolbarContent {
         if imageData != nil {
             ToolbarItem(placement: .primaryAction) {
                 Button(
@@ -285,7 +281,7 @@ fileprivate extension CharacterRecognitionInferenceTab {
     }
     
     @ViewBuilder
-    func section(for output: Output) -> some View {
+    func section(output: Output) -> some View {
         Section {
             OutputView(output: output)
         } header: {

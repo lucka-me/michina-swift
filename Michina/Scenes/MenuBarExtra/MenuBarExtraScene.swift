@@ -147,7 +147,7 @@ fileprivate struct InferenceServiceBlock : View {
             .font(.caption)
             .foregroundStyle(.secondary)
             
-            row(for: metrics.pipelines[values.presentCategory]!)
+            row(metric: metrics.pipelines[values.presentCategory]!)
             
             PipelineCountChart(
                 counts: metrics.runningPipelineCounts[values.presentCategory]!,
@@ -159,10 +159,10 @@ fileprivate struct InferenceServiceBlock : View {
     }
     
     @ViewBuilder
-    func row(for pipelineMetric: InferencePipelineMetric) -> some View {
+    func row(metric: InferencePipelineMetric) -> some View {
         HStack(alignment: .center) {
             Text(
-                pipelineMetric.totalCount,
+                metric.totalCount,
                 format: .number.grouping(.never).precision(.integerLength(6...))
             )
             .font(.system(size: 24, weight: .medium))
@@ -172,15 +172,15 @@ fileprivate struct InferenceServiceBlock : View {
             Grid(alignment: .leading, horizontalSpacing: 6) {
                 GridRow {
                     Text("ResultCount.Success")
-                    Text(pipelineMetric.successCount, format: .number)
+                    Text(metric.successCount, format: .number)
                         .gridColumnAlignment(.trailing)
                 }
-                .foregroundStyle(pipelineMetric.successCount > 0 ? .green : .secondary)
+                .foregroundStyle(metric.successCount > 0 ? .green : .secondary)
                 GridRow {
                     Text("ResultCount.Failure")
-                    Text(pipelineMetric.failureCount, format: .number)
+                    Text(metric.failureCount, format: .number)
                 }
-                .foregroundStyle(pipelineMetric.failureCount > 0 ? .red : .secondary)
+                .foregroundStyle(metric.failureCount > 0 ? .red : .secondary)
             }
             .font(.caption)
         }

@@ -24,19 +24,18 @@ struct ModelsTab : TabContent {
                 if searchText.isEmpty {
                     ForEach(InferenceModelSuite.Category.allCases) { category in
                         Section {
-                            ForEach(InferenceModelSuite.all[category]!) { suite in
-                                row(of: suite)
-                            }
-                            .listRowSeparator(.hidden)
+                            ForEach(
+                                InferenceModelSuite.all[category]!,
+                                content: row(suite:)
+                            )
                         } header: {
                             Label(category)
                         }
                     }
-                } else {
-                    ForEach(searchResults) { suite in
-                        row(of: suite)
-                    }
                     .listRowSeparator(.hidden)
+                } else {
+                    ForEach(searchResults, content: row(suite:))
+                        .listRowSeparator(.hidden)
                 }
             }
             .listStyle(.inset)
@@ -44,15 +43,7 @@ struct ModelsTab : TabContent {
             .frame(minWidth: 300, minHeight: 400)
             .navigationTitle(Self.titleKey)
             .navigationSubtitle("ModelsTab.Subtitle \(cache.sessions.count)")
-            .inspector(isPresented: $isInspectorPresented) {
-                if let selection {
-                    InferenceModelSuiteDetailView(suite: selection)
-                } else {
-                    Text("ModelsTab.NoSelection")
-                        .font(.system(.title, weight: .semibold))
-                        .foregroundStyle(.secondary)
-                }
-            }
+            .inspector(isPresented: $isInspectorPresented, content: inspectorContent)
             .onChange(of: selection) {
                 if selection != nil {
                     isInspectorPresented = true
@@ -80,7 +71,20 @@ fileprivate extension ModelsTab {
 
 fileprivate extension ModelsTab {
     @ViewBuilder
-    func row(of suite: InferenceModelSuite) -> some View {
+    func inspectorContent() -> some View {
+        if let selection {
+            InferenceModelSuiteDetailView(suite: selection)
+        } else {
+            Text("ModelsTab.NoSelection")
+                .font(.system(.title, weight: .semibold))
+                .foregroundStyle(.secondary)
+        }
+    }
+}
+
+fileprivate extension ModelsTab {
+    @ViewBuilder
+    func row(suite: InferenceModelSuite) -> some View {
         VStack(alignment: .leading) {
             Text(suite.name)
                 .font(.headline)
@@ -89,7 +93,7 @@ fileprivate extension ModelsTab {
             HStack {
                 ForEach(InferenceModel.Category.allCases) { category in
                     if let model = suite.models[category] {
-                        label(of: model)
+                        label(model: model)
                     }
                 }
             }
@@ -100,7 +104,7 @@ fileprivate extension ModelsTab {
     }
     
     @ViewBuilder
-    func label(of model: InferenceModel) -> some View {
+    func label(model: InferenceModel) -> some View {
         let color: Color = if model.isBuiltin {
             .mint.opacity(0.6)
         } else if cache.sessions[model] != nil {

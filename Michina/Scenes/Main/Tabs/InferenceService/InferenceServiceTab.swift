@@ -19,25 +19,15 @@ struct InferenceServiceTab : TabContent {
     var body: some TabContent<Never> {
         Tab(Self.titleKey, systemImage: Self.systemImage) {
             List(selection: $selection) {
-                section(for: nil)
+                section(category: nil)
                 
-                ForEach(InferenceModelSuite.Category.allCases, content: section(for:))
+                ForEach(InferenceModelSuite.Category.allCases, content: section(category:))
             }
             .listStyle(.inset)
             .frame(minWidth: 300, minHeight: 400)
-            .toolbar {
-                toolbarContent
-            }
+            .toolbar(content: toolbarContent)
             .navigationTitle("InferenceService")
-            .inspector(isPresented: $isInspectorPresented) {
-                if case let .category(category) = selection {
-                    InferencePipelineMetricView(metric: metrics.pipelines[category]!)
-                } else {
-                    Text("InferenceServiceTab.NoSelection")
-                        .font(.system(.title, weight: .semibold))
-                        .foregroundStyle(.secondary)
-                }
-            }
+            .inspector(isPresented: $isInspectorPresented, content: inspectorContent)
             .onChange(of: selection) {
                 if selection != nil {
                     isInspectorPresented = true
@@ -73,7 +63,7 @@ fileprivate extension InferenceServiceTab {
     }
     
     @ToolbarContentBuilder
-    var toolbarContent: some ToolbarContent {
+    func toolbarContent() -> some ToolbarContent {
         ToolbarItem {
             Toggle(
                 "InferenceServiceTab.ShowCharts",
@@ -86,10 +76,24 @@ fileprivate extension InferenceServiceTab {
 
 fileprivate extension InferenceServiceTab {
     @ViewBuilder
-    func section(for category: InferenceModelSuite.Category?) -> some View {
+    func inspectorContent() -> some View {
+        if case let .category(category) = selection {
+            InferencePipelineMetricView(metric: metrics.pipelines[category]!)
+        } else {
+            Text("InferenceServiceTab.NoSelection")
+                .font(.system(.title, weight: .semibold))
+                .foregroundStyle(.secondary)
+        }
+    }
+}
+
+fileprivate extension InferenceServiceTab {
+    @ViewBuilder
+    func section(category: InferenceModelSuite.Category?) -> some View {
         Section {
-            row(for: metrics.pipelines[category]!)
+            row(pipelineMetric: metrics.pipelines[category]!)
                 .tag(Selection.category(category: category))
+                .listRowSeparator(.visible, edges: .top)
             
             if values.showCharts {
                 PipelineCountChart(counts: metrics.runningPipelineCounts[category]!)
@@ -98,16 +102,19 @@ fileprivate extension InferenceServiceTab {
                     .listRowSeparator(.hidden)
             }
         } header: {
-            if let category {
-                Label(category)
-            } else {
-                Label("InferenceServiceTab.Overall", systemImage: "rectangle.stack")
+            Group {
+                if let category {
+                    Label(category)
+                } else {
+                    Label("InferenceServiceTab.Overall", systemImage: "rectangle.stack")
+                }
             }
+            .listRowSeparator(.hidden)
         }
     }
     
     @ViewBuilder
-    func row(for pipelineMetric: InferencePipelineMetric) -> some View {
+    func row(pipelineMetric: InferencePipelineMetric) -> some View {
         HStack(alignment: .center, spacing: 12) {
             Text(
                 pipelineMetric.totalCount,

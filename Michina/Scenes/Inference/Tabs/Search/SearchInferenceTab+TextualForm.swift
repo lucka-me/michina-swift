@@ -38,7 +38,7 @@ extension SearchInferenceTab {
             Form {
                 inputSection
                 
-                outputSections
+                ForEach(outputs.reversed(), content: section(output:))
             }
             .formStyle(.grouped)
         }
@@ -248,35 +248,33 @@ fileprivate extension SearchInferenceTab.TextualForm {
 
 fileprivate extension SearchInferenceTab.TextualForm {
     @ViewBuilder
-    var outputSections: some View {
-        ForEach(outputs.reversed()) { output in
-            Section {
-                LabeledContent {
-                    if selection == output {
-                        Text("SearchInferenceTab.TextualForm.Applied")
-                    } else {
-                        Button("SearchInferenceTab.TextualForm.Apply") {
-                            selection = output
-                        }
-                        .buttonStyle(.link)
+    func section(output: Output) -> some View {
+        Section {
+            LabeledContent {
+                if selection == output {
+                    Text("SearchInferenceTab.TextualForm.Applied")
+                } else {
+                    Button("SearchInferenceTab.TextualForm.Apply") {
+                        selection = output
                     }
-                } label: {
-                    Text(output.searchText)
-                        .monospaced()
-                        .textSelection(.enabled)
+                    .buttonStyle(.link)
                 }
-            } header: {
-                HStack(spacing: 12) {
-                    Label(
-                        output.index,
-                        format: .number.precision(.integerLength(2)),
-                        systemImage: "number"
-                    )
-                    
-                    Spacer()
-                    
-                    Text(output.elapse, format: .elapse)
-                }
+            } label: {
+                Text(output.searchText)
+                    .monospaced()
+                    .textSelection(.enabled)
+            }
+        } header: {
+            HStack(spacing: 12) {
+                Label(
+                    output.index,
+                    format: .number.precision(.integerLength(2)),
+                    systemImage: "number"
+                )
+                
+                Spacer()
+                
+                Text(output.elapse, format: .elapse)
             }
         }
     }
