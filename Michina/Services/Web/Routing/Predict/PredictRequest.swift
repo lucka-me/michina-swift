@@ -23,24 +23,22 @@ extension PredictRequest : Decodable {
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        let entries = try JSONDecoder()
-            .decode(
-                [ String : [ String : PredictEntry ] ].self,
-                from: try container.decode(Data.self, forKey: .entries)
-            )
+        let entries = try container.decode(Entries.self, forKey: .entries)
         
-        if let taskEntries = entries[ModelSuiteCategory.facialRecognition] {
+        switch entries.key {
+        case .facialRecognition:
             guard
-                let detection = taskEntries[ModelCategory.detection],
+                let detection = entries.value[.detection],
                 let detectionMinimalConfidence = detection.options?.minScore,
-                let recognition = taskEntries[ModelCategory.recognition]
+                let recognition = entries.value[.recognition]
             else {
-                throw HTTPError(.badRequest, message: "The facial-recognition doesn't contains required entries.")
-            }
-            guard
-                let image = CIImage(data: try container.decode(Data.self, forKey: .image))
-            else {
-                throw HTTPError(.badRequest, message: "Unable to decode the image part.")
+                throw HTTPError(
+                    .unprocessableContent,
+                    message: """
+                        The object of "\(entries.key.rawValue)" \
+                        doesn't contain required fields.
+                        """
+                )
             }
             
             self = .facialRecognition(
@@ -56,16 +54,11 @@ extension PredictRequest : Decodable {
                         suiteName: recognition.modelName,
                         modelCategory: .recognition
                     ),
-                    image: image
+                    image: try container.decode(CIImage.self, forKey: .image)
                 )
             )
-        } else if let taskEntries = entries[ModelSuiteCategory.search] {
-            if let visual = taskEntries[ModelCategory.visual] {
-                guard
-                    let image = CIImage(data: try container.decode(Data.self, forKey: .image))
-                else {
-                    throw HTTPError(.badRequest, message: "Unable to decode the image part.")
-                }
+        case .search:
+            if let visual = entries.value[.visual] {
                 self = .visualSearch(
                     input: .init(
                         model: try Self.findModel(
@@ -73,10 +66,10 @@ extension PredictRequest : Decodable {
                             suiteName: visual.modelName,
                             modelCategory: .visual
                         ),
-                        image: image
+                        image: try container.decode(CIImage.self, forKey: .image)
                     )
                 )
-            } else if let textual = taskEntries[ModelCategory.textual] {
+            } else if let textual = entries.value[.textual] {
                 self = .textualSearch(
                     input: try .init(
                         model: Self.findModel(
@@ -89,22 +82,26 @@ extension PredictRequest : Decodable {
                     )
                 )
             } else {
-                throw HTTPError(.notImplemented, message: "The service only supports clip.textual yet.")
+                throw HTTPError(
+                    .unprocessableContent,
+                    message: "The search doesn't contains supported model type."
+                )
             }
-        } else if let taskEntries = entries[ModelSuiteCategory.characterRecognition] {
+        case .characterRecognition:
             guard
-                let detection = taskEntries[ModelCategory.detection],
+                let detection = entries.value[.detection],
                 let detectionMinimalConfidence = detection.options?.minScore,
                 let detectionMaximalResolution = detection.options?.maxResolution,
-                let recognition = taskEntries[ModelCategory.recognition],
+                let recognition = entries.value[.recognition],
                 let recognitionMinimalConfidence = recognition.options?.minScore
             else {
-                throw HTTPError(.badRequest, message: "The facial-recognition doesn't contains required entries.")
-            }
-            guard
-                let image = CIImage(data: try container.decode(Data.self, forKey: .image))
-            else {
-                throw HTTPError(.badRequest, message: "Unable to decode the image part.")
+                throw HTTPError(
+                    .unprocessableContent,
+                    message: """
+                        The object of "\(entries.key.rawValue)" \
+                        doesn't contain required fields.
+                        """
+                )
             }
             
             self = .characterRecognition(
@@ -122,11 +119,9 @@ extension PredictRequest : Decodable {
                         modelCategory: .recognition
                     ),
                     recognitionMinimalConfidence: recognitionMinimalConfidence,
-                    image: image
+                    image: try container.decode(CIImage.self, forKey: .image)
                 )
             )
-        } else {
-            throw HTTPError(.notImplemented, message: "No known task.")
         }
     }
 }
@@ -167,7 +162,11 @@ fileprivate extension PredictRequest {
         else {
             throw HTTPError(
                 .notImplemented,
-                message: "The model \(suiteCategory.rawValue)/\(suiteName)/\(modelCategory.rawValue) is not supported."
+                message: """
+                    The requested model \
+                    "\(suiteCategory.rawValue)/\(suiteName)/\(modelCategory.rawValue)" \
+                    is not supported.
+                    """
             )
         }
         
@@ -175,7 +174,71 @@ fileprivate extension PredictRequest {
     }
 }
 
-fileprivate struct PredictEntry : Decodable {
+fileprivate extension KeyedDecodingContainer {
+    func decode(_ type: Entries.Type, forKey key: Key) throws -> Entries {
+        var object = try JSONDecoder()
+            .decode(
+                [ String : [ String : Entry ] ].self,
+                from: try decode(Data.self, forKey: key)
+            )
+        guard let onlyField = object.popFirst(), object.isEmpty else {
+            throw DecodingError.typeMismatch(
+                type,
+                .init(
+                    codingPath: codingPath,
+                    debugDescription: "Invalid number of objects found, expected one.",
+                    underlyingError: nil
+                )
+            )
+        }
+        guard let key = InferenceModelSuite.Category(rawValue: onlyField.key) else {
+            throw DecodingError.typeMismatch(
+                InferenceModelSuite.Category.self,
+                .init(
+                    codingPath: codingPath,
+                    debugDescription: "Invalid key: \(onlyField.key).",
+                    underlyingError: nil
+                )
+            )
+        }
+        return (
+            key: key,
+            value: try onlyField.value.reduce(into: [ : ]) { partial, element in
+                guard let key = InferenceModel.Category(rawValue: element.key) else {
+                    throw DecodingError.typeMismatch(
+                        InferenceModel.Category.self,
+                        .init(
+                            codingPath: codingPath,
+                            debugDescription: """
+                                Invalid key in \(onlyField.key): \(element.key).
+                                """,
+                            underlyingError: nil
+                        )
+                    )
+                }
+                partial[key] = element.value
+            }
+        )
+    }
+    
+    func decode(_: CIImage.Type, forKey key: Key) throws -> CIImage {
+        let data = try decode(Data.self, forKey: key)
+        guard let image = CIImage(data: data) else {
+            throw HTTPError(
+                .unprocessableContent,
+                message: "Unable to decode the image part."
+            )
+        }
+        return image
+    }
+}
+
+fileprivate typealias Entries = (
+    key: InferenceModelSuite.Category,
+    value: [ InferenceModel.Category : Entry ]
+)
+
+fileprivate struct Entry : Decodable {
     struct Options : Decodable {
         var language: String?
         var minScore: Float?
