@@ -8,6 +8,8 @@
 
 Immich Machine Learning Server on macOS.
 
+Join TestFlight [here](https://testflight.apple.com/join/rJP9acvk).
+
 ## ⚠️ Disclaimer
 
 This project is still under development, and most models are not verified yet. **Use AT YOUR OWN RISK, and do not forget
