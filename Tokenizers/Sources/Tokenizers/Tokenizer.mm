@@ -34,6 +34,15 @@ static NSInteger const kTokenizerErrorCode = 1;
     } CATCH_TOKENIZER(error)
 }
 
+- (Boolean)enableFixingLength:(size_t)length
+             withPaddingToken:(NSString*)token
+                        error:(NSError**)error {
+    const rust::Str rustToken(token.UTF8String);
+    try {
+        return (*_box)->enable_fixing_length(length, rustToken);
+    } CATCH_TOKENIZER_RETURN(error, false)
+}
+
 - (nullable Encoding *)encodeText:(NSString*)text
                             error:(NSError**)error {
     const rust::Str rustText(text.UTF8String);
@@ -53,7 +62,7 @@ static NSInteger const kTokenizerErrorCode = 1;
         ];
         for (const auto element : rustEncoding.attention_mask) {
             NSNumber* number = [NSNumber numberWithUnsignedInt:element];
-            [ids addObject:number];
+            [attentionMask addObject:number];
         }
         
         Encoding* encoding = [[Encoding alloc] init];

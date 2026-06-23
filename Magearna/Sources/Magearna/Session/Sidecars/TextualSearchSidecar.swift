@@ -14,9 +14,6 @@ struct TextualSearchSidecar : Sendable {
     let shouldCanonicalize: Bool
     let shouldSpecifyLanguage: Bool
     
-    let contextLength: Int
-    let paddingTokenID: Int32?
-    
     init(model: InferenceModel, cacheDirectory: URL) throws {
         self.shouldSpecifyLanguage = model.suiteName.hasPrefix("nllb")
         
@@ -32,7 +29,7 @@ struct TextualSearchSidecar : Sendable {
                     .appendingPathExtension("json")
             )
         )
-        self.contextLength = modelSuiteConfigurations.text_cfg.context_length ?? 77 // Why 77
+        let contextLength = modelSuiteConfigurations.text_cfg.context_length ?? 77 // Why 77
         self.shouldCanonicalize = modelSuiteConfigurations.tokenizer_kwargs?.clean == "canonicalize"
         self.tokenizer = try .init(
             fromPath: directoryURL
@@ -49,13 +46,12 @@ struct TextualSearchSidecar : Sendable {
                     .appendingPathExtension("json")
             )
         )
-        self.paddingTokenID = if
-            let token = tokenizerConfigurations.pad_token,
-            let id = try self.tokenizer.encodeText(token).ids.first
-        {
-            .init(id.uint32Value)
-        } else {
-            nil
+        
+        if let token = tokenizerConfigurations.pad_token {
+            try self.tokenizer.enableFixingLength(
+                contextLength,
+                withPaddingToken: token
+            )
         }
     }
 }

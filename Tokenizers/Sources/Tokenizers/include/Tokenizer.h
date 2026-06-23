@@ -19,6 +19,10 @@ NS_SWIFT_SENDABLE
 - (nullable instancetype)initFromPath:(NSString*)path
                                 error:(NSError**)error NS_DESIGNATED_INITIALIZER;
 
+- (Boolean)enableFixingLength:(size_t)length
+             withPaddingToken:(NSString*)paddingToken
+                        error:(NSError**)error;
+
 - (nullable Encoding*)encodeText:(NSString*)text
                            error:(NSError**)error;
 

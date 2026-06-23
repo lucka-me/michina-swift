@@ -28,4 +28,13 @@ void SaveRustErrorToError(const rust::Error& rustError, NSError** error);
         return nil;                             \
     }
 
+#define CATCH_TOKENIZER_RETURN(error, result)   \
+    catch (const rust::Error& rustError) {      \
+        SaveRustErrorToError(rustError, error); \
+        return result;                          \
+    } catch (const std::exception& exception) { \
+        SaveExceptionToError(exception, error); \
+        return result;                          \
+    }
+
 NS_ASSUME_NONNULL_END

@@ -164,8 +164,7 @@ fileprivate extension TextualSearchSidecar {
             cleanText = floresCode + cleanText
         }
         let encoding = try tokenizer.encodeText(cleanText)
-        let tokens = encoding.ids.map { Int32($0.uint32Value) }
-        return postprocess(tokens: tokens)
+        return encoding.ids.map { Int32($0.uint32Value) }
     }
     
     private func clear(text: String) -> String {
@@ -176,18 +175,6 @@ fileprivate extension TextualSearchSidecar {
             spacesNormalized.removingCharacters(in: .punctuationCharacters)
         } else {
             spacesNormalized
-        }
-    }
-    
-    private func postprocess(tokens: [ Int32 ]) -> [ Int32 ] {
-        if tokens.count < contextLength {
-            if let paddingTokenID {
-                tokens + .init(repeating: paddingTokenID, count: contextLength - tokens.count)
-            } else {
-                tokens
-            }
-        } else {
-            .init(tokens.prefix(contextLength))
         }
     }
 }
