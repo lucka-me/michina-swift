@@ -93,13 +93,11 @@ fileprivate extension InferenceServiceTab {
         Section {
             row(pipelineMetric: metrics.pipelines[category]!)
                 .tag(Selection.category(category: category))
-                .listRowSeparator(.visible, edges: .top)
             
             if values.showCharts {
                 PipelineCountChart(counts: metrics.runningPipelineCounts[category]!)
                     .frame(height: 60)
                     .padding(.top, 12)
-                    .listRowSeparator(.hidden)
             }
         } header: {
             Group {
@@ -109,8 +107,8 @@ fileprivate extension InferenceServiceTab {
                     Label("InferenceServiceTab.Overall", systemImage: "rectangle.stack")
                 }
             }
-            .listRowSeparator(.hidden)
         }
+        .listRowSeparator(.hidden)
     }
     
     @ViewBuilder

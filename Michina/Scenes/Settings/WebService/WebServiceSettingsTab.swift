@@ -35,7 +35,7 @@ struct WebServiceSettingsTab : TabContent {
                 
                 urlsSection
             }
-            .frame(minWidth: 200, maxWidth: 400)
+            .frame(minWidth: 400, minHeight: 300)
             .onAppear {
                 alert.whenTrying {
                     hostAddresses = try WebServiceSettings.collectHostAddresses()

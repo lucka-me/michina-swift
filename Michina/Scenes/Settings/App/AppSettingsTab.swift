@@ -19,7 +19,7 @@ struct AppSettingsTab : TabContent {
 //                launchAtLoginSection
                 iconsSection
             }
-            .frame(minWidth: 300, maxWidth: 400)
+            .frame(minWidth: 300, minHeight: 200)
         }
     }
 }

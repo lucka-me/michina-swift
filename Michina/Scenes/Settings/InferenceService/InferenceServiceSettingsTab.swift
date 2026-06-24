@@ -18,7 +18,7 @@ struct InferenceServiceSettingsTab : TabContent {
                 preloadModelsSection
                 cacheSection
             }
-            .frame(minWidth: 300, maxWidth: 400)
+            .frame(minWidth: 400, minHeight: 400)
         }
     }
 }

@@ -17,7 +17,9 @@ struct SettingsScene : Scene {
             }
             .formStyle(.grouped)
             .windowResizeAnchor(.top)
+            .windowResizeBehavior(.enabled)
             .alertable()
         }
+        .windowResizability(.contentMinSize)
     }
 }
