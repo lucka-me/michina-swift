@@ -24,12 +24,9 @@ final class InferenceSessionCache {
     @ObservationIgnored
     private var fetchContinuations: [ ModelSuite : [ CheckedContinuation<Void, Error> ] ] = [ : ]
     
-    @ObservationIgnored
-    private var touchInstants: [ InferenceModel : ContinuousClock.Instant ] = [ : ]
-    
     private let fetchTaskGroup: ConstrainedTaskGroup<Void> = .init()
     
-    private let touchContinuation: AsyncStream<InferenceModel>.Continuation
+    private let touchContinuation: AsyncStream<Touching>.Continuation
     
     private let settings = InferenceServiceSettings.shared
     
@@ -38,17 +35,17 @@ final class InferenceSessionCache {
     ) {
         self.cacheDirectory = cacheDirectory
         let (touchStream, touchContinuation) = AsyncStream.makeStream(
-            of: InferenceModel.self,
-            bufferingPolicy: .bufferingOldest(1)
+            of: Touching.self,
+            bufferingPolicy: .unbounded
         )
         self.touchContinuation = touchContinuation
-        Task(name: "InferenceSessionCache.Touch", priority: .background) {
+        Task.detached(name: "InferenceSessionCache.Touch", priority: .background) {
             try await self.handle(touchStream: touchStream)
         }
         if !settings.preloadModels.isEmpty {
             let models = settings.preloadModels
             Task.detached(priority: .background) {
-                try await self.load(for: models)
+                try await self.load(for: models, preferredLifespan: .zero)
             }
         }
     }
@@ -63,12 +60,15 @@ extension InferenceSessionCache {
 }
 
 extension InferenceSessionCache {
-    func load(for model: InferenceModel) async throws -> InferenceSession? {
+    func load(
+        for model: InferenceModel,
+        preferredLifespan: Duration? = nil
+    ) async throws -> InferenceSession? {
         guard !model.isBuiltin else {
             return nil
         }
         if let session = sessions[model] {
-            touch(model: model)
+            access(model: model, preferredLifespan: preferredLifespan)
             return session
         }
         
@@ -99,7 +99,7 @@ extension InferenceSessionCache {
                 }
                 .value
             sessions[model] = session
-            touch(model: model)
+            access(model: model, preferredLifespan: preferredLifespan)
             loadContinuations[model]!.forEach { $0.resume(returning: session) }
         } catch {
             loadContinuations[model]!.forEach { $0.resume(throwing: error) }
@@ -110,14 +110,18 @@ extension InferenceSessionCache {
     }
     
     func load(
-        for models: [ InferenceModel ]
+        for models: [ InferenceModel ],
+        preferredLifespan: Duration? = nil
     ) async throws -> [ InferenceModel.Category : InferenceSession ]  {
         try await withThrowingTaskGroup(
             of: InferenceSession?.self
         ) { @Sendable group in
             for model in models {
                 group.addTask {
-                    try await self.load(for: model)
+                    try await self.load(
+                        for: model,
+                        preferredLifespan: preferredLifespan
+                    )
                 }
             }
             
@@ -133,7 +137,7 @@ extension InferenceSessionCache {
 extension InferenceSessionCache {
     func unload(for model: InferenceModel) {
         sessions.removeValue(forKey: model)
-        touchInstants.removeValue(forKey: model)
+        touchContinuation.yield(.init(model: model, operation: .unload))
     }
     
     func unload(for models: [ InferenceModel ]) {
@@ -150,23 +154,70 @@ extension InferenceSessionCache {
 }
 
 fileprivate extension InferenceSessionCache {
-    func touch(model: InferenceModel) {
-        touchInstants[model] = .now
-        touchContinuation.yield(model)
+    struct Touching : Sendable {
+        enum Operation : Sendable {
+            case access(
+                instance: ContinuousClock.Instant = .now,
+                preferredLifespan: Duration?
+            )
+            case unload
+        }
+        
+        let model: InferenceModel
+        let operation: Operation
     }
     
-    func handle(touchStream: AsyncStream<InferenceModel>) async throws {
-        // TODO: Refine the touching and unload logic, to support waking up when settings changed
-        //       and different ttl for each model
-        for await _ in touchStream {
-            while let oldestInstant = touchInstants.min(by: { $0.value < $1.value })?.value {
-                try await Task.sleep(until: oldestInstant + .seconds(settings.cache.timeToLive))
-                let deadline = ContinuousClock.now - .seconds(settings.cache.timeToLive)
-                unload(
-                    for: touchInstants
-                        .filter { $0.value < deadline }
-                        .map(\.key)
-                )
+    func access(model: InferenceModel, preferredLifespan: Duration?) {
+        touchContinuation.yield(
+            .init(
+                model: model,
+                operation: .access(preferredLifespan: preferredLifespan)
+            )
+        )
+    }
+    
+    nonisolated func handle(touchStream: AsyncStream<Touching>) async throws {
+        typealias Instant = ContinuousClock.Instant
+        
+        var accessInstants: [ InferenceModel : Instant ] = [ : ]
+        var preferredLifespans: [ InferenceModel : Duration ] = [ : ]
+        var checkTasks: [ InferenceModel : Task<Void, any Error> ] = [ : ]
+        
+        for await touching in touchStream {
+            switch touching.operation {
+            case .access(let instance, let preferredLifespan):
+                accessInstants[touching.model] = instance
+                
+                let lifespan: Duration
+                if let preferredLifespan {
+                    preferredLifespans[touching.model] = preferredLifespan
+                    lifespan = preferredLifespan
+                } else if let preferredLifespan = preferredLifespans[touching.model] {
+                    lifespan = preferredLifespan
+                } else {
+                    lifespan = .seconds(await settings.cache.lifespan)
+                }
+                
+                checkTasks[touching.model]?.cancel()
+                if lifespan > .zero {
+                    let model = touching.model
+                    let deadline = instance + lifespan
+                    checkTasks[touching.model] = .detached(
+                        priority: .background
+                    ) { [ weak self ] in
+                        try await Task.sleep(until: deadline)
+                        await self?.unload(for: model)
+                    }
+                } else {
+                    // Live forever
+                    checkTasks.removeValue(forKey: touching.model)
+                }
+            case .unload:
+                checkTasks[touching.model]?.cancel()
+                
+                accessInstants.removeValue(forKey: touching.model)
+                preferredLifespans.removeValue(forKey: touching.model)
+                checkTasks.removeValue(forKey: touching.model)
             }
         }
     }

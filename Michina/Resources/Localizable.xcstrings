@@ -852,22 +852,22 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The model will be unloaded after a period of idle to reduce memory usage."
+            "value" : "Michina can unload models after a period of idle to reduce memory usage.\nDefault period is 300s, setting to zero (0) will disable this behavior."
           }
         }
       }
     },
-    "InferenceServiceSettingsTab.Cache.TimeToLive" : {
+    "InferenceServiceSettingsTab.Cache.Lifespan" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Unload After"
+            "value" : "Automatically Unload After"
           }
         }
       }
     },
-    "InferenceServiceSettingsTab.Cache.TimeToLive.Prompt" : {
+    "InferenceServiceSettingsTab.Cache.Lifespan.Prompt" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -972,7 +972,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Load selected models automatically when Michina launches."
+            "value" : "Load selected models automatically when Michina launches.\nThe preloaded models will never be unloaded automatically, except you unload and load them manually."
           }
         }
       }

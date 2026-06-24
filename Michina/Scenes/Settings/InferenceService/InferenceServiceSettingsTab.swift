@@ -71,20 +71,23 @@ fileprivate extension InferenceServiceSettingsTab {
                 settings.preloadModels.enumerated(),
                 id: \.element.id
             ) { enumeration in
-                LabeledContent {
-                    Button(role: .destructive) {
-                        settings.preloadModels.remove(at: enumeration.offset)
-                    }
-                } label: {
+                HStack {
                     VStack(alignment: .leading) {
-                        HStack(spacing: 12) {
+                        HStack(spacing: 6) {
                             Text(enumeration.element.suiteCategory.titleKey)
+                            Divider()
                             Text(enumeration.element.category.titleKey)
                         }
                         .font(.caption)
                         
                         Text(enumeration.element.suiteName)
                             .monospaced()
+                    }
+                    
+                    Spacer()
+                    
+                    Button(role: .destructive) {
+                        settings.preloadModels.remove(at: enumeration.offset)
                     }
                 }
             }
@@ -139,10 +142,10 @@ fileprivate extension InferenceServiceSettingsTab {
         
         Section {
             TextField(
-                "InferenceServiceSettingsTab.Cache.TimeToLive",
-                value: $settings.timeToLive,
+                "InferenceServiceSettingsTab.Cache.Lifespan",
+                value: $settings.lifespan,
                 format: .number.grouping(.never),
-                prompt: Text("InferenceServiceSettingsTab.Cache.TimeToLive.Prompt")
+                prompt: Text("InferenceServiceSettingsTab.Cache.Lifespan.Prompt")
             )
         } header: {
             Text("InferenceServiceSettingsTab.Cache")

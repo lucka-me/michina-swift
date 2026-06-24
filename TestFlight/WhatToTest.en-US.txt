@@ -2,6 +2,7 @@ Welcome to Michina.
 
 Build #17
 - Added: Preload models when Michina launches, set models in Settings - Inference Service
+- Added: Automatically Unload can be disabled by setting the lifespan to zero (0)
 
 Build #16
 - Fixed: App crash when run Textual Smart Search inference in Inference window
