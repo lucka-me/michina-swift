@@ -34,7 +34,12 @@ extension WebServiceSettings {
 }
 
 extension WebServiceSettings {
-    static func collectHostAddresses() throws -> [ String ] {
+    struct Interface {
+        let name: String
+        let address: String
+    }
+    
+    static func collectHostInterfaces() throws -> [ Interface ] {
         var headPointer: UnsafeMutablePointer<ifaddrs>?
         guard getifaddrs(&headPointer) == .zero, let headPointer else {
             throw Errno(rawValue: errno)
@@ -44,7 +49,7 @@ extension WebServiceSettings {
             freeifaddrs(headPointer)
         }
         
-        var results: [ String ] = [ ]
+        var results: [ Interface ] = [ ]
         var enumeratePointer: UnsafeMutablePointer<ifaddrs>? = headPointer
         while let address = enumeratePointer {
             defer {
@@ -83,7 +88,7 @@ extension WebServiceSettings {
             guard let host = String(cString: hostBuffer, encoding: .utf8) else {
                 continue
             }
-            results.append(host)
+            results.append(.init(name: name, address: host))
         }
         return results
     }

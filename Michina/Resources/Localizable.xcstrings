@@ -1353,42 +1353,12 @@
         }
       }
     },
-    "OnboardingSettingsView.Port" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Port"
-          }
-        }
-      }
-    },
-    "OnboardingSettingsView.Port.TextField" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Listen on"
-          }
-        }
-      }
-    },
     "OnboardingSettingsView.Subtitle" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Most important options."
-          }
-        }
-      }
-    },
-    "OnboardingSettingsView.URL.Footer" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In your Immich instance, navigate to Machine Learning Settings and add an URL to this device."
           }
         }
       }
@@ -1609,7 +1579,17 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The defualt port is 3003, you need to restart the Web Service to apply the new port."
+            "value" : "The defualt port is 3003, you need to restart the Web Service to apply the new port.\nIn your Immich instance, navigate to *Machine Learning Settings* and add an URL to this device.\nThese URLs are generated from your device's network interface information, and for reference only."
+          }
+        }
+      }
+    },
+    "WebServiceSettingsTab.Port.TextField" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Listen on Port"
           }
         }
       }
@@ -1620,26 +1600,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Start When Michina Launches"
-          }
-        }
-      }
-    },
-    "WebServiceSettingsTab.URL" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "URL"
-          }
-        }
-      }
-    },
-    "WebServiceSettingsTab.URL.Footer" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "These URLs are generated from your device's network interface information, and for reference only."
           }
         }
       }

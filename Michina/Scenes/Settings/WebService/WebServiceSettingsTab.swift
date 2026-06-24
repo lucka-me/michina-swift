@@ -12,8 +12,6 @@ struct WebServiceSettingsTab : TabContent {
     
     @State private var settings = WebServiceSettings.shared
     
-    @State private var hostAddresses: [ String ] = [ ]
-    
     var body: some TabContent<Never> {
         Tab(Self.titleKey, systemImage: Self.systemImage) {
             Form {
@@ -22,23 +20,43 @@ struct WebServiceSettingsTab : TabContent {
                     isOn: $settings.startWhenInitialized
                 )
                 
-                Section {
-                    TextField(
-                        "WebServiceSettingsTab.Port",
-                        value: $settings.port,
-                        format: .port
-                    )
-                } footer: {
-                    Text("WebServiceSettingsTab.Port.Footer")
-                }
-                
-                
-                urlsSection
+                PortSection()
             }
             .frame(minWidth: 400, minHeight: 300)
+        }
+    }
+}
+
+extension WebServiceSettingsTab {
+    struct PortSection : View {
+        @Environment(\.alert) private var alert
+        
+        @State private var settings = WebServiceSettings.shared
+        @State private var hostInterfaces: [ WebServiceSettings.Interface ] = [ ]
+        
+        var body: some View {
+            Section {
+                TextField(
+                    "WebServiceSettingsTab.Port.TextField",
+                    value: $settings.port,
+                    format: .port
+                )
+                
+                ForEach(hostInterfaces, id: \.address) { interface in
+                    LabeledContent(
+                        interface.name,
+                        value: "http://\(interface.address):\(settings.port.formatted(.port))"
+                    )
+                }
+                .monospaced()
+            } header: {
+                Text("WebServiceSettingsTab.Port")
+            } footer: {
+                Text("WebServiceSettingsTab.Port.Footer")
+            }
             .onAppear {
                 alert.whenTrying {
-                    hostAddresses = try WebServiceSettings.collectHostAddresses()
+                    hostInterfaces = try WebServiceSettings.collectHostInterfaces()
                 }
             }
         }
@@ -48,21 +66,4 @@ struct WebServiceSettingsTab : TabContent {
 fileprivate extension WebServiceSettingsTab {
     static let titleKey: LocalizedStringKey = "WebService"
     static let systemImage: String = "network"
-}
-
-fileprivate extension WebServiceSettingsTab {
-    @ViewBuilder
-    var urlsSection: some View {
-        Section {
-            ForEach(hostAddresses, id: \.self) { address in
-                Text("http://" + address + ":" + settings.port.formatted(.port))
-                    .monospaced()
-                    .textSelection(.enabled)
-            }
-        } header: {
-            Text("WebServiceSettingsTab.URL")
-        } footer: {
-            Text("WebServiceSettingsTab.URL.Footer")
-        }
-    }
 }
