@@ -1,5 +1,8 @@
 Welcome to Michina.
 
+Build #17
+- Added: Preload models when Michina launches, set models in Settings - Inference Service
+
 Build #16
 - Fixed: App crash when run Textual Smart Search inference in Inference window
 - Fixed: Textual Smart Search outputs are not displayed

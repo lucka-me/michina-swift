@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import ONNXRuntime
+import Magearna
 
 struct InferenceServiceSettingsTab : TabContent {
     @State var settings = InferenceServiceSettings.shared
@@ -15,6 +15,7 @@ struct InferenceServiceSettingsTab : TabContent {
         Tab(Self.titleKey, systemImage: Self.systemImage) {
             Form {
                 sessionSections
+                preloadModelsSection
                 cacheSection
             }
             .frame(minWidth: 300, maxWidth: 400)
@@ -59,6 +60,75 @@ fileprivate extension InferenceServiceSettingsTab {
         } footer: {
             Text("InferenceServiceSettingsTab.Optimization.Footer")
         }
+    }
+}
+
+fileprivate extension InferenceServiceSettingsTab {
+    @ViewBuilder
+    var preloadModelsSection: some View {
+        Section {
+            ForEach(
+                settings.preloadModels.enumerated(),
+                id: \.element.id
+            ) { enumeration in
+                LabeledContent {
+                    Button(role: .destructive) {
+                        settings.preloadModels.remove(at: enumeration.offset)
+                    }
+                } label: {
+                    VStack(alignment: .leading) {
+                        HStack(spacing: 12) {
+                            Text(enumeration.element.suiteCategory.titleKey)
+                            Text(enumeration.element.category.titleKey)
+                        }
+                        .font(.caption)
+                        
+                        Text(enumeration.element.suiteName)
+                            .monospaced()
+                    }
+                }
+            }
+            
+            addPreloadModelMenu
+        } header: {
+            Text("InferenceServiceSettingsTab.PreloadModels")
+        } footer: {
+            Text("InferenceServiceSettingsTab.PreloadModels.Footer")
+        }
+    }
+    
+    @ViewBuilder
+    var addPreloadModelMenu: some View {
+        Menu("InferenceServiceSettingsTab.PreloadModels.Add") {
+            ForEach(InferenceModelSuite.Category.allCases) { suiteCategory in
+                Section(suiteCategory.titleKey) {
+                    ForEach(preloadableSuites(category: suiteCategory)) { suite in
+                        let models = preloadableModels(in: suite)
+                        if !models.isEmpty {
+                            Menu(suite.name) {
+                                ForEach(models) { model in
+                                    Button(model.category.titleKey) {
+                                        settings.preloadModels.append(model)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func preloadableSuites(
+        category: InferenceModelSuite.Category
+    ) -> [ InferenceModelSuite ] {
+        InferenceModelSuite.all[category]!
+            .filter { !$0.isBuiltin }
+    }
+    
+    func preloadableModels(in suite: InferenceModelSuite) -> [ InferenceModel ] {
+        suite.models
+            .compactMap { settings.preloadModels.contains($0.value) ? nil : $0.value }
     }
 }
 

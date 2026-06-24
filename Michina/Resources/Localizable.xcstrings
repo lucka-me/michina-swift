@@ -947,6 +947,36 @@
         }
       }
     },
+    "InferenceServiceSettingsTab.PreloadModels" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preload Models"
+          }
+        }
+      }
+    },
+    "InferenceServiceSettingsTab.PreloadModels.Add" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add"
+          }
+        }
+      }
+    },
+    "InferenceServiceSettingsTab.PreloadModels.Footer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Load selected models automatically when Michina launches."
+          }
+        }
+      }
+    },
     "InferenceServiceTab" : {
       "localizations" : {
         "en" : {

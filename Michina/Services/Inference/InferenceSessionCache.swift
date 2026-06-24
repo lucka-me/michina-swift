@@ -45,6 +45,12 @@ final class InferenceSessionCache {
         Task(name: "InferenceSessionCache.Touch", priority: .background) {
             try await self.handle(touchStream: touchStream)
         }
+        if !settings.preloadModels.isEmpty {
+            let models = settings.preloadModels
+            Task.detached(priority: .background) {
+                try await self.load(for: models)
+            }
+        }
     }
 }
 
@@ -150,6 +156,8 @@ fileprivate extension InferenceSessionCache {
     }
     
     func handle(touchStream: AsyncStream<InferenceModel>) async throws {
+        // TODO: Refine the touching and unload logic, to support waking up when settings changed
+        //       and different ttl for each model
         for await _ in touchStream {
             while let oldestInstant = touchInstants.min(by: { $0.value < $1.value })?.value {
                 try await Task.sleep(until: oldestInstant + .seconds(settings.cache.timeToLive))

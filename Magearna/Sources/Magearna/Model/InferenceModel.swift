@@ -55,6 +55,22 @@ public extension InferenceModel {
             .first(where: { $0.name == suiteName })?
             .models[modelCategory]
     }
+    
+    @inlinable static func find(id: some StringProtocol) -> InferenceModel? {
+        let components = id.split(separator: "/")
+        guard
+            components.count == 3,
+            let suiteCategory = InferenceModelSuite.Category(rawValue: .init(components[0])),
+            let modelCategory = InferenceModel.Category(rawValue: .init(components[2]))
+        else {
+            return nil
+        }
+        return find(
+            suiteCategory: suiteCategory,
+            suiteName: .init(components[1]),
+            modelCategory: modelCategory
+        )
+    }
 }
 
 public extension InferenceModel {
