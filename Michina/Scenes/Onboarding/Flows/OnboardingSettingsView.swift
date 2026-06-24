@@ -19,6 +19,8 @@ struct OnboardingSettingsView : View {
     var body: some View {
         Form {
             Section {
+                AppSettingsTab.LaunchAtLoginControls()
+                
                 Toggle(
                     "OnboardingSettingsView.Launch.StartWhenInitialized",
                     isOn: $web.startWhenInitialized

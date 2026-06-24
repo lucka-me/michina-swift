@@ -61,6 +61,26 @@
         }
       }
     },
+    "AppSettingsTab.LaunchAtLogin.OpenSystemSettings" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Login Items panel in System Settings"
+          }
+        }
+      }
+    },
+    "AppSettingsTab.LaunchAtLogin.RequiresApproval" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "System requires your approval."
+          }
+        }
+      }
+    },
     "AppSettingsTab.LaunchAtLogin.Toggle" : {
       "localizations" : {
         "en" : {
