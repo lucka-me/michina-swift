@@ -499,15 +499,8 @@ fileprivate extension FacialRecognitionInferenceTab.PresentableFace {
     }
 }
 
-fileprivate struct SimilarityMinimalDistanceKey : EnvironmentKey {
-    static let defaultValue: Float = 0.5
-}
-
 fileprivate extension EnvironmentValues {
-    var similarityMinimalDistance: Float {
-        get { self[SimilarityMinimalDistanceKey.self] }
-        set { self[SimilarityMinimalDistanceKey.self] = newValue }
-    }
+    @Entry var similarityMinimalDistance: Float = 5.0
 }
 
 fileprivate extension CGRect {

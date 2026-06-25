@@ -57,10 +57,7 @@ struct AlertAction : Sendable {
 }
 
 extension EnvironmentValues {
-    var alert: AlertAction {
-        get { self[AlertEnvironmentKey.self] ?? .init() { _ in } }
-        set { self[AlertEnvironmentKey.self] = newValue }
-    }
+    @Entry var alert = AlertAction { _ in }
 }
 
 extension View {
@@ -116,8 +113,4 @@ fileprivate struct AlertableModifier : ViewModifier {
         currentError = error
         isAlertPresented = true
     }
-}
-
-fileprivate struct AlertEnvironmentKey : EnvironmentKey {
-    static let defaultValue: AlertAction? = nil
 }
