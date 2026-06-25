@@ -85,10 +85,7 @@ extension PreprocessConfiguration : Decodable {
         do {
             let size = try container.decode(Int.self, forKey: .size)
             self.size = [ size, size ]
-        } catch let error as DecodingError {
-            guard case .typeMismatch(_, _) = error else {
-                throw error
-            }
+        } catch DecodingError.typeMismatch(_, _) {
             self.size = try container.decode(forKey: .size)
         }
         

@@ -34,10 +34,8 @@ struct AlertAction : Sendable {
             try operation()
         } catch let error as LocalizedError {
             alertAction(.localized(error: error))
-            return
         } catch {
             alertAction(.generic(error: error))
-            return
         }
     }
     
@@ -90,12 +88,8 @@ fileprivate enum AlertableError: Error, LocalizedError {
         
     var failureReason: String? {
         switch self {
-        case .localized(let error):
-            error.failureReason ?? error.localizedDescription
-        case .generic(let error):
-            error.localizedDescription
-        case .message(_):
-            nil
+        case .localized(let error): error.failureReason
+        default: nil
         }
     }
 }
