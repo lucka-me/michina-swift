@@ -4,7 +4,7 @@ Build #17
 - Added: Preload models when Michina launches, set models in Settings - Inference Service
 - Added: Automatically Unload can be disabled by setting the lifespan to zero (0)
 - Added: Option to launch at login
-- Changed: Verified NLLB and ViT-H-14 Smart Search models
+- Changed: Verified NLLB, ViT-H-14 and ViT-L-14 Smart Search models
 
 Build #16
 - Fixed: App crash when run Textual Smart Search inference in Inference window

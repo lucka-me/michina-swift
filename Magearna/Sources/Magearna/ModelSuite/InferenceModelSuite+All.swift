@@ -57,15 +57,22 @@ public extension InferenceModelSuite {
                 "ViT-H-14-quickgelu__dfn5b"
                 "ViT-H-14__laion2b-s32b-b79k"
             }
-            immichApp(in: .search, areVerified: false) {
-                // TODO: Verify all models...
+            immichApp(
+                in: .search,
+                compatibilities: [
+                    .visual : .inefficient,
+                    .textual : .compatible
+                ]
+            ) {
                 "ViT-L-14-336__openai"
                 "ViT-L-14-quickgelu__dfn2b"
                 "ViT-L-14__laion2b-s32b-b82k"
                 "ViT-L-14__laion400m_e31"
                 "ViT-L-14__laion400m_e32"
                 "ViT-L-14__openai"
-                
+            }
+            immichApp(in: .search, areVerified: false) {
+                // TODO: Verify all models...
                 "ViT-L-16-SigLIP-256__webli"
                 "ViT-L-16-SigLIP-384__webli"
                 
