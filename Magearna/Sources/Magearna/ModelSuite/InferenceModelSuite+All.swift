@@ -52,12 +52,13 @@ public extension InferenceModelSuite {
                 "ViT-B-32__laion400m_e32"
                 "ViT-B-32__openai"
             }
-            immichApp(in: .search, areVerified: false) {
-                // TODO: Verify all models...
+            immichApp(in: .search, compatibility: .inefficient) {
                 "ViT-H-14-378-quickgelu__dfn5b"
                 "ViT-H-14-quickgelu__dfn5b"
                 "ViT-H-14__laion2b-s32b-b79k"
-                
+            }
+            immichApp(in: .search, areVerified: false) {
+                // TODO: Verify all models...
                 "ViT-L-14-336__openai"
                 "ViT-L-14-quickgelu__dfn2b"
                 "ViT-L-14__laion2b-s32b-b82k"
@@ -179,27 +180,30 @@ fileprivate extension InferenceModelSuite {
         }
     }
     
+    @ArrayBuilder<Self>
     static func immichApp(
         in category: Category,
-        isVerified: Bool = true,
-        name: String,
-        compatibilities: [ InferenceModel.Category : InferenceModel.Compatibility ]
-    ) -> Self {
-        .init(
-            category: category,
-            name: name,
-            provider: .immichApp,
-            isVerified: isVerified,
-            models: compatibilities.reduce(into: [ : ]) { partial, pair in
-                partial[pair.key] = .init(
-                    suiteCategory: category,
-                    suiteName: name,
-                    category: pair.key,
-                    provider: .immichApp,
-                    compatibility: pair.value
-                )
-            }
-        )
+        areVerified: Bool = true,
+        compatibilities: [ InferenceModel.Category : InferenceModel.Compatibility ],
+        @ArrayBuilder<String> names: () -> [ String ]
+    ) -> [ Self ] {
+        for name in names() {
+            .init(
+                category: category,
+                name: name,
+                provider: .immichApp,
+                isVerified: areVerified,
+                models: compatibilities.reduce(into: [ : ]) { partial, pair in
+                    partial[pair.key] = .init(
+                        suiteCategory: category,
+                        suiteName: name,
+                        category: pair.key,
+                        provider: .immichApp,
+                        compatibility: pair.value
+                    )
+                }
+            )
+        }
     }
     
     @ArrayBuilder<Self>
