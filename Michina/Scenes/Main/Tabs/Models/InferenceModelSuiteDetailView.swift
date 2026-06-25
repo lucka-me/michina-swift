@@ -115,6 +115,7 @@ fileprivate extension InferenceModelSuiteDetailView {
                     if suite.isVerified {
                         Text(model.compatibility.titleKey)
                             .foregroundStyle(model.compatibility.color)
+                            .help(model.compatibility.helpTitleKey)
                     } else {
                         Text("InferenceModel.Compatibility.Unknown")
                             .foregroundStyle(.yellow)

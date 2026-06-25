@@ -27,6 +27,14 @@ extension InferenceModel.Compatibility : Labelable {
 }
 
 extension InferenceModel.Compatibility {
+    var helpTitleKey: LocalizedStringKey {
+        switch self {
+        case .compatible: "InferenceModel.Compatibility.Compatible.Help"
+        case .inefficient: "InferenceModel.Compatibility.Inefficient.Help"
+        case .incompatible: "InferenceModel.Compatibility.Incompatible.Help"
+        }
+    }
+    
     var color: Color {
         switch self {
         case .compatible: .green

@@ -467,6 +467,16 @@
         }
       }
     },
+    "InferenceModel.Compatibility.Compatible.Help" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This model can be run with Core ML, and loaded in less than 1 min."
+          }
+        }
+      }
+    },
     "InferenceModel.Compatibility.Incompatible" : {
       "localizations" : {
         "en" : {
@@ -477,12 +487,32 @@
         }
       }
     },
+    "InferenceModel.Compatibility.Incompatible.Help" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error will occur when load or run this model with Core ML, some parts of it are not supported by Core ML"
+          }
+        }
+      }
+    },
     "InferenceModel.Compatibility.Inefficient" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Inefficient"
+          }
+        }
+      }
+    },
+    "InferenceModel.Compatibility.Inefficient.Help" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This model can be run with Core ML, but it will take significantly longer time (several minutes) to load with Core ML than with CPU."
           }
         }
       }
