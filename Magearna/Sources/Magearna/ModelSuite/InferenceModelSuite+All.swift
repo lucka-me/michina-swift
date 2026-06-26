@@ -74,11 +74,11 @@ public extension InferenceModelSuite {
             immichApp(in: .search, compatibility: .inefficient) {
                 "ViT-L-16-SigLIP-256__webli"
                 "ViT-L-16-SigLIP-384__webli"
+                
+                "ViT-SO400M-14-SigLIP-384__webli"
             }
             immichApp(in: .search, areVerified: false) {
                 // TODO: Verify all models...
-                "ViT-SO400M-14-SigLIP-384__webli"
-                
                 "XLM-Roberta-Base-ViT-B-32__laion5b_s13b_b90k"
                 "XLM-Roberta-Large-ViT-H-14__frozen_laion5b_s13b_b90k"
             }
@@ -98,10 +98,11 @@ public extension InferenceModelSuite {
                 "ViT-L-16-SigLIP2-256__webli"
                 "ViT-L-16-SigLIP2-384__webli"
                 "ViT-L-16-SigLIP2-512__webli"
-            }
-            immichApp(in: .search, areVerified: false) {
+                
                 "ViT-SO400M-14-SigLIP2-378__webli"
                 "ViT-SO400M-14-SigLIP2__webli"
+            }
+            immichApp(in: .search, areVerified: false) {
                 "ViT-SO400M-16-SigLIP2-256__webli"
             }
             immichApp(in: .search, compatibility: .inefficient) {
