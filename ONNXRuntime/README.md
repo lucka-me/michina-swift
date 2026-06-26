@@ -10,7 +10,7 @@ the XCFramework from source.
 
 ## Preprocess
 
-One of the target of this package requires `onnxruntime.xcframework` , which is built from source in
+One of the target in this package requires `onnxruntime.xcframework` , which is built from source in
 [onnxruntime](./onnxruntime).
 
 Python 3.10+ and CMake are used as building tools. It's recommended to install them with Homebrew:

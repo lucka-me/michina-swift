@@ -5,13 +5,13 @@ Objective-C).
 
 ## Preprocess
 
-One of the target of this package requires `tokenizers.xcframework`, which is built from source in [Rust](./Rust).
+One of the target in this package requires `tokenizers.xcframework`, which is built from source in [Rust](./Rust).
 
 Rust and [cxxbridge-cmd](https://crates.io/crates/cxxbridge-cmd) are used as building tools to build the framwork and
-generate C++ glue code. It's recommended to install them with Homebrew:
+generate C++ glue code. Please follow [their official instruction](https://rust-lang.org/tools/install/) to install Rust
+and then install cxxbridge-cmd with cargo:
 
 ```shell
-brew install rust
 cargo install cxxbridge-cmd
 ```
 
