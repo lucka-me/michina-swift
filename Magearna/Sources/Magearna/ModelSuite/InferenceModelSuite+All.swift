@@ -101,16 +101,12 @@ public extension InferenceModelSuite {
                 
                 "ViT-SO400M-14-SigLIP2-378__webli"
                 "ViT-SO400M-14-SigLIP2__webli"
-            }
-            immichApp(in: .search, areVerified: false) {
-                "ViT-SO400M-16-SigLIP2-256__webli"
-            }
-            immichApp(in: .search, compatibility: .inefficient) {
-                "ViT-SO400M-16-SigLIP2-384__webli"
-            }
-            immichApp(in: .search, areVerified: false) {
-                "ViT-SO400M-16-SigLIP2-512__webli"
                 
+                "ViT-SO400M-16-SigLIP2-256__webli"
+                "ViT-SO400M-16-SigLIP2-384__webli"
+                "ViT-SO400M-16-SigLIP2-512__webli"
+            }
+            immichApp(in: .search, areVerified: false) {
                 "ViT-gopt-16-SigLIP2-256__webli"
                 "ViT-gopt-16-SigLIP2-384__webli"
                 
