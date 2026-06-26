@@ -24,7 +24,7 @@ final class InferenceSessionCache {
     @ObservationIgnored
     private var fetchContinuations: [ ModelSuite : [ CheckedContinuation<Void, Error> ] ] = [ : ]
     
-    private let fetchTaskGroup: ConstrainedTaskGroup<Void> = .init()
+    private let fetchTaskGroup: ConstrainedTaskGroup<Void>
     
     private let touchContinuation: AsyncStream<Touching>.Continuation
     
@@ -34,6 +34,11 @@ final class InferenceSessionCache {
         cacheDirectory: URL = .applicationSupportDirectory.appending(component: "Models")
     ) {
         self.cacheDirectory = cacheDirectory
+        
+        self.fetchTaskGroup = .init(
+            maxTaskCount: min(4, ProcessInfo.processInfo.processorCount)
+        )
+        
         let (touchStream, touchContinuation) = AsyncStream.makeStream(
             of: Touching.self,
             bufferingPolicy: .unbounded

@@ -54,34 +54,13 @@ enum ImmichAppEndpoint : InferenceModelSuiteProviderEndpoint {
                     }
                     
                     group.addTask {
-                        let destination = suite
-                            .directoryURL(in: cacheDirectory)
-                            .appending(path: sibling.rfilename)
-                        return if let fileSize = destination.fileSize {
-                            Source(
-                                repository: suite.name,
-                                revision: information.sha,
-                                path: sibling.rfilename,
-                                size: fileSize
-                            )
-                        } else {
-                            try await taskScheduling.addDataTask(
-                                from: url
-                                    .appending(components: "api", "models")
-                                    .appending(components: namespace, suite.name)
-                                    .appending(components: "treesize", information.sha)
-                                    .appending(path: sibling.rfilename)
-                            ) { data, _ in
-                                let treeSize = try JSONDecoder()
-                                    .decode(TreeSize.self, from: data)
-                                return Source(
-                                    repository: suite.name,
-                                    revision: information.sha,
-                                    path: sibling.rfilename,
-                                    size: treeSize.size
-                                )
-                            }
-                        }
+                        try await source(
+                            suite: suite,
+                            revision: information.sha,
+                            path: sibling.rfilename,
+                            cacheDirectory: cacheDirectory,
+                            with: taskScheduling
+                        )
                     }
                 }
                 
@@ -143,6 +122,53 @@ fileprivate extension ImmichAppEndpoint {
 }
 
 fileprivate extension ImmichAppEndpoint {
+    static func source(
+        suite: InferenceModelSuite,
+        revision: String,
+        path: String,
+        cacheDirectory: URL,
+        with taskScheduling: some ConstrainedTaskScheduling
+    ) async throws -> Source {
+        let destination = suite
+            .directoryURL(in: cacheDirectory)
+            .appending(path: path)
+        if let fileSize = destination.fileSize {
+            return .init(
+                repository: suite.name,
+                revision: revision,
+                path: path,
+                size: fileSize
+            )
+        }
+        let treeSize: TreeSize = try await taskScheduling.addDataTask(
+            from: url
+                .appending(components: "api", "models")
+                .appending(components: namespace, suite.name)
+                .appending(components: "treesize", revision)
+                .appending(path: path)
+        )
+        let source = Source(
+            repository: suite.name,
+            revision: revision,
+            path: path,
+            size: treeSize.size
+        )
+        guard source.shouldPreDownload else {
+            return source
+        }
+        
+        // Pre download small files
+        try await taskScheduling.addDownloadTask(
+            from: source.resolvingURL,
+            to: suite.directoryURL(in: cacheDirectory).appending(path: source.path),
+            reporting: nil
+        )
+        
+        return source
+    }
+}
+
+fileprivate extension ImmichAppEndpoint {
     static func addBatchDimension(for model: InferenceModel, in cacheDirectory: URL) throws {
         let fileURL = model.modelFileURL(in: cacheDirectory)
         var modelProto = try ONNXModelProto(serializedBytes: Data(contentsOf: fileURL))
@@ -176,6 +202,10 @@ fileprivate struct Source {
         self.revision = revision
         self.path = path
         self.size = size
+    }
+    
+    var shouldPreDownload: Bool {
+        !isModelFile && size <= 1024 * 1024
     }
     
     var isModelFile: Bool {

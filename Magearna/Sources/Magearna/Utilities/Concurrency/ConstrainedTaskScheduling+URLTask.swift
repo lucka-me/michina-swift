@@ -24,7 +24,7 @@ extension ConstrainedTaskScheduling {
             if let error = error as? URLError, error.code == .cancelled {
                 return false
             }
-            try await Task.sleep(for: .milliseconds(100) * condition.attempts)
+            try await Task.sleep(for: .seconds(condition.attempts))
             return true
         }
     }
