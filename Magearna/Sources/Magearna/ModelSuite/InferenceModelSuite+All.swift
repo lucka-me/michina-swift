@@ -106,10 +106,18 @@ public extension InferenceModelSuite {
                 "ViT-SO400M-16-SigLIP2-384__webli"
                 "ViT-SO400M-16-SigLIP2-512__webli"
             }
-            immichApp(in: .search, areVerified: false) {
+            immichApp(
+                in: .search,
+                compatibilities: [
+                    // CoreML.Specification.Model exceeded maximum protobuf size of 2GB: 4635334187
+                    .visual : .incompatible,
+                    .textual : .inefficient
+                ]
+            ) {
                 "ViT-gopt-16-SigLIP2-256__webli"
                 "ViT-gopt-16-SigLIP2-384__webli"
-                
+            }
+            immichApp(in: .search, areVerified: false) {
                 "LABSE-Vit-L-14"
                 "XLM-Roberta-Large-Vit-B-16Plus"
                 "XLM-Roberta-Large-Vit-B-32"
