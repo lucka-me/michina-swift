@@ -12,7 +12,6 @@ public struct InferenceModelSuite : Sendable {
     public let name: String
     
     public let provider: Provider
-    public let isVerified: Bool
     
     public let models: [ InferenceModel.Category : InferenceModel ]
     
@@ -20,13 +19,11 @@ public struct InferenceModelSuite : Sendable {
         category: Category,
         name: String,
         provider: Provider,
-        isVerified: Bool,
         models: [ InferenceModel.Category : InferenceModel ]
     ) {
         self.category = category
         self.name = name
         self.provider = provider
-        self.isVerified = isVerified
         self.models = models
     }
 }

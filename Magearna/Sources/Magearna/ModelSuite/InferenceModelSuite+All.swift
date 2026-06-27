@@ -8,7 +8,7 @@
 public extension InferenceModelSuite {
     static let all: [ Category : [ InferenceModelSuite ] ] = [
         .facialRecognition : Array {
-            immichApp(in: .facialRecognition, areVerified: true) {
+            immichApp(in: .facialRecognition) {
                 "antelopev2"
                 "buffalo_l"
                 "buffalo_m"
@@ -154,12 +154,11 @@ public extension InferenceModelSuite {
                 "ESLAV__PP-OCRv5_mobile"
                 "TH__PP-OCRv5_mobile"
             }
-            apple(
-                in: .characterRecognition,
-                name: "apple-vision",
-                areVerified: false,
-                modelCategories: [ .detection, .recognition ]
-            )
+           apple(
+               in: .characterRecognition,
+               name: "apple-vision",
+               modelCategories: [ .detection, .recognition ]
+           )
         },
     ]
 }
@@ -168,14 +167,12 @@ fileprivate extension InferenceModelSuite {
     static func apple(
         in category: Category,
         name: String,
-        areVerified: Bool = true,
         modelCategories: [ InferenceModel.Category ],
     ) -> Self {
         .init(
             category: category,
             name: name,
             provider: .apple,
-            isVerified: areVerified,
             models: modelCategories.reduce(into: [ : ]) {
                 $0[$1] = .init(
                     suiteCategory: category,
@@ -191,7 +188,6 @@ fileprivate extension InferenceModelSuite {
     @ArrayBuilder<Self>
     static func immichApp(
         in category: Category,
-        areVerified: Bool = true,
         compatibility: InferenceModel.Compatibility = .compatible,
         @ArrayBuilder<String> names: () -> [ String ]
     ) -> [ Self ] {
@@ -200,7 +196,6 @@ fileprivate extension InferenceModelSuite {
                 category: category,
                 name: name,
                 provider: .immichApp,
-                isVerified: areVerified,
                 models: InferenceModel.create(
                     suiteCategory: category,
                     suiteName: name,
@@ -214,7 +209,6 @@ fileprivate extension InferenceModelSuite {
     @ArrayBuilder<Self>
     static func immichApp(
         in category: Category,
-        areVerified: Bool = true,
         compatibilities: [ InferenceModel.Category : InferenceModel.Compatibility ],
         @ArrayBuilder<String> names: () -> [ String ]
     ) -> [ Self ] {
@@ -223,7 +217,6 @@ fileprivate extension InferenceModelSuite {
                 category: category,
                 name: name,
                 provider: .immichApp,
-                isVerified: areVerified,
                 models: compatibilities.reduce(into: [ : ]) { partial, pair in
                     partial[pair.key] = .init(
                         suiteCategory: category,
@@ -239,7 +232,6 @@ fileprivate extension InferenceModelSuite {
     
     @ArrayBuilder<Self>
     static func rapidOCR(
-        areVerified: Bool = true,
         compatibility: InferenceModel.Compatibility = .compatible,
         @ArrayBuilder<String> names: () -> [ String ]
     ) -> [ Self ] {
@@ -248,7 +240,6 @@ fileprivate extension InferenceModelSuite {
                 category: .characterRecognition,
                 name: name,
                 provider: .rapidOCR,
-                isVerified: areVerified,
                 models: InferenceModel.create(
                     suiteCategory: .characterRecognition,
                     suiteName: name,

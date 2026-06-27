@@ -517,16 +517,6 @@
         }
       }
     },
-    "InferenceModel.Compatibility.Unknown" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Unknown"
-          }
-        }
-      }
-    },
     "InferenceModelSuite.Category.All" : {
       "localizations" : {
         "en" : {
@@ -607,32 +597,12 @@
         }
       }
     },
-    "InferenceModelSuiteDetailView.Glance.NotVerified" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Not Verified"
-          }
-        }
-      }
-    },
     "InferenceModelSuiteDetailView.Glance.Provider" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Provided by"
-          }
-        }
-      }
-    },
-    "InferenceModelSuiteDetailView.Glance.Verified" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Verified"
           }
         }
       }

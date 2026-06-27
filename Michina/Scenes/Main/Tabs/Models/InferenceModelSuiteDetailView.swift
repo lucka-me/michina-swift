@@ -52,20 +52,6 @@ fileprivate extension InferenceModelSuiteDetailView {
             LabeledContent("InferenceModelSuiteDetailView.Glance.Provider") {
                 Text(suite.provider.titleKey)
             }
-            
-            if suite.isVerified {
-                Label(
-                    "InferenceModelSuiteDetailView.Glance.Verified",
-                    systemImage: "checkmark.seal"
-                )
-                .foregroundStyle(.green)
-            } else {
-                Label(
-                    "InferenceModelSuiteDetailView.Glance.NotVerified",
-                    systemImage: "exclamationmark.triangle"
-                )
-                .foregroundStyle(.red)
-            }
         }
         .buttonStyle(.link)
     }
@@ -112,14 +98,9 @@ fileprivate extension InferenceModelSuiteDetailView {
                 }
                 
                 LabeledContent("InferenceModelSuiteDetailView.Model.Compatibility") {
-                    if suite.isVerified {
-                        Text(model.compatibility.titleKey)
-                            .foregroundStyle(model.compatibility.color)
-                            .help(model.compatibility.helpTitleKey)
-                    } else {
-                        Text("InferenceModel.Compatibility.Unknown")
-                            .foregroundStyle(.yellow)
-                    }
+                    Text(model.compatibility.titleKey)
+                        .foregroundStyle(model.compatibility.color)
+                        .help(model.compatibility.helpTitleKey)
                 }
                 
                 if cache.sessions[model] != nil {
