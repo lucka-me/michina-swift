@@ -17,7 +17,7 @@ public actor TextualSearchInferencePipeline : InferencePipeline {
     private let input: Input
     
     private var session: InferenceSession? = nil
-    private var sidecar: TextualSearchSidecar? = nil
+    private var sidecar: Sidecar? = nil
     
     private var output: Output = [ ]
     
@@ -105,7 +105,7 @@ public extension TextualSearchInferencePipeline {
     }
 }
 
-fileprivate extension TextualSearchSidecar {
+fileprivate extension TextualSearchInferencePipeline.Sidecar {
     struct Encoding {
         let ids: [ Int32 ]
         let attentionMask: [ Int32 ]

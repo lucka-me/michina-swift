@@ -1,5 +1,5 @@
 //
-//  VisualSearchSidecar.swift
+//  VisualSearchInferencePipeline+Sidecar.swift
 //  Magearna
 //
 //  Created by Lucka on 2026-05-20.
@@ -8,42 +8,44 @@
 import CoreGraphics
 import Foundation
 
-struct VisualSearchSidecar : Sendable {
-    let inputSize: CGSize
-    
-    // immich-ml ignores these configurations and use crop center and bicubic
-    let resizeMode: ResizeMode
-    let interpolation: Interpolation
-    
-    let decodeMeans: [ 3 of Float ]
-    let decodeScales: [ 3 of Float ]
-    
-    init(model: InferenceModel, cacheDirectory: URL) throws {
-        let preprocessConfiguration = try JSONDecoder()
-            .decode(
-                PreprocessConfiguration.self,
-                from: .init(
-                    contentsOf: model.directoryURL(in: cacheDirectory)
-                        .appending(component: "preprocess_cfg")
-                        .appendingPathExtension("json")
+extension VisualSearchInferencePipeline {
+    struct Sidecar : Sendable {
+        let inputSize: CGSize
+        
+        // immich-ml ignores these configurations and use crop center and bicubic
+        let resizeMode: ResizeMode
+        let interpolation: Interpolation
+        
+        let decodeMeans: [ 3 of Float ]
+        let decodeScales: [ 3 of Float ]
+        
+        init(model: InferenceModel, cacheDirectory: URL) throws {
+            let preprocessConfiguration = try JSONDecoder()
+                .decode(
+                    PreprocessConfiguration.self,
+                    from: .init(
+                        contentsOf: model.directoryURL(in: cacheDirectory)
+                            .appending(component: "preprocess_cfg")
+                            .appendingPathExtension("json")
+                    )
                 )
+            
+            self.inputSize = .init(
+                width: preprocessConfiguration.size[0],
+                height: preprocessConfiguration.size[1]
             )
-        
-        self.inputSize = .init(
-            width: preprocessConfiguration.size[0],
-            height: preprocessConfiguration.size[1]
-        )
-        
-        self.resizeMode = preprocessConfiguration.resizeMode
-        self.interpolation = preprocessConfiguration.interpolation
-        
-        // In OpenClipVisualEncoder.transform, the to_numpy already normalized to [0, 1]
-        self.decodeMeans = .init { preprocessConfiguration.mean[$0] * 255 }
-        self.decodeScales = .init { 1 / preprocessConfiguration.std[$0] / 255 }
+            
+            self.resizeMode = preprocessConfiguration.resizeMode
+            self.interpolation = preprocessConfiguration.interpolation
+            
+            // In OpenClipVisualEncoder.transform, the to_numpy already normalized to [0, 1]
+            self.decodeMeans = .init { preprocessConfiguration.mean[$0] * 255 }
+            self.decodeScales = .init { 1 / preprocessConfiguration.std[$0] / 255 }
+        }
     }
 }
 
-extension VisualSearchSidecar {
+extension VisualSearchInferencePipeline.Sidecar {
     enum Interpolation: String, Decodable, Sendable {
         case bicubic
         case lanczos
@@ -63,11 +65,11 @@ fileprivate struct PreprocessConfiguration {
     // nearest, box, bilinear, hamming, bicubic, lanczos
     // immich-ml doesn't use it, the resize_pil uses bicubic
     // CIFilter provides bicubicScaleTransform() and lanczosScaleTransform()
-    var interpolation: VisualSearchSidecar.Interpolation
+    var interpolation: VisualSearchInferencePipeline.Sidecar.Interpolation
     
     // squash: scale and stretch to fill the inputSize
     // shortest: Don't know what it is
-    var resizeMode: VisualSearchSidecar.ResizeMode
+    var resizeMode: VisualSearchInferencePipeline.Sidecar.ResizeMode
 }
 
 extension PreprocessConfiguration : Decodable {
@@ -92,8 +94,14 @@ extension PreprocessConfiguration : Decodable {
         self.mean = try container.decode(forKey: .mean)
         self.std = try container.decode(forKey: .std)
         
-        self.interpolation = try container.decode(VisualSearchSidecar.Interpolation.self, forKey: .interpolation)
-        self.resizeMode = try container.decode(VisualSearchSidecar.ResizeMode.self, forKey: .resize_mode)
+        self.interpolation = try container.decode(
+            VisualSearchInferencePipeline.Sidecar.Interpolation.self,
+            forKey: .interpolation
+        )
+        self.resizeMode = try container.decode(
+            VisualSearchInferencePipeline.Sidecar.ResizeMode.self,
+            forKey: .resize_mode
+        )
     }
 }
 

@@ -19,7 +19,7 @@ public actor VisualSearchInferencePipeline : InferencePipeline {
     private let input: Input
     
     private var session: InferenceSession? = nil
-    private var sidecar: VisualSearchSidecar? = nil
+    private var sidecar: Sidecar? = nil
     
     private var output: Output = [ ]
     
@@ -107,7 +107,7 @@ fileprivate extension VisualSearchInferencePipeline {
     }
 }
 
-fileprivate extension VisualSearchSidecar {
+fileprivate extension VisualSearchInferencePipeline.Sidecar {
     var inputShape: [ NSNumber ] {
         [
             VisualSearchInferencePipeline.StaticConfigurations.batchSize,

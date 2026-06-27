@@ -11,7 +11,7 @@ import SwiftProtobuf
 
 struct ArcFace : Sendable {
     private let session: InferenceSession
-    private let sidecar: ArcFaceSidecar
+    private let sidecar: Sidecar
     
     init(session: InferenceSession) {
         self.session = session

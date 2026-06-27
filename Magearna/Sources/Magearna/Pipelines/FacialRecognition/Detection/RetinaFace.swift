@@ -11,7 +11,7 @@ import ONNXRuntime
 
 struct RetinaFace : FaceDetectionFunction {
     private let session: InferenceSession
-    private let sidecar: RetinaFaceSidecar
+    private let sidecar: Sidecar
     
     init(session: InferenceSession) {
         self.session = session

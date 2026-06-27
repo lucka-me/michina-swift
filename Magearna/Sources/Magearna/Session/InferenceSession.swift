@@ -116,39 +116,12 @@ public final class InferenceSession : Sendable {
         self.inputNames = try session.inputNames()
         self.outputNames = try session.outputNames()
         
-        self.sidecar = switch model.suiteCategory {
-        case .facialRecognition:
-            switch model.category {
-            case .detection: .retinaFace(
-                .init(outputNamesCount: self.outputNames.count)
-            )
-            case .recognition: .arcFace(
-                try .init(
-                    model: model,
-                    cacheDirectory: cacheDirectory,
-                    isCoreMLExecutionProviderEnabled: executionProvider == .coreML
-                )
-            )
-            default: fatalError("Unsupported sidecar: \(model.id)")
-            }
-        case .search:
-            switch model.category {
-            case .visual: .visualSearch(
-                try .init(model: model, cacheDirectory: cacheDirectory)
-            )
-            case .textual: .textualSearch(
-                try .init(model: model, cacheDirectory: cacheDirectory)
-            )
-            default: fatalError("Unsupported sidecar: \(model.id)")
-            }
-        case .characterRecognition:
-            switch model.category {
-            case .recognition: .rapidCharacterRecognition(
-                try .init(model: model, cacheDirectory: cacheDirectory)
-            )
-            default: nil
-            }
-        }
+        self.sidecar = try .create(
+            model: model,
+            cacheDirectory: cacheDirectory,
+            outputNamesCount: self.outputNames.count,
+            isCoreMLExecutionProviderEnabled: executionProvider == .coreML
+        )
     }
 }
 

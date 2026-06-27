@@ -10,7 +10,7 @@ import ONNXRuntime
 
 struct RapidCharacterRecognition : CharacterRecognitionFunction {
     private let session: InferenceSession
-    private let sidecar: RapidCharacterRecognitionSidecar
+    private let sidecar: Sidecar
     
     init(session: InferenceSession) {
         self.session = session
