@@ -9,6 +9,8 @@ import Foundation
 
 public extension InferenceModelSuite.Provider {
     protocol Endpoint : Sendable {
+        static var provider: InferenceModelSuite.Provider { get }
+        
         func homepageURL(of suite: InferenceModelSuite) -> URL
     }
     
@@ -22,6 +24,10 @@ public extension InferenceModelSuite.Provider {
     }
     
     protocol MirrorableEndpoint : Endpoint {
+        static var defaultBaseURL: URL { get }
+        
         init(baseURL: URL)
+        
+        func verify() async throws -> Bool
     }
 }

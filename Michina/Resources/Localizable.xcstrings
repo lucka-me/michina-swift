@@ -897,6 +897,66 @@
         }
       }
     },
+    "InferenceServiceSettingsTab.Endpoints" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Endpoint"
+          }
+        }
+      }
+    },
+    "InferenceServiceSettingsTab.Endpoints.Footer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Endpoints are where Michina queries information and download models from. Some websites provide “mirror” of Hugging Face, which may provide better access in some situation like behind a Fire Wall."
+          }
+        }
+      }
+    },
+    "InferenceServiceSettingsTab.Endpoints.ImmichApp" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hugging Face"
+          }
+        }
+      }
+    },
+    "InferenceServiceSettingsTab.Endpoints.Provider %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For models by %@"
+          }
+        }
+      }
+    },
+    "InferenceServiceSettingsTab.Endpoints.Verified" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verified"
+          }
+        }
+      }
+    },
+    "InferenceServiceSettingsTab.Endpoints.Verify" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verify"
+          }
+        }
+      }
+    },
     "InferenceServiceSettingsTab.ExecutionProviders" : {
       "localizations" : {
         "en" : {

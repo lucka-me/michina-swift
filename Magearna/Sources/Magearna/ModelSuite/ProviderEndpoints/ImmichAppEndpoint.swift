@@ -11,6 +11,10 @@ import SwiftProtobuf
 
 public extension InferenceModelSuite.Provider {
     struct ImmichAppEndpoint : ExternalEndpoint, MirrorableEndpoint {
+        public static let provider = InferenceModelSuite.Provider.immichApp
+        
+        public static let defaultBaseURL = URL(string: "https://huggingface.co")!
+        
         private let baseURL: URL
         
         public init(baseURL: URL) {
@@ -121,6 +125,22 @@ public extension InferenceModelSuite.Provider {
                 try Self.addBatchDimension(for: model, in: cacheDirectory)
             }
         }
+        
+        public func verify() async throws -> Bool {
+            let request = HTTPRequest(
+                method: .head,
+                url: baseURL
+                    .appending(components: "api", "trending")
+                    .appending(
+                        queryItems: [
+                            .init(name: "type", value: "model"),
+                            .init(name: "limit", value: "5"),
+                        ]
+                    )
+            )
+            let (_, response) = try await URLSession.shared.data(for: request)
+            return response.status.kind == .successful
+        }
     }
 }
 
@@ -162,7 +182,6 @@ Self == InferenceModelSuite.Provider.ImmichAppEndpoint {
 }
 
 fileprivate extension InferenceModelSuite.Provider.ImmichAppEndpoint {
-    static let defaultBaseURL = URL(string: "https://huggingface.co")!
     static let namespace = "immich-app"
 }
 

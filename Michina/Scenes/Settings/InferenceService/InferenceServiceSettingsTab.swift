@@ -16,6 +16,7 @@ struct InferenceServiceSettingsTab : TabContent {
             Form {
                 sessionSections
                 preloadModelsSection
+                endpointsSection
                 cacheSection
             }
             .frame(minWidth: 400, minHeight: 400)
@@ -130,8 +131,31 @@ fileprivate extension InferenceServiceSettingsTab {
     }
     
     func preloadableModels(in suite: InferenceModelSuite) -> [ InferenceModel ] {
-        suite.models
-            .compactMap { settings.preloadModels.contains($0.value) ? nil : $0.value }
+        InferenceModel.Category.allCases.compactMap { category in
+            guard
+                let model = suite.models[category],
+                !settings.preloadModels.contains(model)
+            else {
+                return nil
+            }
+            return model
+        }
+    }
+}
+
+fileprivate extension InferenceServiceSettingsTab {
+    @ViewBuilder
+    var endpointsSection: some View {
+        Section {
+            EndpointField<InferenceModelSuite.Provider.ImmichAppEndpoint>(
+                "InferenceServiceSettingsTab.Endpoints.ImmichApp",
+                url: $settings.immichAppEndpointURL
+            )
+        } header: {
+            Text("InferenceServiceSettingsTab.Endpoints")
+        } footer: {
+            Text("InferenceServiceSettingsTab.Endpoints.Footer")
+        }
     }
 }
 
@@ -152,5 +176,103 @@ fileprivate extension InferenceServiceSettingsTab {
         } footer: {
             Text("InferenceServiceSettingsTab.Cache.Footer")
         }
+    }
+}
+
+fileprivate struct EndpointField<
+    Endpoint: InferenceModelSuite.Provider.MirrorableEndpoint
+> : View {
+    @Binding private var url: URL?
+    
+    @Environment(\.alert) private var alert
+    
+    @State private var inputValue: URL?
+    
+    @State private var isVerified: Bool = false
+    @State private var progress: Progress? = nil
+    
+    private let titleKey: LocalizedStringKey
+    
+    init(_ titleKey: LocalizedStringKey, url: Binding<URL?>) {
+        self._url = url
+        self._inputValue = .init(initialValue: url.wrappedValue)
+        self.titleKey = titleKey
+    }
+    
+    var body: some View {
+        VStack(alignment: .trailing, spacing: 8) {
+            TextField(
+                titleKey,
+                value: $inputValue,
+                format: format,
+                prompt: Text(Endpoint.defaultBaseURL, format: format)
+            )
+            .onSubmit {
+                alert.whenTrying(verify)
+            }
+            
+            HStack(alignment: .firstTextBaseline) {
+                Text(
+                    """
+                    InferenceServiceSettingsTab.Endpoints.Provider \
+                    \(Text(Endpoint.provider.titleKey).italic())
+                    """
+                )
+                .foregroundStyle(.secondary)
+                
+                Spacer()
+                
+                Button {
+                    alert.whenTrying(verify)
+                } label: {
+                    if isVerified {
+                        Text("InferenceServiceSettingsTab.Endpoints.Verified")
+                            .foregroundStyle(.green)
+                    } else {
+                        Text("InferenceServiceSettingsTab.Endpoints.Verify")
+                    }
+                }
+                .disabled(inputValue == nil)
+                .opacity(progress != nil ? 0 : 1)
+                .overlay {
+                    if let progress {
+                        ProgressView(progress)
+                            .progressViewStyle(.circular)
+                    }
+                }
+                
+                Button(role: .destructive) {
+                    url = nil
+                    inputValue = nil
+                }
+                .disabled(url == nil)
+            }
+        }
+        .disabled(progress != nil)
+        .onChange(of: inputValue) {
+            isVerified = false
+        }
+    }
+    
+    private var format: URL.FormatStyle {
+        .url.path(.omitWhen(.path, matches: [ "", "/" ]))
+    }
+    
+    private func verify() async throws {
+        guard let inputValue else {
+            isVerified = false
+            return
+        }
+        progress = .init()
+        defer {
+            progress = nil
+        }
+        let endpoint = Endpoint(baseURL: inputValue)
+        guard try await endpoint.verify() else {
+            isVerified = false
+            return
+        }
+        isVerified = true
+        url = inputValue
     }
 }

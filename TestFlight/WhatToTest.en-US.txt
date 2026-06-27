@@ -5,6 +5,7 @@ Build #17
 - Added: Automatically Unload can be disabled by setting the lifespan to zero (0)
 - Added: Option to launch at login
 - Added: Support M-CLIP models
+- Added: Option to set endpoint of Hugging Face
 - Changed: Verified all Smart Search models
 
 Build #16

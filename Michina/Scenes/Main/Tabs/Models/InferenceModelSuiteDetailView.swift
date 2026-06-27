@@ -13,6 +13,7 @@ struct InferenceModelSuiteDetailView : View {
     @Environment(\.openWindow) private var openWindow
     
     @State private var cache = InferenceService.default.cache
+    @State private var settings = InferenceServiceSettings.shared
     
     private let suite: InferenceModelSuite
     
@@ -84,7 +85,7 @@ fileprivate extension InferenceModelSuiteDetailView {
     var homepageURL: URL {
         let endpoint: InferenceModelSuite.Provider.Endpoint
         endpoint = switch suite.provider {
-        case .immichApp: .immichApp
+        case .immichApp: settings.immichAppEndpoint
         case .rapidOCR: .rapidOCR
         case .apple: .apple
         }

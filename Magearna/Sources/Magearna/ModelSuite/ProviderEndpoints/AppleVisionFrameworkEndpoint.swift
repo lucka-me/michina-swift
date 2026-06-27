@@ -9,6 +9,8 @@ import Foundation
 
 public extension InferenceModelSuite.Provider {
     struct AppleVisionFrameworkEndpoint : Endpoint {
+        public static let provider = InferenceModelSuite.Provider.apple
+        
         private init() {
             
         }

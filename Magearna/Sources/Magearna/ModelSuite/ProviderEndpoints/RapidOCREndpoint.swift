@@ -10,6 +10,8 @@ import HTTPTypesFoundation
 
 public extension InferenceModelSuite.Provider {
     struct RapidOCREndpoint : InferenceModelSuite.Provider.ExternalEndpoint {
+        public static let provider = InferenceModelSuite.Provider.rapidOCR
+        
         private init() {
             
         }

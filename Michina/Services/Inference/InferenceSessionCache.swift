@@ -245,7 +245,7 @@ fileprivate extension InferenceSessionCache {
         do {
             let endpoint: InferenceModelSuite.Provider.ExternalEndpoint?
             endpoint = switch suite.provider {
-            case .immichApp: .immichApp
+            case .immichApp: settings.immichAppEndpoint
             case .rapidOCR: .rapidOCR
             case .apple: nil
             }
