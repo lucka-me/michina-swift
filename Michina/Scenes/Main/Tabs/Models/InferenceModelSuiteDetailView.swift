@@ -59,7 +59,7 @@ fileprivate extension InferenceModelSuiteDetailView {
     @ViewBuilder
     var linksSection: some View {
         Section {
-            Link("InferenceModelSuiteDetailView.Links.Homepage", destination: suite.homepageURL)
+            Link("InferenceModelSuiteDetailView.Links.Homepage", destination: homepageURL)
             if !suite.isBuiltin {
                 let directoryURL = suite.directoryURL(in: cache.cacheDirectory)
                 if FileManager.default.fileExists(at: directoryURL) {
@@ -79,6 +79,16 @@ fileprivate extension InferenceModelSuiteDetailView {
             }
         }
         .buttonStyle(.link)
+    }
+    
+    var homepageURL: URL {
+        let endpoint: InferenceModelSuite.Provider.Endpoint
+        endpoint = switch suite.provider {
+        case .immichApp: .immichApp
+        case .rapidOCR: .rapidOCR
+        case .apple: .apple
+        }
+        return endpoint.homepageURL(of: suite)
     }
 }
 

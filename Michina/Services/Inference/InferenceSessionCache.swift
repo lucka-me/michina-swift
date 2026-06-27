@@ -14,7 +14,7 @@ final class InferenceSessionCache {
     nonisolated let cacheDirectory: URL
     
     private(set) var loadProgresses: [ InferenceModel : Progress ] = [ : ]
-    private(set) var fetchProgresses: [ ModelSuite : Progress ] = [ : ]
+    private(set) var fetchProgresses: [ InferenceModelSuite : Progress ] = [ : ]
     
     private(set) var sessions: [ InferenceModel : InferenceSession ] = [ : ]
     
@@ -22,7 +22,7 @@ final class InferenceSessionCache {
     private var loadContinuations: [ InferenceModel : [ CheckedContinuation<InferenceSession, Error> ] ] = [ : ]
     
     @ObservationIgnored
-    private var fetchContinuations: [ ModelSuite : [ CheckedContinuation<Void, Error> ] ] = [ : ]
+    private var fetchContinuations: [ InferenceModelSuite : [ CheckedContinuation<Void, Error> ] ] = [ : ]
     
     private let fetchTaskGroup: ConstrainedTaskGroup<Void>
     
@@ -54,10 +54,6 @@ final class InferenceSessionCache {
             }
         }
     }
-}
-
-extension InferenceSessionCache {
-    typealias ModelSuite = InferenceModelSuite
 }
 
 extension InferenceSessionCache {
@@ -229,9 +225,9 @@ fileprivate extension InferenceSessionCache {
 }
 
 fileprivate extension InferenceSessionCache {
-    func fetch(suite: ModelSuite) async throws {
+    func fetch(suite: InferenceModelSuite) async throws {
         guard fetchContinuations[suite] == nil else {
-            let _: Void = try await withCheckedThrowingContinuation {
+            try await withCheckedThrowingContinuation {
                 fetchContinuations[suite]!.append($0)
             }
             return
@@ -247,7 +243,15 @@ fileprivate extension InferenceSessionCache {
         }
         
         do {
-            try await suite.fatch(
+            let endpoint: InferenceModelSuite.Provider.ExternalEndpoint?
+            endpoint = switch suite.provider {
+            case .immichApp: .immichApp
+            case .rapidOCR: .rapidOCR
+            case .apple: nil
+            }
+            
+            try await endpoint?.fetch(
+                suite: suite,
                 to: cacheDirectory,
                 with: fetchTaskGroup,
                 reporting: progress

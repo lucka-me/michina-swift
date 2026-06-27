@@ -29,42 +29,4 @@ public extension InferenceModelSuite {
     @inlinable var isBuiltin: Bool {
         provider.isBuiltin
     }
-    
-    var homepageURL: URL {
-        provider.endpoint.homepageURL(of: self)
-    }
-    
-    func fatch(
-        to cacheDirectory: URL,
-        with taskScheduling: some ConstrainedTaskScheduling,
-        reporting progress: Progress? = nil
-    ) async throws {
-        try await provider.endpoint.fetch(
-            suite: self,
-            to: cacheDirectory,
-            with: taskScheduling,
-            reporting: progress
-        )
-    }
-}
-
-extension InferenceModelSuite.Provider {
-    var endpoint: any InferenceModelSuiteProviderEndpoint.Type {
-        switch self {
-        case .immichApp: ImmichAppEndpoint.self
-        case .rapidOCR: RapidOCREndpoint.self
-        case .apple: AppleVisionFrameworkEndpoint.self
-        }
-    }
-}
-
-protocol InferenceModelSuiteProviderEndpoint {
-    static func fetch(
-        suite: InferenceModelSuite,
-        to cacheDirectory: URL,
-        with taskScheduling: some ConstrainedTaskScheduling,
-        reporting progress: Progress?
-    ) async throws
-    
-    static func homepageURL(of suite: InferenceModelSuite) -> URL
 }

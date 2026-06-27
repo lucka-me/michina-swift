@@ -7,17 +7,26 @@
 
 import Foundation
 
-enum AppleVisionFrameworkEndpoint : InferenceModelSuiteProviderEndpoint {
-    static func fetch(
-        suite: InferenceModelSuite,
-        to cacheDirectory: URL,
-        with taskScheduling: some ConstrainedTaskScheduling,
-        reporting progress: Progress?
-    ) async throws {
+public extension InferenceModelSuite.Provider {
+    struct AppleVisionFrameworkEndpoint : Endpoint {
+        private init() {
+            
+        }
         
+        public func homepageURL(of suite: InferenceModelSuite) -> URL {
+            .init(string: "https://developer.apple.com/documentation/vision")!
+        }
     }
-    
-    static func homepageURL(of suite: InferenceModelSuite) -> URL {
-        .init(string: "https://developer.apple.com/documentation/vision")!
+}
+
+public extension InferenceModelSuite.Provider.AppleVisionFrameworkEndpoint {
+    static let `default` = Self.init()
+}
+
+public extension InferenceModelSuite.Provider.Endpoint where
+Self == InferenceModelSuite.Provider.AppleVisionFrameworkEndpoint
+{
+    @inlinable static var apple: Self {
+        .default
     }
 }
