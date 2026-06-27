@@ -77,9 +77,10 @@ public extension InferenceModelSuite {
                 
                 "ViT-SO400M-14-SigLIP-384__webli"
             }
-            immichApp(in: .search, areVerified: false) {
-                // TODO: Verify all models...
+            immichApp(in: .search) {
                 "XLM-Roberta-Base-ViT-B-32__laion5b_s13b_b90k"
+            }
+            immichApp(in: .search, compatibility: .inefficient) {
                 "XLM-Roberta-Large-ViT-H-14__frozen_laion5b_s13b_b90k"
             }
             immichApp(in: .search) {
@@ -117,10 +118,26 @@ public extension InferenceModelSuite {
                 "ViT-gopt-16-SigLIP2-256__webli"
                 "ViT-gopt-16-SigLIP2-384__webli"
             }
-            immichApp(in: .search, areVerified: false) {
+            immichApp(
+                in: .search,
+                compatibilities: [
+                    .visual : .inefficient,
+                    .textual : .compatible
+                ]
+            ) {
                 "LABSE-Vit-L-14"
+            }
+            immichApp(
+                in: .search,
+                compatibilities: [
+                    .visual : .compatible,
+                    .textual : .inefficient
+                ]
+            ) {
                 "XLM-Roberta-Large-Vit-B-16Plus"
                 "XLM-Roberta-Large-Vit-B-32"
+            }
+            immichApp(in: .search, compatibility: .inefficient) {
                 "XLM-Roberta-Large-Vit-L-14"
             }
         },

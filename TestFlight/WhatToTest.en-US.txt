@@ -5,7 +5,7 @@ Build #17
 - Added: Automatically Unload can be disabled by setting the lifespan to zero (0)
 - Added: Option to launch at login
 - Added: Support M-CLIP models
-- Changed: Verified NLLB and ViT Smart Search models
+- Changed: Verified all Smart Search models
 
 Build #16
 - Fixed: App crash when run Textual Smart Search inference in Inference window
