@@ -12,7 +12,7 @@ import Tokenizers
 public actor TextualSearchInferencePipeline : InferencePipeline {
     public static let category = InferenceModelSuite.Category.search
     
-    public private(set) var modelReports: [InferencePipelineModelReport] = [ ]
+    public private(set) var modelReports: [ InferencePipelineModelReport ] = [ ]
     
     private let input: Input
     
@@ -36,7 +36,9 @@ public actor TextualSearchInferencePipeline : InferencePipeline {
         
         self.session = session
         guard case let .textualSearch(sidecar) = session.sidecar else {
-            fatalError("The session doesn't contain TextualSearchInferencePipeline.Configurations.")
+            fatalError(
+                "The session doesn't contain TextualSearchInferencePipeline.Configurations."
+            )
         }
         self.sidecar = sidecar
         
@@ -45,18 +47,34 @@ public actor TextualSearchInferencePipeline : InferencePipeline {
     
     public func run() throws -> Output {
         guard let session, let sidecar else {
-            fatalError("TextualSearchInferencePipeline.prepared() was not called.")
+            fatalError(
+                "TextualSearchInferencePipeline.prepared() was not called."
+            )
         }
         
         let elapse = try ContinuousClock().measure {
-            let ids = try sidecar.encode(text: input.text, language: input.language)
-            let inputValue = try ORTValue(
-                tensorData: .init(data: ids.withUnsafeBufferPointer { .init(buffer: $0) }),
+            let encoding = try sidecar.encode(text: input.text, language: input.language)
+            var inputs: [ String : ORTValue ] = [ : ]
+            inputs[session.inputNames[0]] = try ORTValue(
+                tensorData: .init(
+                    data: encoding.ids.withUnsafeBufferPointer { .init(buffer: $0) }
+                ),
                 elementType: .int32,
-                shape: [ 1, ids.count as NSNumber ]
+                shape: [ 1, encoding.ids.count as NSNumber ]
             )
+            if session.inputNames.count == 2 {
+                inputs[session.inputNames[1]] = try ORTValue(
+                    tensorData: .init(
+                        data: encoding
+                            .attentionMask
+                            .withUnsafeBufferPointer { .init(buffer: $0) }
+                    ),
+                    elementType: .int32,
+                    shape: [ 1, encoding.attentionMask.count as NSNumber ]
+                )
+            }
             let outputs = try session.session.run(
-                withInputs: [ session.inputNames[0] : inputValue ],
+                withInputs: inputs,
                 outputNames: .init(session.outputNames),
                 runOptions: nil
             )
@@ -88,6 +106,11 @@ public extension TextualSearchInferencePipeline {
 }
 
 fileprivate extension TextualSearchSidecar {
+    struct Encoding {
+        let ids: [ Int32 ]
+        let attentionMask: [ Int32 ]
+    }
+    
     static let floresCodes: [ String : String ] = [
         "af": "afr_Latn",
         "ar": "arb_Arab",
@@ -147,7 +170,7 @@ fileprivate extension TextualSearchSidecar {
         "zh-TW": "zho_Hant",
     ]
     
-    func encode(text: String, language: String?) throws -> [ Int32 ] {
+    func encode(text: String, language: String?) throws -> Encoding {
         var cleanText = clear(text: text)
         let indexOffsets: (start: Int, end: Int)
         if shouldPrependLanguage {
@@ -173,10 +196,16 @@ fileprivate extension TextualSearchSidecar {
             indexOffsets = (0, 0)
         }
         let encoding = try tokenizer.encodeText(cleanText)
-        return encoding.ids[
-            encoding.ids.startIndex + indexOffsets.start ..<
-            encoding.ids.endIndex + indexOffsets.end
-        ].map { Int32($0.uint32Value) }
+        return .init(
+            ids: encoding.ids[
+                encoding.ids.startIndex + indexOffsets.start ..<
+                encoding.ids.endIndex + indexOffsets.end
+            ].map { Int32($0.uint32Value) },
+            attentionMask: encoding.attentionMask[
+                encoding.attentionMask.startIndex + indexOffsets.start ..<
+                encoding.attentionMask.endIndex + indexOffsets.end
+            ].map { Int32($0.uint32Value) }
+        )
     }
     
     private func clear(text: String) -> String {
