@@ -126,28 +126,20 @@ fileprivate extension RapidCharacterRecognition {
             }
         }
         
-        let transformedImage = image
-            .transformed(
-                by: .similarityTransform(
-                    from: source.map { $0.verticallyFlipped(in: image.extent.size) },
-                    to: [
-                        CGPoint(x: destinationRect.minX, y: destinationRect.minY),
-                        CGPoint(x: destinationRight, y: destinationRect.minY),
-                        
-                        CGPoint(x: destinationRight, y: destinationBottom),
-                        CGPoint(x: destinationRect.minX, y: destinationBottom),
-                    ].map { $0.verticallyFlipped(in: image.extent.size) }
-                )
+        let destinationLeft = destinationRect.origin.x
+        let destinationTop = destinationRect.origin.y
+        let destination: [ CGPoint ] = [
+            .init(x: destinationLeft, y: destinationTop),
+            .init(x: destinationRight, y: destinationTop),
+            .init(x: destinationRight, y: destinationBottom),
+            .init(x: destinationLeft, y: destinationBottom),
+        ]
+        let transformedImage = image.transformed(
+            by: .similarityTransform(
+                from: source.map { $0.verticallyFlipped(in: image.extent.size) },
+                to: destination.map { $0.verticallyFlipped(in: image.extent.size) }
             )
-            .cropped(
-                to: .init(
-                    origin: destinationRect.origin,
-                    size: .init(
-                        width: destinationRight - destinationRect.minX,
-                        height: destinationBottom - destinationRect.minY
-                    )
-                ).verticallyFlipped(in: image.extent.size)
-            )
+        )
         
         guard
             let cgImage = CIContext.pipelineShared.createCGImage(

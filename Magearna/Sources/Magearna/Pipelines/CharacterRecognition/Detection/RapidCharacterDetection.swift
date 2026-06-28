@@ -127,7 +127,7 @@ fileprivate extension RapidCharacterDetection {
             let cgImage = CIContext.pipelineShared.createCGImage(
                 scaledImage,
                 from: .init(
-                    origin: scaledImage.extent.origin,
+                    origin: image.extent.origin,
                     size: scaledSize
                 )
             )

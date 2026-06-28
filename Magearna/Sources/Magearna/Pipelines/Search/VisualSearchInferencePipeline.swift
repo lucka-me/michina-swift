@@ -40,7 +40,9 @@ public actor VisualSearchInferencePipeline : InferencePipeline {
         
         self.session = session
         guard case let .visualSearch(sidecar) = session.sidecar else {
-            fatalError("The session doesn't contain VisualSearchInferencePipeline.Configurations.")
+            fatalError(
+                "The session doesn't contain VisualSearchInferencePipeline.Sidecar."
+            )
         }
         self.sidecar = sidecar
         
@@ -55,6 +57,8 @@ public actor VisualSearchInferencePipeline : InferencePipeline {
         let elapse = try ContinuousClock().measure {
             let processedImage = try sidecar
                 .process(image: input.image)
+            // There is a "mode" : "RGB" in preprocess_cfg.json, will there be any exception like
+            // BGR?
             let data = try processedImage
                 .decodeForONNX(
                     means: sidecar.decodeMeans,
@@ -123,15 +127,26 @@ fileprivate extension VisualSearchInferencePipeline.Sidecar {
         let imageSize = image.extent.size
         let scale: CGFloat
         let aspectRatio: CGFloat
+        let origin: CGPoint
         switch resizeMode {
         case .squash:
             scale = inputSize.height / imageSize.height
             aspectRatio = (inputSize.width / imageSize.width) / scale
+            origin = image.extent.origin
         case .shortest:
-            scale = if imageSize.ratio > inputSize.ratio {
-                inputSize.width / imageSize.width
+            // Center the image in the frame
+            if imageSize.ratio > inputSize.ratio {
+                scale = inputSize.width / imageSize.width
+                origin = .init(
+                    x: image.extent.origin.x,
+                    y: image.extent.origin.y - (inputSize.height - imageSize.height * scale) / 2
+                )
             } else {
-                inputSize.height / imageSize.height
+                scale = inputSize.height / imageSize.height
+                origin = .init(
+                    x: image.extent.origin.x - (inputSize.width - imageSize.width * scale) / 2,
+                    y: image.extent.origin.y
+                )
             }
             aspectRatio = 1
         }
@@ -140,38 +155,31 @@ fileprivate extension VisualSearchInferencePipeline.Sidecar {
         switch interpolation {
         case .bicubic:
             let scaleFilter = CIFilter.bicubicScaleTransform()
-            scaleFilter.inputImage = image
             scaleFilter.scale = .init(scale)
             scaleFilter.aspectRatio = .init(aspectRatio)
+            
+            scaleFilter.inputImage = image
             scaledImage = scaleFilter.outputImage
         case .lanczos:
             let scaleFilter = CIFilter.lanczosScaleTransform()
-            scaleFilter.inputImage = image
             scaleFilter.scale = .init(scale)
             scaleFilter.aspectRatio = .init(aspectRatio)
+            
+            scaleFilter.inputImage = image
             scaledImage = scaleFilter.outputImage
         }
-        // TODO: Figure out how to generate a correct size
-        // The scale and aspectRatio is not 100% precise, the size of scaledImage may not match
-        // inputSize
         guard let scaledImage else {
             throw .runtime("Unable to resize the image")
         }
+        
+        // The scale and aspectRatio is not 100% precise, the size of scaledImage may not match
+        // inputSize
+        // There is a "fill_color" : 0 in preprocess_cfg.json, should we composite the image over
+        // it? How about images with transparant part?
         guard
             let cgImage = CIContext.pipelineShared.createCGImage(
-                scaledImage.composited(over: .black),
-                from: .init(
-                    // Core Graphics: Origin at Lower-Left
-                    // vImage and other: Origin at Upper-Left
-                    // So we need to move the origin down to keep the CGImage filled from top row
-                    // Both x grows right
-                    origin: .init(
-                        x: scaledImage.extent.origin.x,
-                        y: scaledImage.extent.origin.y
-                            - (inputSize.height - scaledImage.extent.height)
-                    ),
-                    size: inputSize
-                )
+                scaledImage,
+                from: .init(origin: origin, size: inputSize)
             )
         else {
             throw .runtime("Unable to create CGImage")

@@ -71,10 +71,21 @@ fileprivate extension RetinaFace {
 fileprivate extension RetinaFace {
     func scale(image: CIImage) throws -> (image: CGImage, scale: Double) {
         let imageSize = image.extent.size
-        let scale: CGFloat = if imageSize.ratio > StaticConfigurations.inputSize.ratio {
-            StaticConfigurations.inputSize.width / imageSize.width
+        let scale: CGFloat
+        let origin: CGPoint
+        if imageSize.ratio > StaticConfigurations.inputSize.ratio {
+            scale = StaticConfigurations.inputSize.width / imageSize.width
+            // Core Graphics: Origin at Lower-Left
+            // vImage and other: Origin at Upper-Left
+            // So we need to move the origin down to keep the CGImage filled from top row
+            // Both x grows right
+            origin = .init(
+                x: image.extent.origin.x,
+                y: image.extent.origin.y - (StaticConfigurations.inputSize.height - imageSize.height * scale)
+            )
         } else {
-            StaticConfigurations.inputSize.height / imageSize.height
+            scale = StaticConfigurations.inputSize.height / imageSize.height
+            origin = image.extent.origin
         }
         
         let scaleFilter = CIFilter.lanczosScaleTransform()
@@ -87,18 +98,7 @@ fileprivate extension RetinaFace {
         guard
             let cgImage = CIContext.pipelineShared.createCGImage(
                 scaledImage,
-                from: .init(
-                    // Core Graphics: Origin at Lower-Left
-                    // vImage and other: Origin at Upper-Left
-                    // So we need to move the origin down to keep the CGImage filled from top row
-                    // Both x grows right
-                    origin: .init(
-                        x: scaledImage.extent.origin.x,
-                        y: scaledImage.extent.origin.y
-                            - (StaticConfigurations.inputSize.height - scaledImage.extent.height)
-                    ),
-                    size: StaticConfigurations.inputSize
-                )
+                from: .init(origin: origin, size: StaticConfigurations.inputSize)
             )
         else {
             throw .runtime("Unable to create CGImage")
