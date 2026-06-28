@@ -8,7 +8,7 @@
 import Foundation
 
 extension FormatStyle where Self == IntegerFormatStyle<Int> {
-    static var port: IntegerFormatStyle<Int> {
+    static var port: Self {
         .number.grouping(.never)
     }
 }

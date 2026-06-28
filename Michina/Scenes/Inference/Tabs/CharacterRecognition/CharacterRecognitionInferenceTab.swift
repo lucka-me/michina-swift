@@ -382,8 +382,18 @@ fileprivate extension CharacterRecognitionInferenceTab {
                             )
                         
                         HStack(spacing: 8) {
-                            Text("CharacterRecognitionInferenceTab.Output.ShapeConfidence \(box.data.shape.confidence, format: .percent.precision(.fractionLength(2)))")
-                            Text("CharacterRecognitionInferenceTab.Output.TextConfidence \(box.data.text.confidence, format: .percent.precision(.fractionLength(2)))")
+                            Text(
+                                """
+                                CharacterRecognitionInferenceTab.Output.ShapeConfidence \
+                                \(box.data.shape.confidence, format: .confidence)
+                                """
+                            )
+                            Text(
+                                """
+                                CharacterRecognitionInferenceTab.Output.TextConfidence \
+                                \(box.data.text.confidence, format: .confidence)
+                                """
+                            )
                         }
                         .font(.system(.caption, design: .monospaced))
                         .padding(.horizontal, 4)

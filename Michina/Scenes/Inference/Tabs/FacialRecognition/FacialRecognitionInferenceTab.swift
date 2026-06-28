@@ -412,10 +412,7 @@ fileprivate extension FacialRecognitionInferenceTab {
                 }
                 .safeAreaInset(edge: .bottom, spacing: 4) {
                     VStackLayout(spacing: 2) {
-                        Text(
-                            face.data.geometry.confidence,
-                            format: .percent.precision(.fractionLength(2))
-                        )
+                        Text(face.data.geometry.confidence, format: .confidence)
                         if let distance {
                             Text(distance, format: .number.precision(.fractionLength(4)))
                         }
