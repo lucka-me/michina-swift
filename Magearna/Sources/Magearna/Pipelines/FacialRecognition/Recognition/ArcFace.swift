@@ -29,7 +29,6 @@ extension ArcFace {
     typealias Output = [ Embedding ]
     
     func identify(faces: [ FaceGeometry ], in image: CIImage) throws -> Output {
-        // TODO: Convert to task group
         let dataBatch = try faces
             .map { try normalize(face: $0, in: image) }
             .map {
@@ -86,18 +85,20 @@ fileprivate extension ArcFace {
                 )
             )
         } else {
-            // TODO: Check if the transform anchor is (0, 0)
-            transformedImage = image.transformed(
-                by: .identity
-                    .translatedBy(
-                        x: -face.boundingBox.minX,
-                        y: -(image.extent.height - face.boundingBox.maxY)
-                    )
+            // Each transform should anchor to (0, 0), use concatenating(:)
+            // If use translate.scaledBy(x:y:) directly, the anchor will be the translated origin
+            let translate = CGAffineTransform.identity
+                .translatedBy(
+                    x: -face.boundingBox.minX,
+                    y: -(image.extent.height - face.boundingBox.maxY)
+                )
+            let scale = CGAffineTransform
+                .identity
                     .scaledBy(
                         x: StaticConfigurations.inputSize.width / face.boundingBox.width,
                         y: StaticConfigurations.inputSize.height / face.boundingBox.height
                     )
-            )
+            transformedImage = image.transformed(by: translate.concatenating(scale))
         }
         
         guard
