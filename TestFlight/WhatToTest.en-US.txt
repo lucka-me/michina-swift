@@ -1,12 +1,13 @@
 Welcome to Michina.
 
-Build #17
+Build #18
 - Added: Preload models when Michina launches, set models in Settings - Inference Service
 - Added: Automatically Unload can be disabled by setting the lifespan to zero (0)
 - Added: Option to launch at login
 - Added: Support M-CLIP models
 - Added: Option to set endpoint of Hugging Face
 - Changed: Verified all Smart Search models
+- Fixed: In Inference window, the OCR Character box rotation is incorrect
 
 Build #16
 - Fixed: App crash when run Textual Smart Search inference in Inference window

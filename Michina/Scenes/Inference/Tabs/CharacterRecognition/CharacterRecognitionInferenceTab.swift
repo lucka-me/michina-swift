@@ -444,8 +444,8 @@ fileprivate extension CGRect {
 
 fileprivate extension Quadrilateral {
     var rotationAngle: Angle {
-        let dx = self.topLeft.x - self.bottomLeft.x
-        let dy = self.topLeft.y - self.bottomLeft.y
+        let dx = self.bottomRight.x - self.bottomLeft.x
+        let dy = self.bottomRight.y - self.bottomLeft.y
         
         return if dx.isZero {
             .zero
