@@ -22,7 +22,6 @@ struct AppleVisionCharacterDetectionAnalyzer : CharacterDetectionFunction {
                 }
                 return .init(
                     confidence: observation.confidence,
-                    // TODO: The output points feels like scaled, check
                     item: .init(
                         topLeft: observation.topLeft
                             .verticallyFlipped()

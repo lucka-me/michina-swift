@@ -13,14 +13,16 @@ let package = Package(
     dependencies: [
         .package(name: "ONNXRuntime", path: "../ONNXRuntime"),
         .package(name: "Tokenizers", path: "../Tokenizers"),
-        .package(url: "https://github.com/apple/swift-http-types.git", from: "1.6.0"),
-        .package(url: "https://github.com/apple/swift-protobuf.git", from: "1.38.0"),
-        .package(url: "https://github.com/ml-explore/mlx-swift", from: "0.31.4"),
+        .package(url: "https://github.com/apple/swift-collections.git", .upToNextMajor(from: "1.6.0")),
+        .package(url: "https://github.com/apple/swift-http-types.git", .upToNextMajor(from: "1.6.0")),
+        .package(url: "https://github.com/apple/swift-protobuf.git", .upToNextMajor(from: "1.38.0")),
+        .package(url: "https://github.com/ml-explore/mlx-swift", .upToNextMajor(from: "0.31.4")),
     ],
     targets: [
         .target(
             name: "Magearna",
             dependencies: [
+                .product(name: "DequeModule", package: "swift-collections"),
                 .product(name: "HTTPTypesFoundation", package: "swift-http-types"),
                 .product(name: "MLX", package: "mlx-swift"),
                 .product(name: "ONNXRuntime", package: "ONNXRuntime"),

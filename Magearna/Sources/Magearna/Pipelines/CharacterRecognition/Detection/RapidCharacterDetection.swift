@@ -209,36 +209,35 @@ fileprivate extension RapidCharacterDetection {
             let rowRange = (Int(boundingBox.minY) ..< Int(boundingBox.maxY))
             let colRange = (Int(boundingBox.minX) ..< Int(boundingBox.maxX))
             let accumulated: (count: Int, confidence: Double) = rowRange.reduce(
-                (count: 0, confidence: 0.0)
+                into: (0, 0.0)
             ) { accumulated, row in
-                colRange.reduce(accumulated) { rowAccumulated, col in
+                accumulated = colRange.reduce(into: accumulated) { accumulated, col in
                     let point = CGPoint(
                         x: .init(col) / imageSize.width,
                         y: 1.0 - .init(row) / imageSize.height
                     )
-                    return if path.contains(point) {
-                        (
-                            rowAccumulated.count + 1,
-                            rowAccumulated.confidence + .init(confidences[row * bufferSize.width + col])
-                        )
-                    } else {
-                        rowAccumulated
+                    guard path.contains(point) else {
+                        return
                     }
+                    accumulated.count += 1
+                    accumulated.confidence += .init(
+                        confidences[row * bufferSize.width + col]
+                    )
                 }
             }
             
-            let boundingQuad = contour.boundingQuad
+            let boundingRectangle = contour.minimalBoundingRectangle()
             let quadrilateral = Quadrilateral(
-                topLeft: boundingQuad.topLeft
+                topLeft: boundingRectangle.topLeft
                     .verticallyFlipped()
                     .toImageCoordinates(originalImageSize),
-                topRight: boundingQuad.topRight
+                topRight: boundingRectangle.topRight
                     .verticallyFlipped()
                     .toImageCoordinates(originalImageSize),
-                bottomRight: boundingQuad.bottomRight
+                bottomRight: boundingRectangle.bottomRight
                     .verticallyFlipped()
                     .toImageCoordinates(originalImageSize),
-                bottomLeft: boundingQuad.bottomLeft
+                bottomLeft: boundingRectangle.bottomLeft
                     .verticallyFlipped()
                     .toImageCoordinates(originalImageSize)
             )

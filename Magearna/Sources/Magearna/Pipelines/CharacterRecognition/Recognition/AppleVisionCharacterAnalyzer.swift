@@ -28,7 +28,6 @@ actor AppleVisionCharacterAnalyzer :
             .map { observation in
                 .init(
                     confidence: observation.confidence,
-                    // TODO: The output shapes are weird, check
                     item: .init(
                         topLeft: observation.topLeft
                             .verticallyFlipped()
