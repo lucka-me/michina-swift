@@ -1,6 +1,7 @@
 Welcome to Michina.
 
 Build #19
+- Added: Deduplication for RapidOCR recognition
 - Fixed: Abnormal character boxes of text with slant using RapidOCR models
 - Fixed: Character boxes are presented incorrectly in the Inference window
 

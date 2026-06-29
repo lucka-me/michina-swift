@@ -10,6 +10,7 @@ import SwiftProtobuf
 
 extension RapidCharacterRecognition {
     struct Sidecar : Sendable {
+        // Should it be [ Character ]?
         let characters: [ String ]
         
         init(model: InferenceModel, cacheDirectory: URL) throws {

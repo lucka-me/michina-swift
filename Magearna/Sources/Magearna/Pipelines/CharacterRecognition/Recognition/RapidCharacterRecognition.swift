@@ -166,27 +166,38 @@ fileprivate extension RapidCharacterRecognition {
         return stride(from: flatValues.startIndex, to: flatValues.endIndex, by: lengthPerItem)
             .map { itemIndex in
                 let itemSlice = flatValues[itemIndex ..< itemIndex + lengthPerItem]
-                let tokens = stride(from: itemSlice.startIndex, to: itemSlice.endIndex, by: lengthPerToken)
-                    .map { tokenIndex -> (character: String, confidence: Float) in
-                        let element = itemSlice[tokenIndex ..< tokenIndex + lengthPerToken]
-                            .enumerated()
-                            .max { $0.element < $1.element }!
-                        return (
-                            character: sidecar.characters[element.offset],
-                            confidence: element.element
-                        )
-                    }
-                    .reduce(into: (text: "", confidence: Float.zero)) { partial, token in
-                        partial.text.append(token.character)
-                        partial.confidence += token.confidence
-                    }
-                
-                let confidence = tokens.confidence / .init(tokensPerItem)
-                return if confidence >= minimalConfidence, !tokens.text.isEmpty {
-                    .init(confidence: confidence, item: tokens.text)
-                } else {
-                    nil
+                let (text, accumulatedConfidence) = stride(
+                    from: itemSlice.startIndex,
+                    to: itemSlice.endIndex,
+                    by: lengthPerToken
+                )
+                .map { tokenIndex -> (character: String, confidence: Float) in
+                    let element = itemSlice[tokenIndex ..< tokenIndex + lengthPerToken]
+                        .enumerated()
+                        .max { $0.element < $1.element }!
+                    return (
+                        character: sidecar.characters[element.offset],
+                        confidence: element.element
+                    )
                 }
+                .reduce(into: (text: "", confidence: Float.zero)) { partial, token in
+                    guard !partial.text.hasSuffix(token.character) else {
+                        // Duplicated
+                        return
+                    }
+                    partial.text.append(token.character)
+                    partial.confidence += token.confidence
+                }
+                
+                guard !text.isEmpty else {
+                    return nil
+                }
+                
+                let confidence = accumulatedConfidence / .init(text.count)
+                guard confidence >= minimalConfidence else {
+                    return nil
+                }
+                return .init(confidence: confidence, item: text)
             }
     }
 }
