@@ -16,13 +16,13 @@ public struct Quadrilateral : Sendable, QuadrilateralShape {
 
 public extension Quadrilateral {
     var boundingBox: CGRect {
-        let allX = [ topLeft.x, topRight.x, bottomRight.x, bottomLeft.x ]
-        let allY = [ topLeft.y, topRight.y, bottomRight.y, bottomLeft.y ]
+        let allX = [ topLeft.x, topRight.x, bottomRight.x, bottomLeft.x ].sorted()
+        let allY = [ topLeft.y, topRight.y, bottomRight.y, bottomLeft.y ].sorted()
         
-        let minX = allX.min()!
-        let minY = allY.min()!
-        let maxX = allX.max()!
-        let maxY = allY.max()!
+        let minX = allX.first!
+        let minY = allY.first!
+        let maxX = allX.last!
+        let maxY = allY.last!
         
         return .init(
             origin: .init(x: minX, y: minY),

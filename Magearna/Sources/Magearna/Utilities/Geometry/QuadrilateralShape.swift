@@ -23,6 +23,20 @@ public extension QuadrilateralShape {
     }
 }
 
+public extension QuadrilateralShape {
+    var height: Double {
+        max(topLeft.distance(to: bottomLeft), topRight.distance(to: bottomRight))
+    }
+    
+    var width: Double {
+        max(topLeft.distance(to: topRight), bottomLeft.distance(to: bottomRight))
+    }
+    
+    var ratio: Double {
+        width / height
+    }
+}
+
 extension QuadrilateralShape {
     var area: Double {
         let sides = [
@@ -43,20 +57,6 @@ extension QuadrilateralShape {
         + topRight.distance(to: bottomRight)
         + bottomRight.distance(to: bottomLeft)
         + bottomLeft.distance(to: topLeft)
-    }
-}
-
-extension QuadrilateralShape {
-    var height: Double {
-        max(topLeft.distance(to: bottomLeft), topRight.distance(to: bottomRight))
-    }
-    
-    var width: Double {
-        max(topLeft.distance(to: topRight), bottomLeft.distance(to: bottomRight))
-    }
-    
-    var ratio: Double {
-        width / height
     }
 }
 

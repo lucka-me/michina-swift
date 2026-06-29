@@ -2,6 +2,7 @@ Welcome to Michina.
 
 Build #19
 - Fixed: Abnormal character boxes of text with slant using RapidOCR models
+- Fixed: Character boxes are presented incorrectly in the Inference window
 
 Build #18
 - Added: Preload models when Michina launches, set models in Settings - Inference Service

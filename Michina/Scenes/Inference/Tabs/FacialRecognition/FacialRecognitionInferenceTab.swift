@@ -336,15 +336,17 @@ fileprivate extension FacialRecognitionInferenceTab {
                 .clipShape(.rect(cornerRadius: 12))
                 .overlay {
                     GeometryReader { proxy in
-                        let scale = proxy.size.width / output.inputImageSize.width
                         ForEach(output.faces) { face in
                             FaceRect(
                                 face: face,
-                                scale: scale,
                                 hovering: $hovering,
                                 selection: $selection
                             )
                         }
+                        .environment(
+                            \.scale,
+                             proxy.size.width / output.inputImageSize.width
+                        )
                     }
                 }
         }
@@ -354,17 +356,17 @@ fileprivate extension FacialRecognitionInferenceTab {
         @Binding var hovering: UUID?
         @Binding var selection: PresentableFace?
         
+        @Environment(\.scale) private var scale
+        
         @Environment(\.similarityMinimalDistance)
         private var similarityMinimalDistance
         
         @State var captionHeight = CGFloat.zero
         
         private let face: PresentableFace
-        private let scale: CGFloat
         
         init(
             face: PresentableFace,
-            scale: CGFloat,
             hovering: Binding<UUID?>,
             selection: Binding<PresentableFace?>
         ) {
@@ -372,7 +374,6 @@ fileprivate extension FacialRecognitionInferenceTab {
             self._selection = selection
             
             self.face = face
-            self.scale = scale
         }
         
         var body: some View {
@@ -395,10 +396,6 @@ fileprivate extension FacialRecognitionInferenceTab {
             
             RoundedRectangle(cornerRadius: 6)
                 .stroke(frameColor, lineWidth: 2)
-                .frame(
-                    width: face.data.geometry.item.boundingBox.width * scale,
-                    height: face.data.geometry.item.boundingBox.height * scale
-                )
                 .contentShape(.rect(cornerRadius: 6))
                 .onHover {
                     if $0 {
@@ -410,6 +407,10 @@ fileprivate extension FacialRecognitionInferenceTab {
                 .onTapGesture {
                     selection = face
                 }
+                .frame(
+                    width: face.data.geometry.item.boundingBox.width * scale,
+                    height: face.data.geometry.item.boundingBox.height * scale
+                )
                 .safeAreaInset(edge: .bottom, spacing: 4) {
                     VStackLayout(spacing: 2) {
                         Text(face.data.geometry.confidence, format: .confidence)
@@ -497,6 +498,7 @@ fileprivate extension FacialRecognitionInferenceTab.PresentableFace {
 }
 
 fileprivate extension EnvironmentValues {
+    @Entry var scale: CGFloat = 1.0
     @Entry var similarityMinimalDistance: Float = 5.0
 }
 

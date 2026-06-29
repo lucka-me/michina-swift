@@ -319,14 +319,16 @@ fileprivate extension CharacterRecognitionInferenceTab {
                 .clipShape(.rect(cornerRadius: 12))
                 .overlay {
                     GeometryReader { proxy in
-                        let scale = proxy.size.width / output.inputSize.width
                         ForEach(output.boxes) { box in
                             CharacterBoxQuadrilateral(
                                 box: box,
-                                scale: scale,
                                 hovering: $hovering
                             )
                         }
+                        .environment(
+                            \.scale,
+                             proxy.size.width / output.inputSize.width
+                        )
                     }
                 }
         }
@@ -335,42 +337,53 @@ fileprivate extension CharacterRecognitionInferenceTab {
     struct CharacterBoxQuadrilateral : View {
         @Binding var hovering: UUID?
         
+        @Environment(\.scale) private var scale
+        
         @State var captionHeight = CGFloat.zero
         
         private let box: PresentableCharacterBox
-        private let scale: CGFloat
+        private let boundingBox: CGRect
+        private let rotationAngle: Angle
         
         init(
             box: PresentableCharacterBox,
-            scale: CGFloat,
             hovering: Binding<UUID?>
         ) {
             self._hovering = hovering
             
             self.box = box
-            self.scale = scale
+            self.boundingBox = box.data.shape.item.boundingBox
+            self.rotationAngle = box.data.shape.item.rotationAngle
         }
         
         var body: some View {
             RoundedRectangle(cornerRadius: 6)
-                .rotation(box.data.shape.item.rotationAngle, anchor: .center)
-                .stroke(frameColor, lineWidth: 4)
-                .frame(
-                    width: box.data.shape.item.boundingBox.width * scale,
-                    height: box.data.shape.item.boundingBox.height * scale
+                .size(
+                    width: box.data.shape.item.width * scale,
+                    height: box.data.shape.item.height * scale,
+                    anchor: .center
                 )
+                .rotation(rotationAngle, anchor: .center)
+                .stroke(frameColor, lineWidth: 4)
                 .opacity(opacity)
                 .contentShape(
                     .rect(cornerRadius: 6)
-                    .rotation(box.data.shape.item.rotationAngle, anchor: .center)
+                    .rotation(rotationAngle, anchor: .center)
                 )
                 .onHover {
+                    // TODO: Fix hovering
+                    // contentShape seems not work well with rotated shape, maybe use
+                    // onContinuousHover + CGPath to track if it's inside the shape.
                     if $0 {
                         hovering = box.id
                     } else if hovering == box.id {
                         hovering = nil
                     }
                 }
+                .frame(
+                    width: boundingBox.width * scale,
+                    height: boundingBox.height * scale
+                )
                 .safeAreaInset(edge: .bottom, spacing: 4) {
                     VStack(spacing: 4) {
                         Text(box.data.text.item)
@@ -406,15 +419,10 @@ fileprivate extension CharacterRecognitionInferenceTab {
                     .opacity(hovering == box.id ? 1 : 0)
                 }
                 .zIndex(zIndex)
-                .position(position)
-        }
-        
-        private var position: CGPoint {
-            let boundingBox = box.data.shape.item.boundingBox
-            return .init(
-                x: boundingBox.centerX * scale,
-                y: boundingBox.centerY * scale + 2 + (captionHeight / 2)
-            )
+                .position(
+                    x: boundingBox.centerX * scale,
+                    y: boundingBox.centerY * scale + 2 + (captionHeight / 2)
+                )
         }
         
         private var opacity: CGFloat {
@@ -442,6 +450,10 @@ fileprivate extension CharacterRecognitionInferenceTab {
     }
 }
 
+fileprivate extension EnvironmentValues {
+    @Entry var scale: CGFloat = 1.0
+}
+
 fileprivate extension CGRect {
     var centerX: CGFloat {
         self.origin.x + (self.width / 2)
@@ -454,12 +466,12 @@ fileprivate extension CGRect {
 
 fileprivate extension Quadrilateral {
     var rotationAngle: Angle {
-        let dx = self.bottomRight.x - self.bottomLeft.x
-        let dy = self.bottomRight.y - self.bottomLeft.y
+        let dx = self.topRight.x - self.topLeft.x
+        let dy = self.topRight.y - self.topLeft.y
         
-        return if dx.isZero {
+        return if dy.isZero {
             .zero
-        } else if dy.isZero {
+        } else if dx.isZero {
             .degrees(90)
         } else {
             .radians(atan2(dy, dx))
