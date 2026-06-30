@@ -2,6 +2,8 @@
 
 set -e
 
+ls -R $CI_DERIVED_DATA_PATH
+
 sourceDirectory=$(realpath $(dirname $0))
 
 source $sourceDirectory/ci_env.sh
