@@ -1,0 +1,19 @@
+$color-background-light: white;
+$color-background-dark: black;
+$color-accent: #EF5350;
+
+:root {
+    --color-background: #{$color-background-light};
+    --color-primary: #{darken($color-background-light, 90%)};
+    --color-secondary: #{darken($color-background-light, 60%)};
+
+    --color-accent: #{lighten($color-accent, 10%)};
+
+    @media (prefers-color-scheme: dark) {
+        --color-background: #{$color-background-dark};
+        --color-primary: #{lighten($color-background-dark, 90%)};
+        --color-secondary: #{lighten($color-background-dark, 60%)};
+
+        --color-accent: #{darken($color-accent, 10%)};
+    }
+}

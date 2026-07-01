@@ -1,0 +1,40 @@
+@import url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/fontawesome.min.css);
+@import url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/brands.min.css);
+
+@import "color-scheme.scss";
+
+:root {
+    --body-horizontal-padding: 1.6rem;
+}
+
+html {
+    background-color: var(--color-background);
+    color: var(--color-primary);
+
+    font-family: 'SF Pro Text', Roboto, 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.5;
+}
+
+body {
+    margin: 0 auto;
+    max-width: 1024px;
+}
+
+main {
+    padding: 0.8rem var(--body-horizontal-padding);
+
+    img {
+        width: 100%;
+    }
+}
+
+.color-primary { color: var(--color-primary); }
+.color-secondary { color: var(--color-secondary); }
+.color-accent { color: var(--color-accent); }
+
+.text-center { text-align: center; }
+
+@import "components/anchor.scss";
+@import "components/heading.scss";
+
+@import "components/header.scss";

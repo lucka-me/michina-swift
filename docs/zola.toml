@@ -1,0 +1,41 @@
+base_url = "https://michina.lucka.dev"
+title = "Michina"
+description = "Immich Machine Learning Server on macOS."
+
+build_search_index = false
+compile_sass = true
+minify_html = true
+
+[markdown]
+external_links_target_blank = true
+lazy_async_image = true
+
+[extra]
+favicon = [
+    { path = "images/app-icon-dark.png", media = "(prefers-color-scheme: dark)" },
+    { path = "images/app-icon-light.png", media = "(prefers-color-scheme: light)" },
+]
+logo = {
+    sources = [
+        {
+            srcset = [
+                { path = "images/app-icon-dark.png", descriptors="2x" },
+            ],
+            media = "(prefers-color-scheme: dark)"
+        },
+        {
+            srcset = [
+                { path = "images/app-icon-light.png", descriptors="2x" },
+            ],
+            media = "(prefers-color-scheme: light)"
+        },
+    ],
+    fallback = "images/app-icon-light.png"
+}
+socials = [
+    { name = "GitHub", icon = "github", url = "https://github.com/lucka-me/michina-swift" },
+]
+nav = [
+    { name = "Privacy", path = "/privacy" },
+    { name = "Contact", path = "/contact" },
+]

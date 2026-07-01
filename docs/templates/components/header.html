@@ -1,0 +1,49 @@
+<header>
+    <div>
+        {% if config.extra.logo %}
+            {% if config.extra.logo is string %}
+                <img src="{{ get_url(path=config.extra.logo) }}" alt="{{ config.title }}" />
+            {% else %}
+                <picture>
+                    {% for source in config.extra.logo.sources %}
+                        <source
+                            srcset="
+                                {% for src in source.srcset %}
+                                    {{ get_url(path=src.path) }} {{ src.descriptors | default(value='') }},
+                                {% endfor %}
+                                "
+                            {% if source.type %}type="{{ source.type }}"{% endif %}
+                            {% if source.media %}media="{{ source.media }}"{% endif %}
+                            />
+                    {% endfor %}
+                    <img src="{{ get_url(path=config.extra.logo.fallback) }}" alt="{{ config.title }}" />
+                </picture>
+            {% endif %}
+        {% endif %}
+        <a href="{{ config.base_url }}">{{ config.title }}</a>
+    </div>
+
+    <div>
+        {% if config.extra.socials %}
+            <div class="socials">
+                {% for social in config.extra.socials %}
+                    <a href="{{ social.url }}" target="_blank">
+                        <i class="fa-brands fa-{{ social.icon }}"></i>
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if config.extra.nav %}
+            <nav>
+                <ul>
+                    {% for item in config.extra.nav %}
+                        <li>
+                            <a href="{{ get_url(path=item.path) }}">{{ item.name }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </nav>
+        {% endif %}
+    </div>
+</header>

@@ -1,0 +1,69 @@
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:locale" content="ja_JP">
+    <meta property="og:site_name" content="{{ config.title }}">
+
+    {% if current_url %}
+        <meta property="og:url" content="{{ current_url }}">
+        <link rel="canonical" href="{{ current_url }}"/>
+    {% endif %}
+
+    {% if page %}
+        {% set provider = page %}
+    {% else %}
+        {% set provider = section %}
+    {% endif %}
+
+    {% if provider.title %}
+        <title>{{ provider.title }} ｜ {{ config.title }}</title>
+        <meta property="og:title" content="{{ provider.title }} ｜ {{ config.title }}">
+    {% else %}
+        <title>{{ config.title }}</title>
+        <meta property="og:title" content="{{ config.title }}">
+    {% endif %}
+
+    {% if provider.description %}
+        <meta name="description" content="{{ provider.description }}" />
+        <meta property="og:description" content="{{ provider.description }}" />
+    {% elif provider.summary %}
+        <meta name="description" content="{{ provider.summary }}" />
+        <meta property="og:description" content="{{ provider.summary }}" />
+    {% elif config.description %}
+        <meta name="description" content="{{ config.description }}" />
+        <meta property="og:description" content="{{ config.description }}" />
+    {% endif %}
+
+    {% if config.extra.favicon %}
+        {% if config.extra.favicon is string %}
+            <link rel="icon" href="{{ get_url(path=config.extra.favicon) }}" />
+            <link rel="apple-touch-icon" href="{{ get_url(path=config.extra.favicon) }}" />
+        {% else %}
+            {% for item in config.extra.favicon %}
+                <link rel="icon"
+                    href="{{ get_url(path=item.path) }}"
+                    {% if item.media %}media="{{ item.media }}"{% endif %}
+                    />
+                <link rel="apple-touch-icon"
+                    href="{{ get_url(path=item.path) }}"
+                    {% if item.media %}media="{{ item.media }}"{% endif %}
+                    />
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+
+    {% if provider.external_styles %}
+        {% for link in provider.external_styles %}
+            <link rel="stylesheet" href="{{ link }}" />
+        {% endfor %}
+    {% endif %}
+    {% if config.extra.external_styles %}
+        {% for link in config.extra.external_styles %}
+            <link rel="stylesheet" href="{{ link }}" />
+        {% endfor %}
+    {% endif %}
+
+    <link rel="stylesheet" href="{{ get_url(path='style.css') }}">
+</head>
