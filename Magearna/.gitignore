@@ -7,3 +7,6 @@
 
 # Finder
 .DS_Store
+
+# Generated source
+Sources/Magearna/Utilities/ONNX/Protobuf/Definitions/ONNX.proto

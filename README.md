@@ -36,5 +36,5 @@ This Xcode Workspace contains following local packages, READMEs are available.
 
 ## Build
 
-Binary targets `onnxruntime.xcframework` and `tokenizers.xcframework` should be built before resolving dependencies,
-please check the README.md in [ONNXRuntime](./ONNXRuntime) and [Tokenizers](./Tokenizers) for details of building.
+Some XCFramework and source file of the packages need to be built or generated before resolving, please refer to their
+`README.md` for details of building.
