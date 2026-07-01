@@ -1,19 +1,25 @@
 # Michina
 
 <picture>
-    <source src="./Michina/Resources/Assets.xcassets/AppIconPreview/Default.imageset/Default-iOS-Dark-1024x1024@1x.png" media="(prefers-color-scheme: dark)"/>
-    <source src="./Michina/Resources/Assets.xcassets/AppIconPreview/Default.imageset/Default-iOS-Default-1024x1024@1x.png" media="(prefers-color-scheme: light)"/>
-    <img src="./Michina/Resources/Assets.xcassets/AppIconPreview/Default.imageset/Default-iOS-Default-1024x1024@1x.png" width="128">
+    <source srcset="./docs/static/images/app-icon-dark.png 2x" media="(prefers-color-scheme: dark)" />
+    <source srcset="./docs/static/images/app-icon-light.png 2x" media="(prefers-color-scheme: light)" />
+    <img src="./docs/static/images/app-icon-light.png" />
 </picture>
 
 Immich Machine Learning Server on macOS.
 
-Join TestFlight [here](https://testflight.apple.com/join/rJP9acvk).
+[Join TestFlight](https://testflight.apple.com/join/rJP9acvk).
 
 ## ⚠️ Disclaimer
 
-This project is still under development, and most models are not verified yet. **Use AT YOUR OWN RISK, and do not forget
-to BACKUP your database before running massive machine learning jobs on your Immich instance with Michina.**
+This project is still under development. **Use AT YOUR OWN RISK, and do not forget to BACKUP your database before
+running massive machine learning jobs on your Immich instance with Michina.**
+
+Because of the differences in image processing ecosystem between of Swift (Core Image, Core Graphic, vImage...) and
+Python (Pillow, OpenCV, NumPy...), Machina doesn't always behave exactly the same as the original official
+implementation does, which may lead to slight differences in the outputs.  
+But these differences are expected to be toleratable, like the facial recognition embedding being different but still
+close enough to be classified as the same person.
 
 ## Glance
 
