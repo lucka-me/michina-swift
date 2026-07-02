@@ -23,15 +23,28 @@ then
     buildArguments+=(--xcode_code_signing_identity $SIGNING_IDENTITY)
 fi
 
+cmakeExtraDefines=()
+if [ $ORT_BUILD_CONFIG = 'Debug' ]
+then
+    cmakeExtraDefines+=(CMAKE_XCODE_ATTRIBUTE_DEBUG_INFORMATION_FORMAT='dwarf')
+    cmakeExtraDefines+=(CMAKE_XCODE_ATTRIBUTE_GCC_GENERATE_DEBUGGING_SYMBOLS='YES')
+else
+    cmakeExtraDefines+=(CMAKE_XCODE_ATTRIBUTE_DEBUG_INFORMATION_FORMAT='dwarf-with-dsym')
+fi
+
 projectPath=$(realpath $(dirname $0)/../onnxruntime)
 
 buildPath=$projectPath/build
+
+if [ ! -f $buildPath/$ORT_BUILD_CONFIG/CMakeCache.txt ] || [ ! -z ORT_UPDATE_CMAKE ]
+then
+    buildArguments+=(--update)
+fi
 
 cd $projectPath && $PYTHON_EXECUTABLE               \
     $projectPath/tools/ci_build/build.py            \
     --build_dir $buildPath                          \
     --config $ORT_BUILD_CONFIG                      \
-    --update                                        \
     --build                                         \
     --parallel                                      \
     --compile_no_warning_as_error                   \
@@ -42,6 +55,7 @@ cd $projectPath && $PYTHON_EXECUTABLE               \
         CMAKE_POLICY_VERSION_MINIMUM=3.5            \
         FETCHCONTENT_TRY_FIND_PACKAGE_MODE=NEVER    \
         onnxruntime_BUILD_UNIT_TESTS=OFF            \
+        ${cmakeExtraDefines[@]}                     \
     --skip_tests                                    \
     --macos MacOSX                                  \
     --apple_sysroot macosx                          \
@@ -53,16 +67,23 @@ cd $projectPath && $PYTHON_EXECUTABLE               \
     --use_coreml                                    \
     ${buildArguments[@]}
 
-buildOutputPath=$buildPath/$ORT_BUILD_CONFIG/$ORT_BUILD_CONFIG
-
-xcframeworkPath=$buildOutputPath/onnxruntime.xcframework
+xcframeworkPath=$buildPath/onnxruntime.xcframework
 if [ -d $xcframeworkPath ]
 then
     rm -r $xcframeworkPath
 fi
 
+buildOutputPath=$buildPath/$ORT_BUILD_CONFIG/$ORT_BUILD_CONFIG
+
+createXCFrameworkInputArguments=()
+if [ $ORT_BUILD_CONFIG = 'Release' ]
+then
+    createXCFrameworkInputArguments+=(-debug-symbols $buildOutputPath/onnxruntime.framework.dSYM)
+fi
+
 xcrun xcodebuild -create-xcframework                    \
     -framework $buildOutputPath/onnxruntime.framework   \
+    ${createXCFrameworkInputArguments[@]}               \
     -output $xcframeworkPath
 
 if [ ! -z $SIGNING_IDENTITY ]

@@ -27,7 +27,6 @@ let package = Package(
                 .product(name: "HTTPTypesFoundation", package: "swift-http-types"),
                 .product(name: "MLX", package: "mlx-swift"),
                 .product(name: "ONNXRuntime", package: "ONNXRuntime"),
-                .product(name: "ONNXRuntimeExtensions", package: "ONNXRuntime"),
                 .product(name: "SwiftProtobuf", package: "swift-protobuf"),
                 .product(name: "Tokenizers", package: "Tokenizers"),
             ],
