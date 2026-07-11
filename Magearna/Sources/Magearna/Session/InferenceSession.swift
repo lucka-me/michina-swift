@@ -48,6 +48,7 @@ public final class InferenceSession : Sendable {
             executionProvider = .cpu
         }
         
+        let optimizationVersioning: OptimizationVersioning?
         switch executionProvider {
         case .coreML:
             // https://onnxruntime.ai/docs/api/objectivec/Classes/ORTSessionOptions.html
@@ -60,16 +61,26 @@ public final class InferenceSession : Sendable {
             ]
             
             if options.persistOptimizations {
-                let optimizationsURL = model.directoryURL(in: cacheDirectory).appending(
-                    components: ".optimizations", "CoreML"
+                let versioning = OptimizationVersioning(
+                    model: model,
+                    cacheDirectory: cacheDirectory,
+                    executionProvider: executionProvider
                 )
-                try FileManager.default.createDirectory(
-                    at: optimizationsURL,
-                    withIntermediateDirectories: true
-                )
-                executionProviderOptions["ModelCacheDirectory"] = optimizationsURL.path(
+                if try versioning.checkOutdated() {
+                    try FileManager.default.createDirectory(
+                        at: versioning.directory,
+                        withIntermediateDirectories: true
+                    )
+                    optimizationVersioning = versioning
+                } else {
+                    optimizationVersioning = nil
+                }
+                
+                executionProviderOptions["ModelCacheDirectory"] = versioning.directory.path(
                     percentEncoded: false
                 )
+            } else {
+                optimizationVersioning = nil
             }
             
             try sessionOptions.appendCoreMLExecutionProvider(
@@ -88,17 +99,23 @@ public final class InferenceSession : Sendable {
             )
             
             if options.persistOptimizations {
-                let optimizationsURL = model.directoryURL(in: cacheDirectory).appending(
-                    components: ".optimizations", "CPU", "optimized"
+                let versioning = OptimizationVersioning(
+                    model: model,
+                    cacheDirectory: cacheDirectory,
+                    executionProvider: executionProvider
                 )
                 try FileManager.default.createDirectory(
-                    at: optimizationsURL.deletingLastPathComponent(),
+                    at: versioning.directory,
                     withIntermediateDirectories: true
                 )
                 try sessionOptions.setOptimizedModelFilePath(
-                    optimizationsURL.path(percentEncoded: false)
+                    versioning.directory
+                        .appending(component: "optimized")
+                        .path(percentEncoded: false)
                 )
             }
+            
+            optimizationVersioning = nil
         }
         
         // Error: Trying to add a domain to DomainToVersion map, but the domain is already exist
@@ -112,6 +129,8 @@ public final class InferenceSession : Sendable {
             modelPath: model.modelFileURL(in: cacheDirectory).path(percentEncoded: false),
             sessionOptions: sessionOptions
         )
+        
+        try optimizationVersioning?.markUpToDate()
         
         self.inputNames = try session.inputNames()
         self.outputNames = try session.outputNames()
@@ -128,4 +147,57 @@ public final class InferenceSession : Sendable {
 fileprivate enum ExecutionProvider {
     case coreML
     case cpu
+}
+
+fileprivate struct OptimizationVersioning {
+    private struct Versions : Codable {
+        var onnxRuntime: String?
+    }
+    
+    let directory: URL
+    
+    private let versionsFile: URL
+    
+    init(
+        model: InferenceModel,
+        cacheDirectory: URL,
+        executionProvider: ExecutionProvider
+    ) {
+        let folder = switch executionProvider {
+        case .coreML: "CoreML"
+        case .cpu: "CPU"
+        }
+        
+        self.directory = model
+            .directoryURL(in: cacheDirectory)
+            .appending(components: ".optimizations", folder)
+        self.versionsFile = directory
+            .appending(component: "versions")
+            .appendingPathExtension("json")
+    }
+    
+    func checkOutdated() throws -> Bool {
+        guard FileManager.default.fileExists(at: directory) else {
+            return true
+        }
+        
+        guard FileManager.default.fileExists(at: versionsFile) else {
+            return true
+        }
+        
+        let versions = try JSONDecoder()
+            .decode(Versions.self, from: .init(contentsOf: versionsFile))
+        guard versions.onnxRuntime == ORTVersion() else {
+            try FileManager.default.removeItem(at: directory)
+            return true
+        }
+        
+        return false
+    }
+    
+    func markUpToDate() throws {
+        try JSONEncoder()
+            .encode(Versions(onnxRuntime: ORTVersion()))
+            .write(to: versionsFile)
+    }
 }

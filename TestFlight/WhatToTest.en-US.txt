@@ -1,5 +1,8 @@
 Welcome to Michina.
 
+Build #20
+- Added: Persist versioning JSON for Core ML optimization files.
+
 Build #19
 This is the first build with all expected features implemented and issues fixed, we will prepare for the first release after the ラブライブ！サンシャイン!! Guilty Kiss × Saint Snow TWO-MAN LIVE "VS".
 
