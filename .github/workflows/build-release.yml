@@ -53,7 +53,6 @@ jobs:
     name: Build Tokenizers XCFramework
     runs-on: macos-26
     env:
-      MACOSX_DEPLOYMENT_TARGET: 26.0
       GENERATED_XCFRAMEWORK_PATH: Tokenizers/Rust/target/tokenizers.xcframework
     steps:
       - name: Checkout
@@ -63,7 +62,9 @@ jobs:
         uses: actions/cache@v6
         with:
           key: cache-tokenizers-${{ hashFiles('Tokenizers/Rust/Cargo.lock', 'Tokenizers/Rust/src/**', 'Tokenizers/Scripts/**') }}
-          path: ${{ env.GENERATED_XCFRAMEWORK_PATH }}
+          path: |
+            ${{ env.GENERATED_XCFRAMEWORK_PATH }}
+            Tokenizers/Sources/Tokenizers/*bridge.rs.*
       - name: Setup Tools
         if: steps.cache-tokenizers.outputs.cache-hit != 'true'
         run: cargo install cxxbridge-cmd
