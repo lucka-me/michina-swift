@@ -28,8 +28,6 @@ if [ $ORT_BUILD_CONFIG = 'Debug' ]
 then
     cmakeExtraDefines+=(CMAKE_XCODE_ATTRIBUTE_DEBUG_INFORMATION_FORMAT='dwarf')
     cmakeExtraDefines+=(CMAKE_XCODE_ATTRIBUTE_GCC_GENERATE_DEBUGGING_SYMBOLS='YES')
-else
-    cmakeExtraDefines+=(CMAKE_XCODE_ATTRIBUTE_DEBUG_INFORMATION_FORMAT='dwarf-with-dsym')
 fi
 
 projectPath=$(realpath $(dirname $0)/../onnxruntime)
@@ -73,17 +71,8 @@ then
     rm -r $xcframeworkPath
 fi
 
-buildOutputPath=$buildPath/$ORT_BUILD_CONFIG/$ORT_BUILD_CONFIG
-
-createXCFrameworkInputArguments=()
-if [ $ORT_BUILD_CONFIG = 'Release' ]
-then
-    createXCFrameworkInputArguments+=(-debug-symbols $buildOutputPath/onnxruntime.framework.dSYM)
-fi
-
-xcrun xcodebuild -create-xcframework                    \
-    -framework $buildOutputPath/onnxruntime.framework   \
-    ${createXCFrameworkInputArguments[@]}               \
+xcrun xcodebuild -create-xcframework                                                \
+    -framework $buildPath/$ORT_BUILD_CONFIG/$ORT_BUILD_CONFIG/onnxruntime.framework \
     -output $xcframeworkPath
 
 if [ ! -z $SIGNING_IDENTITY ]
