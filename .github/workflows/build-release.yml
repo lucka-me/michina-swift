@@ -67,7 +67,7 @@ jobs:
             Tokenizers/Sources/Tokenizers/*bridge.rs.*
       - name: Setup Tools
         if: steps.cache-tokenizers.outputs.cache-hit != 'true'
-        run: cargo install cxxbridge-cmd
+        run: cargo install --version 1.0.194 cxxbridge-cmd
       - name: Build
         if: steps.cache-tokenizers.outputs.cache-hit != 'true'
         run: Tokenizers/Scripts/build-tokenizers.sh
