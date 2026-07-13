@@ -40,9 +40,9 @@ jobs:
         if: steps.cache-onnxruntime.outputs.cache-hit != 'true'
         env:
           ORT_UPDATE_CMAKE: true
-        run: |
-          ONNXRuntime/Scripts/build-onnxruntime.sh
-          aa archive -D ${{ env.GENERATED_XCFRAMEWORK_PATH }} -o ${{ env.GENERATED_XCFRAMEWORK_PATH }}.aar
+        run: ONNXRuntime/Scripts/build-onnxruntime.sh
+      - name: Archive
+        run: aa archive -D ${{ env.GENERATED_XCFRAMEWORK_PATH }} -o ${{ env.GENERATED_XCFRAMEWORK_PATH }}.aar
       - name: Upload Binary
         uses: actions/upload-artifact@v7
         with:
@@ -69,11 +69,19 @@ jobs:
         run: cargo install cxxbridge-cmd
       - name: Build
         if: steps.cache-tokenizers.outputs.cache-hit != 'true'
+        run: Tokenizers/Scripts/build-tokenizers.sh
+      - name: Archive
         run: |
-          Tokenizers/Scripts/build_tokenizers.sh
           aa archive -D ${{ env.GENERATED_XCFRAMEWORK_PATH }} -o ${{ env.GENERATED_XCFRAMEWORK_PATH }}.aar
+          aa archive -D Tokenizers/Sources/Tokenizers -o ${{ env.GENERATED_XCFRAMEWORK_PATH }}.generated-sources.aar \
+            -include-regex 'bridge.rs.'
       - name: Upload Binary
         uses: actions/upload-artifact@v7
         with:
           path: ${{ env.GENERATED_XCFRAMEWORK_PATH }}.aar
+          archive: false
+      - name: Upload Additional Sources
+        uses: actions/upload-artifact@v7
+        with:
+          path: ${{ env.GENERATED_XCFRAMEWORK_PATH }}.generated-sources.aar
           archive: false

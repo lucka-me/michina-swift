@@ -49,8 +49,3 @@ then
     xcrun codesign --timestamp --sign $SIGNING_IDENTITY \
         $xcframeworkPath
 fi
-
-if [ ! -z $ARCHIVE_XCFRAMEWORK ]
-then
-    aa archive -D $xcframeworkPath -o $xcframeworkPath.aar
-fi
