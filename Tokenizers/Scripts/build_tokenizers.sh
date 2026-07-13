@@ -43,3 +43,9 @@ fi
 xcodebuild -create-xcframework                                              \
     -library $rustTargetPath/aarch64-apple-darwin/release/libtokenizers.a   \
     -output $xcframeworkPath
+
+if [ ! -z $SIGNING_IDENTITY ]
+then
+    xcrun codesign --timestamp --sign $SIGNING_IDENTITY \
+        $xcframeworkPath
+fi
