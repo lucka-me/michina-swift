@@ -54,16 +54,5 @@
         {% endif %}
     {% endif %}
 
-    {% if provider.external_styles %}
-        {% for link in provider.external_styles %}
-            <link rel="stylesheet" href="{{ link }}" />
-        {% endfor %}
-    {% endif %}
-    {% if config.extra.external_styles %}
-        {% for link in config.extra.external_styles %}
-            <link rel="stylesheet" href="{{ link }}" />
-        {% endfor %}
-    {% endif %}
-
     <link rel="stylesheet" href="{{ get_url(path='style.css') }}">
 </head>
