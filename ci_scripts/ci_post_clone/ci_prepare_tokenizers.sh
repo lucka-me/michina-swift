@@ -2,6 +2,8 @@
 
 set -e
 
+apiURL=https://api.github.com/repos/lucka-me/michina-swift/actions/artifacts/
+
 packagePath=$CI_PRIMARY_REPOSITORY_PATH/Tokenizers
 
 targetPath=$packagePath/Rust/target
@@ -11,13 +13,12 @@ then
 fi
 
 echo 'Fetching XCFramework'
-artifactURL=https://api.github.com/repos/lucka-me/michina-swift/actions/artifacts/8281541814/zip
-curl -s -S -L $artifactURL                                              \
+
+curl -s -S -L $apiURL/8281541814/zip                                    \
     -H "Authorization: Bearer $GITHUB_ACTIONS_ARTIFACTS_DOWNLOAD_TOKEN" \
     | aa extract -d $targetPath
 
 echo 'Fetching Generated Sources'
-artifactURL=https://api.github.com/repos/lucka-me/michina-swift/actions/artifacts/8283814710/zip
-curl -s -S -L $artifactURL                                              \
+curl -s -S -L $apiURL/8283814710/zip                                    \
     -H "Authorization: Bearer $GITHUB_ACTIONS_ARTIFACTS_DOWNLOAD_TOKEN" \
-    | aa extract -d $packagePath/Sources/Tokenizers
+    | aa extract -d $packagePath/Sources
