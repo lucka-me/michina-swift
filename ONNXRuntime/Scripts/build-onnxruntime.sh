@@ -14,15 +14,6 @@ then
 fi
 
 buildArguments=()
-if [ ! -z $SIGNING_TEAM_ID ]
-then
-    buildArguments+=(--xcode_code_signing_team_id $SIGNING_TEAM_ID)
-fi
-if [ ! -z $SIGNING_IDENTITY ]
-then
-    buildArguments+=(--xcode_code_signing_identity $SIGNING_IDENTITY)
-fi
-
 cmakeExtraDefines=()
 if [ $ORT_BUILD_CONFIG = 'Debug' ]
 then
@@ -74,9 +65,3 @@ fi
 xcrun xcodebuild -create-xcframework                                                \
     -framework $buildPath/$ORT_BUILD_CONFIG/$ORT_BUILD_CONFIG/onnxruntime.framework \
     -output $xcframeworkPath
-
-if [ ! -z $SIGNING_IDENTITY ]
-then
-    xcrun codesign --timestamp --sign $SIGNING_IDENTITY \
-        $xcframeworkPath
-fi
