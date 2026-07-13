@@ -2,7 +2,7 @@
 
 set -e
 
-apiURL=https://api.github.com/repos/lucka-me/michina-swift/actions/artifacts/
+apiURL=https://api.github.com/repos/lucka-me/michina-swift/actions/artifacts
 
 buildDirectory=$CI_PRIMARY_REPOSITORY_PATH/ONNXRuntime/onnxruntime/build
 if [ ! -d $buildDirectory ]
