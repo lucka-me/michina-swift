@@ -16,6 +16,8 @@ jobs:
   build-onnxruntime:
     name: Build ONNXRuntime XCFramework
     runs-on: macos-26
+    env:
+      GENERATED_XCFRAMEWORK_PATH: ONNXRuntime/onnxruntime/build/onnxruntime.xcframework
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -26,7 +28,7 @@ jobs:
         uses: actions/cache@v6
         with:
           key: cache-onnxruntime-${{ hashFiles('ONNXRuntime/onnxruntime', 'ONNXRuntime/Scripts/**') }}
-          path: ONNXRuntime/onnxruntime/build/onnxruntime.xcframework
+          path: ${{ env.GENERATED_XCFRAMEWORK_PATH }}
       - name: Setup Build Cache
         id: cache-onnxruntime-build
         if: steps.cache-onnxruntime.outputs.cache-hit != 'true'
@@ -37,13 +39,14 @@ jobs:
       - name: Build
         if: steps.cache-onnxruntime.outputs.cache-hit != 'true'
         env:
-          ARCHIVE_XCFRAMEWORK: true
           ORT_UPDATE_CMAKE: true
-        run: ONNXRuntime/Scripts/build-onnxruntime.sh
+        run: |
+          ONNXRuntime/Scripts/build-onnxruntime.sh
+          aa archive -D ${{ env.GENERATED_XCFRAMEWORK_PATH }} -o ${{ env.GENERATED_XCFRAMEWORK_PATH }}.aar
       - name: Upload Binary
         uses: actions/upload-artifact@v7
         with:
-          path: ONNXRuntime/onnxruntime/build/onnxruntime.xcframework.zip
+          path: ${{ env.GENERATED_XCFRAMEWORK_PATH }}.aar
           archive: false
 
   build-tokenizers:
@@ -51,6 +54,7 @@ jobs:
     runs-on: macos-26
     env:
       MACOSX_DEPLOYMENT_TARGET: 26.0
+      GENERATED_XCFRAMEWORK_PATH: Tokenizers/Rust/target/tokenizers.xcframework
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -59,17 +63,17 @@ jobs:
         uses: actions/cache@v6
         with:
           key: cache-tokenizers-${{ hashFiles('Tokenizers/Rust/Cargo.lock', 'Tokenizers/Rust/src/**', 'Tokenizers/Scripts/**') }}
-          path: Tokenizers/Rust/target/tokenizers.xcframework
+          path: ${{ env.GENERATED_XCFRAMEWORK_PATH }}
       - name: Setup Tools
         if: steps.cache-tokenizers.outputs.cache-hit != 'true'
         run: cargo install cxxbridge-cmd
       - name: Build
         if: steps.cache-tokenizers.outputs.cache-hit != 'true'
-        env:
-          ARCHIVE_XCFRAMEWORK: true
-        run: Tokenizers/Scripts/build_tokenizers.sh
+        run: |
+          Tokenizers/Scripts/build_tokenizers.sh
+          aa archive -D ${{ env.GENERATED_XCFRAMEWORK_PATH }} -o ${{ env.GENERATED_XCFRAMEWORK_PATH }}.aar
       - name: Upload Binary
         uses: actions/upload-artifact@v7
         with:
-          path: Tokenizers/Rust/target/tokenizers.xcframework.zip
+          path: ${{ env.GENERATED_XCFRAMEWORK_PATH }}.aar
           archive: false

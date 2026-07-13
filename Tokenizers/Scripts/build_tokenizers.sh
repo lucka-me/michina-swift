@@ -52,5 +52,5 @@ fi
 
 if [ ! -z $ARCHIVE_XCFRAMEWORK ]
 then
-    zip -qry9 $xcframeworkPath.zip $xcframeworkPath
+    aa archive -D $xcframeworkPath -o $xcframeworkPath.aar
 fi
