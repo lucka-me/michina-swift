@@ -11,6 +11,6 @@ then
 fi
 
 echo 'Fetching XCFramework'
-curl -s -S -L $apiURL/8282040286/zip                                    \
+curl -s -S -L $apiURL/8286253409/zip                                    \
     -H "Authorization: Bearer $GITHUB_ACTIONS_ARTIFACTS_DOWNLOAD_TOKEN" \
     | aa extract -d $buildDirectory

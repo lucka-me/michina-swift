@@ -14,11 +14,11 @@ fi
 
 echo 'Fetching XCFramework'
 
-curl -s -S -L $apiURL/8281541814/zip                                    \
+curl -s -S -L $apiURL/8286269427/zip                                    \
     -H "Authorization: Bearer $GITHUB_ACTIONS_ARTIFACTS_DOWNLOAD_TOKEN" \
     | aa extract -d $targetPath
 
 echo 'Fetching Generated Sources'
-curl -s -S -L $apiURL/8283814710/zip                                    \
+curl -s -S -L $apiURL/8286270043/zip                                    \
     -H "Authorization: Bearer $GITHUB_ACTIONS_ARTIFACTS_DOWNLOAD_TOKEN" \
     | aa extract -d $packagePath/Sources
