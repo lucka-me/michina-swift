@@ -27,14 +27,24 @@ jobs:
         with:
           key: cache-onnxruntime-${{ hashFiles('ONNXRuntime/onnxruntime', 'ONNXRuntime/Scripts/**') }}
           path: ONNXRuntime/onnxruntime/build/onnxruntime.xcframework
+      - name: Setup Build Cache
+        id: cache-onnxruntime-build
+        if: steps.cache-onnxruntime.outputs.cache-hit != 'true'
+        uses: actions/cache@v6
+        with:
+          key: cache-onnxruntime-buid
+          path: ONNXRuntime/onnxruntime/build
       - name: Build
         if: steps.cache-onnxruntime.outputs.cache-hit != 'true'
+        env:
+          ARCHIVE_XCFRAMEWORK: true
+          ORT_UPDATE_CMAKE: true
         run: ONNXRuntime/Scripts/build-onnxruntime.sh
       - name: Upload Binary
         uses: actions/upload-artifact@v7
         with:
-          name: onnxruntime.xcframework
-          path: ONNXRuntime/onnxruntime/build/onnxruntime.xcframework
+          path: ONNXRuntime/onnxruntime/build/onnxruntime.xcframework.zip
+          archive: false
 
   build-tokenizers:
     name: Build Tokenizers XCFramework
@@ -55,9 +65,11 @@ jobs:
         run: cargo install cxxbridge-cmd
       - name: Build
         if: steps.cache-tokenizers.outputs.cache-hit != 'true'
+        env:
+          ARCHIVE_XCFRAMEWORK: true
         run: Tokenizers/Scripts/build_tokenizers.sh
       - name: Upload Binary
         uses: actions/upload-artifact@v7
         with:
-          name: tokenizers.xcframework
-          path: Tokenizers/Rust/target/tokenizers.xcframework
+          path: Tokenizers/Rust/target/tokenizers.xcframework.zip
+          archive: false
