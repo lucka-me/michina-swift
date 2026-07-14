@@ -34,12 +34,12 @@ jobs:
         if: steps.cache-onnxruntime.outputs.cache-hit != 'true'
         uses: actions/cache@v6
         with:
-          key: cache-onnxruntime-buid
+          key: cache-onnxruntime-build-${{ hashFiles('ONNXRuntime/onnxruntime') }}
           path: ONNXRuntime/onnxruntime/build
       - name: Build
         if: steps.cache-onnxruntime.outputs.cache-hit != 'true'
         env:
-          ORT_UPDATE_CMAKE: true
+          ORT_UPDATE_CMAKE: ${{ case(steps.cache-onnxruntime-build.outputs.cache-hit != 'true', true, '') }}
         run: ONNXRuntime/Scripts/build-onnxruntime.sh
       - name: Archive
         run: aa archive -D ${{ env.GENERATED_XCFRAMEWORK_PATH }} -o ${{ env.GENERATED_XCFRAMEWORK_PATH }}.aar
