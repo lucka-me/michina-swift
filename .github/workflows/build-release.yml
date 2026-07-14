@@ -113,12 +113,6 @@ jobs:
           gem install xcpretty
           brew install git-tools
 
-      - name: Restore Modification Time
-        run: |
-          git restore-mtime
-
-          defaults write com.apple.dt.XCBuild IgnoreFileSystemDeviceInodeChanges -bool YES
-
       - name: Prepare Paths
         id: paths
         env:
@@ -134,6 +128,16 @@ jobs:
 
           mkdir -p ${{ env.SECRETS_PATH }}
           echo "secrets=${{ env.SECRETS_PATH }}" >> $GITHUB_OUTPUT
+
+      - name: Restore Modification Time
+        env:
+          CHECKOUTS_PATH: ${{ steps.paths.outputs.derived-data }}/SourcePackages/checkouts
+        run: |
+          git restore-mtime
+          for path in ${{ env.CHECKOUTS_PATH }}/*
+          do
+            cd $path && git restore-mtime
+          done
 
       - name: Download ONNXRuntime XCFramework
         uses: actions/download-artifact@v8
@@ -201,6 +205,8 @@ jobs:
           SPM_SECURITY_PATH=~/Library/org.swift.swiftpm/security
           mkdir -p $SPM_SECURITY_PATH
           cp ci_scripts/ci_post_clone/Security/plugins.json $SPM_SECURITY_PATH
+
+          defaults write com.apple.dt.XCBuild IgnoreFileSystemDeviceInodeChanges -bool YES
 
       - name: Resolve Package Dependencies
         run: |
@@ -270,9 +276,11 @@ jobs:
           echo "export-path=${{ env.EXPORT_PATH }}" >> $GITHUB_OUTPUT
 
       - name: Notarize
+        id: notarize
         env:
           APP_STORE_CONNECT_API_KEY_PATH: ${{ steps.paths.outputs.secrets }}/app-store-connect-api.p8
-          APP_PATH: ${{ steps.export-developer-id.outputs.export-path }}/Michina.app
+          EXPORT_PATH: ${{ steps.export-developer-id.outputs.export-path }}
+          APP_PATH: ${{ env.EXPORT_PATH }}/Michina.app
         run: |
           echo -n ${{ secrets.APP_STORE_CONNECT_API_KEY }} | base64 --decode -o ${{ env.APP_STORE_CONNECT_API_KEY_PATH }}
 
@@ -283,6 +291,9 @@ jobs:
             --wait
           xcrun stapler staple ${{ env.APP_PATH }}
           rm ${{ env.APP_PATH }}.zip
+
+          ditto -c -k --keepParent ${{ env.EXPORT_PATH }} ${{ env.EXPORT_PATH }}.zip
+          echo "export-path=${{ env.EXPORT_PATH }}.zip" >> $GITHUB_OUTPUT
 
       - name: Upload Archive
         uses: actions/upload-artifact@v7
@@ -297,5 +308,5 @@ jobs:
       - name: Upload Developer ID Archive
         uses: actions/upload-artifact@v7
         with:
-          name: Michina-Developer-ID
-          path: ${{ steps.export-developer-id.outputs.export-path }}
+          path: ${{ steps.notarize.outputs.export-path }}
+          archive: false
