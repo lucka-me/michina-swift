@@ -102,14 +102,18 @@ jobs:
       - name: Prepare Paths
         id: paths
         env:
-          DERIVED_DATA_PATH: ${{ runner.temp }}/DerivedData
           ARTIFACTS_PATH: ${{ runner.temp }}/Artifacts
+          DERIVED_DATA_PATH: ${{ runner.temp }}/DerivedData
+          SECRETS_PATH: ${{ runner.temp }}/Secrets
         run: |
+          mkdir -p ${{ env.ARTIFACTS_PATH }}
+          echo "artifacts=${{ env.ARTIFACTS_PATH }}" >> $GITHUB_OUTPUT
+
           mkdir -p ${{ env.DERIVED_DATA_PATH }}
           echo "derived-data=${{ env.DERIVED_DATA_PATH }}" >> $GITHUB_OUTPUT
 
-          mkdir -p ${{ env.ARTIFACTS_PATH }}
-          echo "artifacts=${{ env.ARTIFACTS_PATH }}" >> $GITHUB_OUTPUT
+          mkdir -p ${{ env.SECRETS_PATH }}
+          echo "secrets=${{ env.SECRETS_PATH }}" >> $GITHUB_OUTPUT
 
       - name: Download ONNXRuntime XCFramework
         uses: actions/download-artifact@v8
@@ -137,8 +141,8 @@ jobs:
 
       - name: Setup Xcode Certificate
         env:
-          DEVELOPER_ID_CERTIFICATE_PATH: ${{ runner.temp }}/Secrets/developer-id.p12
-          KEYCHAIN_PATH: ${{ runner.temp }}/Secrets/build.keychain
+          DEVELOPER_ID_CERTIFICATE_PATH: ${{ steps.paths.outputs.secrets }}/developer-id.p12
+          KEYCHAIN_PATH: ${{ steps.paths.outputs.secrets }}/build.keychain
         run: |
           echo -n ${{ secrets.XCODE_DEVELOPER_ID_CERTIFICATE }} | base64 --decode -o ${{ env.DEVELOPER_ID_CERTIFICATE_PATH }}
 
@@ -219,7 +223,7 @@ jobs:
 
       - name: Notarize
         env:
-          APP_STORE_CONNECT_API_KEY_PATH: ${{ runner.temp }}/Secrets/app-store-connect-api.p8
+          APP_STORE_CONNECT_API_KEY_PATH: ${{ steps.paths.outputs.secrets }}/app-store-connect-api.p8
           APP_PATH: ${{ steps.export-developer-id.outputs.export-path }}/Michina.app
         run: |
           echo -n ${{ secrets.APP_STORE_CONNECT_API_KEY }} | base64 --decode -o ${{ env.APP_STORE_CONNECT_API_KEY_PATH }}
