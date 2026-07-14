@@ -219,75 +219,75 @@ jobs:
 
           echo "archive-path=${{ env.ARCHIVE_PATH }}" >> $GITHUB_OUTPUT
 
-      - name: Export for App Store Connect
-        id: export-app-store-connect
-        env:
-          EXPORT_PATH: ${{ runner.temp }}/Exports/app-store-connect
-          EXPORT_OPTIONS_PATH: ${{ runner.temp }}/Exports/app-store-connect.plist
-        run: |
-          set -o pipefail
+      # - name: Export for App Store Connect
+      #   id: export-app-store-connect
+      #   env:
+      #     EXPORT_PATH: ${{ runner.temp }}/Exports/app-store-connect
+      #     EXPORT_OPTIONS_PATH: ${{ runner.temp }}/Exports/app-store-connect.plist
+      #   run: |
+      #     set -o pipefail
 
-          mkdir -p ${{ env.EXPORT_PATH }}
-          plutil -create xml1 ${{ env.EXPORT_OPTIONS_PATH }}
-          plutil -insert method -string app-store-connect ${{ env.EXPORT_OPTIONS_PATH }}
+      #     mkdir -p ${{ env.EXPORT_PATH }}
+      #     plutil -create xml1 ${{ env.EXPORT_OPTIONS_PATH }}
+      #     plutil -insert method -string app-store-connect ${{ env.EXPORT_OPTIONS_PATH }}
 
-          xcodebuild -exportArchive                                 \
-            -archivePath ${{ steps.archive.outputs.archive-path }}  \
-            -exportPath ${{ env.EXPORT_PATH }}                      \
-            -exportOptionsPlist ${{ env.EXPORT_OPTIONS_PATH }}      \
-            -hideShellScriptEnvironment                             \
-            | xcpretty
+      #     xcodebuild -exportArchive                                 \
+      #       -archivePath ${{ steps.archive.outputs.archive-path }}  \
+      #       -exportPath ${{ env.EXPORT_PATH }}                      \
+      #       -exportOptionsPlist ${{ env.EXPORT_OPTIONS_PATH }}      \
+      #       -hideShellScriptEnvironment                             \
+      #       | xcpretty
 
-          echo "export-path=${{ env.EXPORT_OPTIONS_PATH }}" >> $GITHUB_OUTPUT
+      #     echo "export-path=${{ env.EXPORT_OPTIONS_PATH }}" >> $GITHUB_OUTPUT
 
-      - name: Export for Developer ID
-        id: export-developer-id
-        env:
-          EXPORT_PATH: ${{ runner.temp }}/Exports/developer-id
-          EXPORT_OPTIONS_PATH: ${{ runner.temp }}/Exports/developer-id.plist
-        run: |
-          set -o pipefail
+      # - name: Export for Developer ID
+      #   id: export-developer-id
+      #   env:
+      #     EXPORT_PATH: ${{ runner.temp }}/Exports/developer-id
+      #     EXPORT_OPTIONS_PATH: ${{ runner.temp }}/Exports/developer-id.plist
+      #   run: |
+      #     set -o pipefail
 
-          mkdir -p ${{ env.EXPORT_PATH }}
-          plutil -create xml1 ${{ env.EXPORT_OPTIONS_PATH }}
-          plutil -insert method -string developer-id ${{ env.EXPORT_OPTIONS_PATH }}
+      #     mkdir -p ${{ env.EXPORT_PATH }}
+      #     plutil -create xml1 ${{ env.EXPORT_OPTIONS_PATH }}
+      #     plutil -insert method -string developer-id ${{ env.EXPORT_OPTIONS_PATH }}
 
-          xcodebuild -exportArchive                                 \
-            -archivePath ${{ steps.archive.outputs.archive-path }}  \
-            -exportPath ${{ env.EXPORT_PATH }}                      \
-            -exportOptionsPlist ${{ env.EXPORT_OPTIONS_PATH }}      \
-            -hideShellScriptEnvironment                             \
-            | xcpretty
+      #     xcodebuild -exportArchive                                 \
+      #       -archivePath ${{ steps.archive.outputs.archive-path }}  \
+      #       -exportPath ${{ env.EXPORT_PATH }}                      \
+      #       -exportOptionsPlist ${{ env.EXPORT_OPTIONS_PATH }}      \
+      #       -hideShellScriptEnvironment                             \
+      #       | xcpretty
 
-          echo "export-path=${{ env.EXPORT_OPTIONS_PATH }}" >> $GITHUB_OUTPUT
+      #     echo "export-path=${{ env.EXPORT_OPTIONS_PATH }}" >> $GITHUB_OUTPUT
 
-      - name: Notarize
-        env:
-          APP_STORE_CONNECT_API_KEY_PATH: ${{ steps.paths.outputs.secrets }}/app-store-connect-api.p8
-          APP_PATH: ${{ steps.export-developer-id.outputs.export-path }}/Michina.app
-        run: |
-          echo -n ${{ secrets.APP_STORE_CONNECT_API_KEY }} | base64 --decode -o ${{ env.APP_STORE_CONNECT_API_KEY_PATH }}
+      # - name: Notarize
+      #   env:
+      #     APP_STORE_CONNECT_API_KEY_PATH: ${{ steps.paths.outputs.secrets }}/app-store-connect-api.p8
+      #     APP_PATH: ${{ steps.export-developer-id.outputs.export-path }}/Michina.app
+      #   run: |
+      #     echo -n ${{ secrets.APP_STORE_CONNECT_API_KEY }} | base64 --decode -o ${{ env.APP_STORE_CONNECT_API_KEY_PATH }}
 
-          ditto -c -k --keepParent ${{ env.APP_PATH }} ${{ env.APP_PATH }}.zip
-          xcrun notarytool submit ${{ env.APP_PATH }}.zip         \
-            --key ${{ env.APP_STORE_CONNECT_API_KEY_PATH }}       \
-            --key-id ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}  \
-            --wait
-          xcrun stapler staple ${{ env.APP_PATH }}
-          rm ${{ env.APP_PATH }}.zip
+      #     ditto -c -k --keepParent ${{ env.APP_PATH }} ${{ env.APP_PATH }}.zip
+      #     xcrun notarytool submit ${{ env.APP_PATH }}.zip         \
+      #       --key ${{ env.APP_STORE_CONNECT_API_KEY_PATH }}       \
+      #       --key-id ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}  \
+      #       --wait
+      #     xcrun stapler staple ${{ env.APP_PATH }}
+      #     rm ${{ env.APP_PATH }}.zip
 
       - name: Upload Archive
         uses: actions/upload-artifact@v7
         with:
           name: Michina.xcarchive
           path: ${{ steps.archive.outputs.archive-path }}
-      - name: Upload App Store Connect Archive
-        uses: actions/upload-artifact@v7
-        with:
-          name: Michina-App-Store-Connect
-          path: ${{ steps.export-app-store-connect.outputs.export-path }}
-      - name: Upload Developer ID Archive
-        uses: actions/upload-artifact@v7
-        with:
-          name: Michina-Developer-ID
-          path: ${{ steps.export-developer-id.outputs.export-path }}
+      # - name: Upload App Store Connect Archive
+      #   uses: actions/upload-artifact@v7
+      #   with:
+      #     name: Michina-App-Store-Connect
+      #     path: ${{ steps.export-app-store-connect.outputs.export-path }}
+      # - name: Upload Developer ID Archive
+      #   uses: actions/upload-artifact@v7
+      #   with:
+      #     name: Michina-Developer-ID
+      #     path: ${{ steps.export-developer-id.outputs.export-path }}
