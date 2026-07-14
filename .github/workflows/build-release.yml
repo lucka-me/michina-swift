@@ -176,30 +176,45 @@ jobs:
 
           APP_STORE_CONNECT_API_KEY_PATH: ${{ steps.paths.outputs.secrets }}/app-store-connect-api.p8
         run: |
-          echo -n ${{ secrets.XCODE_MAC_DEVELOPMENT_CERTIFICATE }} | base64 --decode -o ${{ env.MAC_DEVELOPMENT_CERTIFICATE_PATH }}
-          echo -n ${{ secrets.XCODE_DEVELOPER_ID_CERTIFICATE }} | base64 --decode -o ${{ env.DEVELOPER_ID_CERTIFICATE_PATH }}
-          echo -n ${{ secrets.XCODE_APPLE_DISTRIBUTION_CERTIFICATE }} | base64 --decode -o ${{ env.APPLE_DISTRIBUTION_CERTIFICATE_PATH }}
-          echo -n ${{ secrets.XCODE_MAC_INSTALLER_DISTRIBUTION_CERTIFICATE }} | base64 --decode -o ${{ env.MAC_INSTALLER_DISTRIBUTION_CERTIFICATE_PATH }}
-
           KEYCHAIN_PASSWORD=$(openssl rand -base64 12)
 
           security create-keychain -p $KEYCHAIN_PASSWORD ${{ env.KEYCHAIN_PATH }}
           security set-keychain-settings -lut 21600 ${{ env.KEYCHAIN_PATH }}
           security unlock-keychain -p $KEYCHAIN_PASSWORD ${{ env.KEYCHAIN_PATH }}
 
-          security import ${{ env.MAC_DEVELOPMENT_CERTIFICATE_PATH }} -k ${{ env.KEYCHAIN_PATH }} \
-            -t cert -f pkcs12 -P ${{ secrets.XCODE_MAC_DEVELOPMENT_CERTIFICATE_PASSWORD }} -A
-          security import ${{ env.DEVELOPER_ID_CERTIFICATE_PATH }} -k ${{ env.KEYCHAIN_PATH }}  \
-            -t cert -f pkcs12 -P ${{ secrets.XCODE_DEVELOPER_ID_CERTIFICATE_PASSWORD }} -A
-          security import ${{ env.APPLE_DISTRIBUTION_CERTIFICATE_PATH }} -k ${{ env.KEYCHAIN_PATH }}  \
-            -t cert -f pkcs12 -P ${{ secrets.XCODE_APPLE_DISTRIBUTION_CERTIFICATE_PASSWORD }} -A
-          security import ${{ env.MAC_INSTALLER_DISTRIBUTION_CERTIFICATE_PATH }} -k ${{ env.KEYCHAIN_PATH }}  \
-            -t cert -f pkcs12 -P ${{ secrets.XCODE_MAC_INSTALLER_DISTRIBUTION_CERTIFICATE_PASSWORD }} -A
+          echo -n ${{ secrets.XCODE_MAC_DEVELOPMENT_CERTIFICATE }}            \
+            | base64 --decode -o ${{ env.MAC_DEVELOPMENT_CERTIFICATE_PATH }}
+          security import ${{ env.MAC_DEVELOPMENT_CERTIFICATE_PATH }}     \
+            -P ${{ secrets.XCODE_MAC_DEVELOPMENT_CERTIFICATE_PASSWORD }}  \
+            -t cert -f pkcs12                                             \
+            -A -k ${{ env.KEYCHAIN_PATH }}
+
+          echo -n ${{ secrets.XCODE_DEVELOPER_ID_CERTIFICATE }}           \
+            | base64 --decode -o ${{ env.DEVELOPER_ID_CERTIFICATE_PATH }}
+          security import ${{ env.DEVELOPER_ID_CERTIFICATE_PATH }}    \
+            -P ${{ secrets.XCODE_DEVELOPER_ID_CERTIFICATE_PASSWORD }} \
+            -t cert -f pkcs12                                         \
+            -A -k ${{ env.KEYCHAIN_PATH }}
+
+          echo -n ${{ secrets.XCODE_APPLE_DISTRIBUTION_CERTIFICATE }}           \
+            | base64 --decode -o ${{ env.APPLE_DISTRIBUTION_CERTIFICATE_PATH }}
+          security import ${{ env.APPLE_DISTRIBUTION_CERTIFICATE_PATH }}    \
+            -P ${{ secrets.XCODE_APPLE_DISTRIBUTION_CERTIFICATE_PASSWORD }} \
+            -t cert -f pkcs12                                               \
+            -A -k ${{ env.KEYCHAIN_PATH }}
+          
+          echo -n ${{ secrets.XCODE_MAC_INSTALLER_DISTRIBUTION_CERTIFICATE }}           \
+            | base64 --decode -o ${{ env.MAC_INSTALLER_DISTRIBUTION_CERTIFICATE_PATH }}
+          security import ${{ env.MAC_INSTALLER_DISTRIBUTION_CERTIFICATE_PATH }}    \
+            -P ${{ secrets.XCODE_MAC_INSTALLER_DISTRIBUTION_CERTIFICATE_PASSWORD }} \
+            -t cert -f pkcs12                                                       \
+            -A -k ${{ env.KEYCHAIN_PATH }}
 
           security set-key-partition-list -S apple-tool:,apple: ${{ env.KEYCHAIN_PATH }}
           security list-keychain -d user -s ${{ env.KEYCHAIN_PATH }}
 
-          echo -n ${{ secrets.APP_STORE_CONNECT_API_KEY }} | base64 --decode -o ${{ env.APP_STORE_CONNECT_API_KEY_PATH }}
+          echo -n ${{ secrets.APP_STORE_CONNECT_API_KEY }}                  \
+            | base64 --decode -o ${{ env.APP_STORE_CONNECT_API_KEY_PATH }}
           echo "app-store-connect-api-key-path=${{ env.APP_STORE_CONNECT_API_KEY_PATH }}" >> $GITHUB_OUTPUT
 
       - name: Manage Build Number
@@ -236,7 +251,7 @@ jobs:
           xcodebuild archive                                          \
             -workspace ${{ env.XCODE_WORKSPACE }}                     \
             -scheme Michina                                           \
-            -destination 'generic/platform=macOS,arch=arm64'          \
+            -destination generic/platform=macOS                       \
             -archivePath ${{ env.ARCHIVE_PATH }}                      \
             -derivedDataPath ${{ steps.paths.outputs.derived-data }}  \
             -hideShellScriptEnvironment                               \
