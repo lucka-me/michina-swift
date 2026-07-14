@@ -139,13 +139,15 @@ jobs:
           name: tokenizers.xcframework.generated-sources.aar
           path: ${{ steps.paths.outputs.artifacts }}
       - name: Extract Artifacts
+        env:
+          ARTIFACTS_PATH: ${{ steps.paths.outputs.artifacts }}
         run: |
           mkdir -p ONNXRuntime/onnxruntime/build
-          aa extract -i ${{ steps.paths.outputs.artifacts }}/onnxruntime.xcframework.aar -d ONNXRuntime/onnxruntime/build
+          aa extract -i ${{ env.ARTIFACTS_PATH }}/onnxruntime.xcframework.aar -d ONNXRuntime/onnxruntime/build
 
           mkdir -p Tokenizers/Rust/target
-          aa extract -i ${{ steps.paths.outputs.artifacts }}/tokenizers.xcframework.aar -d Tokenizers/Rust/target
-          aa extract -i ${{ steps.paths.outputs.artifacts }}/tokenizers.xcframework.generated-sources.aar -d Tokenizers/Sources
+          aa extract -i ${{ env.ARTIFACTS_PATH }}/tokenizers.xcframework.aar -d Tokenizers/Rust/target
+          aa extract -i ${{ env.ARTIFACTS_PATH }}/tokenizers.xcframework.generated-sources.aar -d Tokenizers/Sources
 
       - name: Setup Xcode Certificate
         env:
@@ -163,11 +165,9 @@ jobs:
           security unlock-keychain -p $KEYCHAIN_PASSWORD ${{ env.KEYCHAIN_PATH }}
 
           security import ${{ env.DEVELOPER_ID_CERTIFICATE_PATH }} -k ${{ env.KEYCHAIN_PATH }}  \
-            -t cert -f pkcs12 -P ${{ secrets.XCODE_DEVELOPER_ID_CERTIFICATE_PASSWORD }}         \
-            -A
+            -t cert -f pkcs12 -P ${{ secrets.XCODE_DEVELOPER_ID_CERTIFICATE_PASSWORD }} -A
           security import ${{ env.MAC_DEVELOPMENT_CERTIFICATE_PATH }} -k ${{ env.KEYCHAIN_PATH }} \
-            -t cert -f pkcs12 -P ${{ secrets.XCODE_MAC_DEVELOPMENT_CERTIFICATE_PASSWORD }}        \
-            -A
+            -t cert -f pkcs12 -P ${{ secrets.XCODE_MAC_DEVELOPMENT_CERTIFICATE_PASSWORD }} -A
 
           security set-key-partition-list -S apple-tool:,apple: ${{ env.KEYCHAIN_PATH }}
           security list-keychain -d user -s ${{ env.KEYCHAIN_PATH }}
@@ -192,14 +192,11 @@ jobs:
 
       - name: Resolve Package Dependencies
         run: |
-          set -o pipefail
-
           xcodebuild -resolvePackageDependencies                      \
             -workspace ${{ env.XCODE_WORKSPACE }}                     \
             -derivedDataPath ${{ steps.paths.outputs.derived-data }}  \
             -scheme Michina                                           \
-            -hideShellScriptEnvironment                               \
-            | xcpretty
+            -hideShellScriptEnvironment
 
       - name: Archive
         id: archive
@@ -215,7 +212,7 @@ jobs:
             -derivedDataPath ${{ steps.paths.outputs.derived-data }}  \
             -hideShellScriptEnvironment                               \
             | xcpretty
-          
+
           echo "archive-path=${{ env.ARCHIVE_PATH }}" >> $GITHUB_OUTPUT
 
       - name: Export for App Store Connect
@@ -226,7 +223,7 @@ jobs:
         run: |
           set -o pipefail
 
-          mkdir -p ${{ env.EXPORT_OPTIONS_PATH }}
+          mkdir -p ${{ env.EXPORT_PATH }}
           plutil -create xml1 ${{ env.EXPORT_OPTIONS_PATH }}
           plutil -insert method -string app-store-connect ${{ env.EXPORT_OPTIONS_PATH }}
 
@@ -247,7 +244,7 @@ jobs:
         run: |
           set -o pipefail
 
-          mkdir -p ${{ env.EXPORT_OPTIONS_PATH }}
+          mkdir -p ${{ env.EXPORT_PATH }}
           plutil -create xml1 ${{ env.EXPORT_OPTIONS_PATH }}
           plutil -insert method -string developer-id ${{ env.EXPORT_OPTIONS_PATH }}
 
@@ -257,7 +254,7 @@ jobs:
             -exportOptionsPlist ${{ env.EXPORT_OPTIONS_PATH }}      \
             -hideShellScriptEnvironment                             \
             | xcpretty
-          
+
           echo "export-path=${{ env.EXPORT_OPTIONS_PATH }}" >> $GITHUB_OUTPUT
 
       - name: Notarize
