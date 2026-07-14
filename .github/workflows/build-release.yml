@@ -169,6 +169,10 @@ jobs:
         run: |
           Magearna/Scripts/prepare-proto.sh
 
+          SPM_SECURITY_PATH=~/Library/org.swift.swiftpm/security
+          mkdir -p $SPM_SECURITY_PATH
+          cp ci_scripts/ci_post_clone/Security/plugins.json $SPM_SECURITY_PATH
+
       - name: Resolve Package Dependencies
         run: |
           xcodebuild -resolvePackageDependencies                      \
