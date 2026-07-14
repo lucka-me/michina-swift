@@ -159,6 +159,7 @@ jobs:
           KEYCHAIN_PASSWORD=$(openssl rand -base64 12)
 
           security create-keychain -p $KEYCHAIN_PASSWORD ${{ env.KEYCHAIN_PATH }}
+          security set-keychain-settings -lut 21600 ${{ env.KEYCHAIN_PATH }}
           security unlock-keychain -p $KEYCHAIN_PASSWORD ${{ env.KEYCHAIN_PATH }}
 
           security import ${{ env.DEVELOPER_ID_CERTIFICATE_PATH }} -k ${{ env.KEYCHAIN_PATH }}  \
