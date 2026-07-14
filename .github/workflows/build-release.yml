@@ -100,12 +100,18 @@ jobs:
         uses: actions/checkout@v7
         with:
           submodules: recursive
+      - name: Setup Xcode Cache
+        id: cache-tokenizers
+        uses: actions/cache@v6
+        with:
+          key: cache-xcode
+          path: DerivedData
 
       - name: Prepare Paths
         id: paths
         env:
           ARTIFACTS_PATH: ${{ runner.temp }}/Artifacts
-          DERIVED_DATA_PATH: ${{ runner.temp }}/DerivedData
+          DERIVED_DATA_PATH: ${{ github.workspace }}/DerivedData
           SECRETS_PATH: ${{ runner.temp }}/Secrets
         run: |
           mkdir -p ${{ env.ARTIFACTS_PATH }}
