@@ -129,16 +129,6 @@ jobs:
           mkdir -p ${{ env.SECRETS_PATH }}
           echo "secrets=${{ env.SECRETS_PATH }}" >> $GITHUB_OUTPUT
 
-      - name: Restore Modification Time
-        env:
-          CHECKOUTS_PATH: ${{ steps.paths.outputs.derived-data }}/SourcePackages/checkouts
-        run: |
-          git restore-mtime
-          for path in ${{ env.CHECKOUTS_PATH }}/*
-          do
-            cd $path && git restore-mtime
-          done
-
       - name: Download ONNXRuntime XCFramework
         uses: actions/download-artifact@v8
         with:
@@ -213,6 +203,10 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple: ${{ env.KEYCHAIN_PATH }}
           security list-keychain -d user -s ${{ env.KEYCHAIN_PATH }}
 
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          echo -n ${{ secrets.MAC_APP_STORE_CONNECT_PROVISION_PROFILE }}  \
+            | base64 --decode -o ~/Library/MobileDevice/Provisioning\ Profiles/mac-app-store-connect.provisionprofile
+
           echo -n ${{ secrets.APP_STORE_CONNECT_API_KEY }}                  \
             | base64 --decode -o ${{ env.APP_STORE_CONNECT_API_KEY_PATH }}
           echo "app-store-connect-api-key-path=${{ env.APP_STORE_CONNECT_API_KEY_PATH }}" >> $GITHUB_OUTPUT
@@ -231,8 +225,6 @@ jobs:
           mkdir -p $SPM_SECURITY_PATH
           cp ci_scripts/ci_post_clone/Security/plugins.json $SPM_SECURITY_PATH
 
-          defaults write com.apple.dt.XCBuild IgnoreFileSystemDeviceInodeChanges -bool YES
-
       - name: Resolve Package Dependencies
         run: |
           xcodebuild -resolvePackageDependencies                      \
@@ -240,6 +232,17 @@ jobs:
             -derivedDataPath ${{ steps.paths.outputs.derived-data }}  \
             -scheme Michina                                           \
             -hideShellScriptEnvironment
+
+      - name: Restore Modification Time
+        env:
+          CHECKOUTS_PATH: ${{ steps.paths.outputs.derived-data }}/SourcePackages/checkouts
+        run: |
+          git restore-mtime
+          for path in ${{ env.CHECKOUTS_PATH }}/*
+          do
+            git restore-mtime -C $path
+          done
+          defaults write com.apple.dt.XCBuild IgnoreFileSystemDeviceInodeChanges -bool YES
 
       - name: Archive
         id: archive
