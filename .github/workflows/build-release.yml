@@ -99,32 +99,41 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
+      - name: Prepare Paths
+        id: paths
+        env:
+          DERIVED_DATA_PATH: ${{ runner.temp }}/DerivedData
+          ARTIFACTS_PATH: ${{ runner.temp }}/Artifacts
+        run: |
+          mkdir -p ${{ env.DERIVED_DATA_PATH }}
+          echo "derived-data=${{ env.DERIVED_DATA_PATH }}" >> $GITHUB_OUTPUT
+
+          mkdir -p ${{ env.ARTIFACTS_PATH }}
+          echo "artifacts=${{ env.ARTIFACTS_PATH }}" >> $GITHUB_OUTPUT
+
       - name: Download ONNXRuntime XCFramework
-        id: download-onnxruntime
         uses: actions/download-artifact@v8
         with:
           name: onnxruntime.xcframework.aar
-          path: ${{ runner.temp }}/Artifacts
+          path: ${{ steps.paths.outputs.artifacts }}
       - name: Download Tokenizers XCFramework
-        id: download-tokenizers
         uses: actions/download-artifact@v8
         with:
           name: tokenizers.xcframework.aar
-          path: ${{ runner.temp }}/Artifacts
+          path: ${{ steps.paths.outputs.artifacts }}
       - name: Download Tokenizers Generated Sources
-        id: download-tokenizers-generated-sources
         uses: actions/download-artifact@v8
         with:
           name: tokenizers.xcframework.generated-sources.aar
-          path: ${{ runner.temp }}/Artifacts
+          path: ${{ steps.paths.outputs.artifacts }}
       - name: Extract Artifacts
         run: |
           mkdir -p ONNXRuntime/onnxruntime/build
-          aa extract -i ${{ steps.download-onnxruntime.outputs.download-path }} -d ONNXRuntime/onnxruntime/build
+          aa extract -i ${{ steps.paths.outputs.artifacts }}/onnxruntime.xcframework.aar -d ONNXRuntime/onnxruntime/build
 
           mkdir -p Tokenizers/Rust/target
-          aa extract -i ${{ steps.download-tokenizers.outputs.download-path }} -d Tokenizers/Rust/target
-          aa extract -i ${{ steps.download-tokenizers-generated-sources.outputs.download-path }} -d Tokenizers/Sources
+          aa extract -i ${{ steps.paths.outputs.artifacts }}/tokenizers.xcframework.aar -d Tokenizers/Rust/target
+          aa extract -i ${{ steps.paths.outputs.artifacts }}/tokenizers.xcframework.generated-sources.aar -d Tokenizers/Sources
 
       - name: Setup Xcode Certificate
         env:
@@ -143,14 +152,6 @@ jobs:
             -A
           security set-key-partition-list -S apple-tool:,apple: ${{ env.KEYCHAIN_PATH }}
           security list-keychain -d user -s ${{ env.KEYCHAIN_PATH }}
-
-      - name: Prepare Paths
-        id: paths
-        env:
-          DERIVED_DATA_PATH: ${{ runner.temp }}/DerivedData
-        run: |
-          mkdir -p ${{ env.DERIVED_DATA_PATH }}
-          echo "derived-data=${{ env.DERIVED_DATA_PATH }}" >> $GITHUB_OUTPUT
 
       - name: Manage Build Number
         run: |
@@ -224,7 +225,7 @@ jobs:
           echo -n ${{ secrets.APP_STORE_CONNECT_API_KEY }} | base64 --decode -o ${{ env.APP_STORE_CONNECT_API_KEY_PATH }}
 
           ditto -c -k --keepParent ${{ env.APP_PATH }} ${{ env.APP_PATH }}.zip
-          xcrun notarytool submit ${{ env.APP_PATH }}.zip \
+          xcrun notarytool submit ${{ env.APP_PATH }}.zip         \
             --key ${{ env.APP_STORE_CONNECT_API_KEY_PATH }}       \
             --key-id ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}  \
             --wait
