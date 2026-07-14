@@ -207,6 +207,10 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple: ${{ env.KEYCHAIN_PATH }}
           security list-keychain -d user -s ${{ env.KEYCHAIN_PATH }}
 
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          echo -n ${{ secrets.MAC_APP_STORE_CONNECT_PROVISION_PROFILE }}  \
+            | base64 --decode -o ~/Library/MobileDevice/Provisioning\ Profiles/mac-app-store-connect.provisionprofile
+
           echo -n ${{ secrets.APP_STORE_CONNECT_API_KEY }}                  \
             | base64 --decode -o ${{ env.APP_STORE_CONNECT_API_KEY_PATH }}
           echo "app-store-connect-api-key-path=${{ env.APP_STORE_CONNECT_API_KEY_PATH }}" >> $GITHUB_OUTPUT
@@ -306,20 +310,13 @@ jobs:
           plutil -insert method -string app-store-connect ${{ env.EXPORT_OPTIONS_PATH }}
 
           mkdir -p ${{ env.EXPORT_PATH }}
-          xcodebuild -exportArchive                                                             \
-            -archivePath ${{ steps.archive.outputs.archive-path }}                              \
-            -exportPath ${{ env.EXPORT_PATH }}                                                  \
-            -exportOptionsPlist ${{ env.EXPORT_OPTIONS_PATH }}                                  \
-            -allowProvisioningUpdates                                                           \
-            -authenticationKeyPath ${{ steps.secrets.outputs.app-store-connect-api-key-path }}  \
-            -authenticationKeyID ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}                    \
-            -authenticationKeyIssuerID ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}       \
+          xcodebuild -exportArchive                                                                     \
+            -archivePath ${{ steps.archive.outputs.archive-path }}                                      \
+            -exportPath ${{ env.EXPORT_PATH }}                                                          \
+            -exportOptionsPlist ${{ env.EXPORT_OPTIONS_PATH }}                                          \
+            PROVISIONING_PROFILE_SPECIFIER=${{ secrets.MAC_APP_STORE_CONNECT_PROVISION_PROFILE_UUID }}  \
             -hideShellScriptEnvironment
 
-          xcrun productbuild                              \
-            --component ${{ env.APP_PATH }} /Applications \
-            ${{ env.PACKAGE_PATH }}
-          
           echo "export-path=${{ env.EXPORT_PATH }}" >> $GITHUB_OUTPUT
 
       - name: Wait for Export Steps
