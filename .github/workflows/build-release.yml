@@ -98,6 +98,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          submodules: true
 
       - name: Prepare Paths
         id: paths
@@ -162,6 +164,10 @@ jobs:
           echo "Set build number to ${{ github.run_number }}"
           sed -i '' 's/CURRENT_PROJECT_VERSION = .*/CURRENT_PROJECT_VERSION = ${{ github.run_number }};/g' \
             Michina/Michina.xcodeproj/project.pbxproj
+
+      - name: Prepare Packages
+        run: |
+          Magearna/Scripts/prepare-proto.sh
 
       - name: Resolve Package Dependencies
         run: |
