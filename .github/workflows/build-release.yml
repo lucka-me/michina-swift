@@ -186,25 +186,35 @@ jobs:
           mkdir -p $SPM_SECURITY_PATH
           cp ci_scripts/ci_post_clone/Security/plugins.json $SPM_SECURITY_PATH
 
+      - name: Install Tools
+        run: |
+          gem install xcpretty
+
       - name: Resolve Package Dependencies
         run: |
+          set -o pipefail
+
           xcodebuild -resolvePackageDependencies                      \
             -workspace ${{ env.XCODE_WORKSPACE }}                     \
             -derivedDataPath ${{ steps.paths.outputs.derived-data }}  \
             -scheme Michina                                           \
-            -hideShellScriptEnvironment
+            -hideShellScriptEnvironment                               \
+            | xcpretty
 
       - name: Archive
         id: archive
         env:
           ARCHIVE_PATH: ${{ runner.temp }}/Michina.xcarchive
         run: |
+          set -o pipefail
+
           xcodebuild archive                                          \
             -workspace ${{ env.XCODE_WORKSPACE }}                     \
             -scheme Michina -destination generic/platform=macOS       \
             -archivePath ${{ env.ARCHIVE_PATH }}                      \
             -derivedDataPath ${{ steps.paths.outputs.derived-data }}  \
-            -hideShellScriptEnvironment
+            -hideShellScriptEnvironment                               \
+            | xcpretty
           
           echo "archive-path=${{ env.ARCHIVE_PATH }}" >> $GITHUB_OUTPUT
 
@@ -214,6 +224,8 @@ jobs:
           EXPORT_PATH: ${{ runner.temp }}/Exports/app-store-connect
           EXPORT_OPTIONS_PATH: ${{ runner.temp }}/Exports/app-store-connect.plist
         run: |
+          set -o pipefail
+
           mkdir -p ${{ env.EXPORT_OPTIONS_PATH }}
           plutil -create xml1 ${{ env.EXPORT_OPTIONS_PATH }}
           plutil -insert method -string app-store-connect ${{ env.EXPORT_OPTIONS_PATH }}
@@ -222,7 +234,8 @@ jobs:
             -archivePath ${{ steps.archive.outputs.archive-path }}  \
             -exportPath ${{ env.EXPORT_PATH }}                      \
             -exportOptionsPlist ${{ env.EXPORT_OPTIONS_PATH }}      \
-            -hideShellScriptEnvironment
+            -hideShellScriptEnvironment                             \
+            | xcpretty
 
           echo "export-path=${{ env.EXPORT_OPTIONS_PATH }}" >> $GITHUB_OUTPUT
 
@@ -232,6 +245,8 @@ jobs:
           EXPORT_PATH: ${{ runner.temp }}/Exports/developer-id
           EXPORT_OPTIONS_PATH: ${{ runner.temp }}/Exports/developer-id.plist
         run: |
+          set -o pipefail
+
           mkdir -p ${{ env.EXPORT_OPTIONS_PATH }}
           plutil -create xml1 ${{ env.EXPORT_OPTIONS_PATH }}
           plutil -insert method -string developer-id ${{ env.EXPORT_OPTIONS_PATH }}
@@ -240,7 +255,8 @@ jobs:
             -archivePath ${{ steps.archive.outputs.archive-path }}  \
             -exportPath ${{ env.EXPORT_PATH }}                      \
             -exportOptionsPlist ${{ env.EXPORT_OPTIONS_PATH }}      \
-            -hideShellScriptEnvironment
+            -hideShellScriptEnvironment                             \
+            | xcpretty
           
           echo "export-path=${{ env.EXPORT_OPTIONS_PATH }}" >> $GITHUB_OUTPUT
 
