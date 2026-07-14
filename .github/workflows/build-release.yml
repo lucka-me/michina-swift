@@ -99,6 +99,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
         with:
+          fetch-depth: 0
           submodules: recursive
       - name: Setup Xcode Cache
         id: cache-tokenizers
@@ -106,6 +107,17 @@ jobs:
         with:
           key: cache-xcode
           path: DerivedData
+
+      - name: Install Tools
+        run: |
+          gem install xcpretty
+          brew install git-tools
+
+      - name: Restore Modification Time
+        run: |
+          git restore-mtime
+
+          defaults write com.apple.dt.XCBuild IgnoreFileSystemDeviceInodeChanges -bool YES
 
       - name: Prepare Paths
         id: paths
@@ -190,10 +202,6 @@ jobs:
           mkdir -p $SPM_SECURITY_PATH
           cp ci_scripts/ci_post_clone/Security/plugins.json $SPM_SECURITY_PATH
 
-      - name: Install Tools
-        run: |
-          gem install xcpretty
-
       - name: Resolve Package Dependencies
         run: |
           xcodebuild -resolvePackageDependencies                      \
@@ -259,7 +267,7 @@ jobs:
             -hideShellScriptEnvironment                             \
             | xcpretty
 
-          echo "export-path=${{ env.EXPORT_OPTIONS_PATH }}" >> $GITHUB_OUTPUT
+          echo "export-path=${{ env.EXPORT_PATH }}" >> $GITHUB_OUTPUT
 
       - name: Notarize
         env:
