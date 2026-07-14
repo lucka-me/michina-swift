@@ -171,6 +171,7 @@ jobs:
           MAC_DEVELOPMENT_CERTIFICATE_PATH: ${{ steps.paths.outputs.secrets }}/mac-development.p12
           DEVELOPER_ID_CERTIFICATE_PATH: ${{ steps.paths.outputs.secrets }}/developer-id.p12
           APPLE_DISTRIBUTION_CERTIFICATE_PATH: ${{ steps.paths.outputs.secrets }}/apple-distribution.p12
+          MAC_INSTALLER_DISTRIBUTION_CERTIFICATE_PATH: ${{ steps.paths.outputs.secrets }}/mac-installer-distribution.p12
           KEYCHAIN_PATH: ${{ steps.paths.outputs.secrets }}/build.keychain
 
           APP_STORE_CONNECT_API_KEY_PATH: ${{ steps.paths.outputs.secrets }}/app-store-connect-api.p8
@@ -178,6 +179,7 @@ jobs:
           echo -n ${{ secrets.XCODE_MAC_DEVELOPMENT_CERTIFICATE }} | base64 --decode -o ${{ env.MAC_DEVELOPMENT_CERTIFICATE_PATH }}
           echo -n ${{ secrets.XCODE_DEVELOPER_ID_CERTIFICATE }} | base64 --decode -o ${{ env.DEVELOPER_ID_CERTIFICATE_PATH }}
           echo -n ${{ secrets.XCODE_APPLE_DISTRIBUTION_CERTIFICATE }} | base64 --decode -o ${{ env.APPLE_DISTRIBUTION_CERTIFICATE_PATH }}
+          echo -n ${{ secrets.XCODE_MAC_INSTALLER_DISTRIBUTION_CERTIFICATE }} | base64 --decode -o ${{ env.MAC_INSTALLER_DISTRIBUTION_CERTIFICATE_PATH }}
 
           KEYCHAIN_PASSWORD=$(openssl rand -base64 12)
 
@@ -189,8 +191,10 @@ jobs:
             -t cert -f pkcs12 -P ${{ secrets.XCODE_MAC_DEVELOPMENT_CERTIFICATE_PASSWORD }} -A
           security import ${{ env.DEVELOPER_ID_CERTIFICATE_PATH }} -k ${{ env.KEYCHAIN_PATH }}  \
             -t cert -f pkcs12 -P ${{ secrets.XCODE_DEVELOPER_ID_CERTIFICATE_PASSWORD }} -A
-          security import ${{ env.APPLE_DISTRIBUTION_CERTIFICATE_PATH }} -k ${{ env.KEYCHAIN_PATH }} \
+          security import ${{ env.APPLE_DISTRIBUTION_CERTIFICATE_PATH }} -k ${{ env.KEYCHAIN_PATH }}  \
             -t cert -f pkcs12 -P ${{ secrets.XCODE_APPLE_DISTRIBUTION_CERTIFICATE_PASSWORD }} -A
+          security import ${{ env.MAC_INSTALLER_DISTRIBUTION_CERTIFICATE_PATH }} -k ${{ env.KEYCHAIN_PATH }}  \
+            -t cert -f pkcs12 -P ${{ secrets.XCODE_MAC_INSTALLER_DISTRIBUTION_CERTIFICATE_PASSWORD }} -A
 
           security set-key-partition-list -S apple-tool:,apple: ${{ env.KEYCHAIN_PATH }}
           security list-keychain -d user -s ${{ env.KEYCHAIN_PATH }}
@@ -231,12 +235,14 @@ jobs:
 
           xcodebuild archive                                          \
             -workspace ${{ env.XCODE_WORKSPACE }}                     \
-            -scheme Michina -destination generic/platform=macOS       \
+            -scheme Michina                                           \
+            -destination 'generic/platform=macOS,arch=arm64'          \
             -archivePath ${{ env.ARCHIVE_PATH }}                      \
             -derivedDataPath ${{ steps.paths.outputs.derived-data }}  \
             -hideShellScriptEnvironment                               \
             | xcpretty
 
+          ditto -c -k --keepParent ${{ env.ARCHIVE_PATH }} ${{ env.ARCHIVE_PATH }}.zip
           echo "archive-path=${{ env.ARCHIVE_PATH }}" >> $GITHUB_OUTPUT
 
       - name: Export for Developer ID
@@ -309,8 +315,8 @@ jobs:
       - name: Upload Archive
         uses: actions/upload-artifact@v7
         with:
-          name: Michina.xcarchive
-          path: ${{ steps.archive.outputs.archive-path }}
+          path: ${{ steps.archive.outputs.archive-path }}.zip
+          archive: false
       - name: Upload Developer ID Archive
         uses: actions/upload-artifact@v7
         with:
