@@ -86,3 +86,163 @@ jobs:
         with:
           path: ${{ env.GENERATED_XCFRAMEWORK_PATH }}.generated-sources.aar
           archive: false
+
+  build-machina:
+    name: Build Machina
+    runs-on: macos-26
+    needs:
+      - build-onnxruntime
+      - build-tokenizers
+    env:
+      XCODE_WORKSPACE: ${{ github.workspace }}/Michina.xcworkspace
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Download ONNXRuntime XCFramework
+        id: download-onnxruntime
+        uses: actions/download-artifact@v8
+        with:
+          name: onnxruntime.xcframework.aar
+          path: ${{ runner.temp }}/Artifacts
+      - name: Download Tokenizers XCFramework
+        id: download-tokenizers
+        uses: actions/download-artifact@v8
+        with:
+          name: tokenizers.xcframework.aar
+          path: ${{ runner.temp }}/Artifacts
+      - name: Download Tokenizers Generated Sources
+        id: download-tokenizers-generated-sources
+        uses: actions/download-artifact@v8
+        with:
+          name: tokenizers.xcframework.generated-sources.aar
+          path: ${{ runner.temp }}/Artifacts
+      - name: Extract Artifacts
+        run: |
+          mkdir -p ONNXRuntime/onnxruntime/build
+          aa extract -i ${{ steps.download-onnxruntime.outputs.download-path }} -d ONNXRuntime/onnxruntime/build
+
+          mkdir -p Tokenizers/Rust/target
+          aa extract -i ${{ steps.download-tokenizers.outputs.download-path }} -d Tokenizers/Rust/target
+          aa extract -i ${{ steps.download-tokenizers-generated-sources.outputs.download-path }} -d Tokenizers/Sources
+
+      - name: Setup Xcode Certificate
+        env:
+          DEVELOPER_ID_CERTIFICATE_PATH: ${{ runner.temp }}/Secrets/developer-id.p12
+          KEYCHAIN_PATH: ${{ runner.temp }}/Secrets/build.keychain
+        run: |
+          echo -n ${{ secrets.XCODE_DEVELOPER_ID_CERTIFICATE }} | base64 --decode -o ${{ env.DEVELOPER_ID_CERTIFICATE_PATH }}
+
+          KEYCHAIN_PASSWORD=$(openssl rand -base64 12)
+
+          security create-keychain -p $KEYCHAIN_PASSWORD ${{ env.KEYCHAIN_PATH }}
+          security unlock-keychain -p $KEYCHAIN_PASSWORD ${{ env.KEYCHAIN_PATH }}
+
+          security import ${{ env.DEVELOPER_ID_CERTIFICATE_PATH }} -k ${{ env.KEYCHAIN_PATH }}  \
+            -t cert -f pkcs12 -P ${{ secrets.XCODE_DEVELOPER_ID_CERTIFICATE_PASSWORD }}         \
+            -A
+          security set-key-partition-list -S apple-tool:,apple: ${{ env.KEYCHAIN_PATH }}
+          security list-keychain -d user -s ${{ env.KEYCHAIN_PATH }}
+
+      - name: Prepare Paths
+        id: paths
+        env:
+          DERIVED_DATA_PATH: ${{ runner.temp }}/DerivedData
+        run: |
+          mkdir -p ${{ env.DERIVED_DATA_PATH }}
+          echo "derived-data=${{ env.DERIVED_DATA_PATH }}" >> $GITHUB_OUTPUT
+
+      - name: Manage Build Number
+        run: |
+          echo "Set build number to ${{ github.run_number }}"
+          sed -i '' 's/CURRENT_PROJECT_VERSION = .*/CURRENT_PROJECT_VERSION = ${{ github.run_number }};/g' \
+            Michina/Michina.xcodeproj/project.pbxproj
+
+      - name: Resolve Package Dependencies
+        run: |
+          xcodebuild -resolvePackageDependencies                      \
+            -workspace ${{ env.XCODE_WORKSPACE }}                     \
+            -derivedDataPath ${{ steps.paths.outputs.derived-data }}  \
+            -scheme Michina                                           \
+            -hideShellScriptEnvironment
+
+      - name: Archive
+        id: archive
+        env:
+          ARCHIVE_PATH: ${{ runner.temp }}/Michina.xcarchive
+        run: |
+          xcodebuild archive                                          \
+            -workspace ${{ env.XCODE_WORKSPACE }}                     \
+            -scheme Michina -destination generic/platform=macOS       \
+            -archivePath ${{ env.ARCHIVE_PATH }}                      \
+            -derivedDataPath ${{ steps.paths.outputs.derived-data }}  \
+            -hideShellScriptEnvironment
+          
+          echo "archive-path=${{ env.ARCHIVE_PATH }}" >> $GITHUB_OUTPUT
+
+      - name: Export for App Store Connect
+        id: export-app-store-connect
+        env:
+          EXPORT_PATH: ${{ runner.temp }}/Exports/app-store-connect
+          EXPORT_OPTIONS_PATH: ${{ runner.temp }}/Exports/app-store-connect.plist
+        run: |
+          mkdir -p ${{ env.EXPORT_OPTIONS_PATH }}
+          plutil -create xml1 ${{ env.EXPORT_OPTIONS_PATH }}
+          plutil -insert method -string app-store-connect ${{ env.EXPORT_OPTIONS_PATH }}
+
+          xcodebuild -exportArchive                                 \
+            -archivePath ${{ steps.archive.outputs.archive-path }}  \
+            -exportPath ${{ env.EXPORT_PATH }}                      \
+            -exportOptionsPlist ${{ env.EXPORT_OPTIONS_PATH }}      \
+            -hideShellScriptEnvironment
+
+          echo "export-path=${{ env.EXPORT_OPTIONS_PATH }}" >> $GITHUB_OUTPUT
+
+      - name: Export for Developer ID
+        id: export-developer-id
+        env:
+          EXPORT_PATH: ${{ runner.temp }}/Exports/developer-id
+          EXPORT_OPTIONS_PATH: ${{ runner.temp }}/Exports/developer-id.plist
+        run: |
+          mkdir -p ${{ env.EXPORT_OPTIONS_PATH }}
+          plutil -create xml1 ${{ env.EXPORT_OPTIONS_PATH }}
+          plutil -insert method -string developer-id ${{ env.EXPORT_OPTIONS_PATH }}
+
+          xcodebuild -exportArchive                                 \
+            -archivePath ${{ steps.archive.outputs.archive-path }}  \
+            -exportPath ${{ env.EXPORT_PATH }}                      \
+            -exportOptionsPlist ${{ env.EXPORT_OPTIONS_PATH }}      \
+            -hideShellScriptEnvironment
+          
+          echo "export-path=${{ env.EXPORT_OPTIONS_PATH }}" >> $GITHUB_OUTPUT
+
+      - name: Notarize
+        env:
+          APP_STORE_CONNECT_API_KEY_PATH: ${{ runner.temp }}/Secrets/app-store-connect-api.p8
+          APP_PATH: ${{ steps.export-developer-id.outputs.export-path }}/Michina.app
+        run: |
+          echo -n ${{ secrets.APP_STORE_CONNECT_API_KEY }} | base64 --decode -o ${{ env.APP_STORE_CONNECT_API_KEY_PATH }}
+
+          ditto -c -k --keepParent ${{ env.APP_PATH }} ${{ env.APP_PATH }}.zip
+          xcrun notarytool submit ${{ env.APP_PATH }}.zip \
+            --key ${{ env.APP_STORE_CONNECT_API_KEY_PATH }}       \
+            --key-id ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}  \
+            --wait
+          xcrun stapler staple ${{ env.APP_PATH }}
+          rm ${{ env.APP_PATH }}.zip
+
+      - name: Upload Archive
+        uses: actions/upload-artifact@v7
+        with:
+          name: Michina.xcarchive
+          path: ${{ steps.archive.outputs.archive-path }}
+      - name: Upload App Store Connect Archive
+        uses: actions/upload-artifact@v7
+        with:
+          name: Michina-App-Store-Connect
+          path: ${{ steps.export-app-store-connect.outputs.export-path }}
+      - name: Upload Developer ID Archive
+        uses: actions/upload-artifact@v7
+        with:
+          name: Michina-Developer-ID
+          path: ${{ steps.export-developer-id.outputs.export-path }}
