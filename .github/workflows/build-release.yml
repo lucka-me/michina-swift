@@ -144,9 +144,11 @@ jobs:
       - name: Setup Xcode Certificate
         env:
           DEVELOPER_ID_CERTIFICATE_PATH: ${{ steps.paths.outputs.secrets }}/developer-id.p12
+          MAC_DEVELOPMENT_CERTIFICATE_PATH: ${{ steps.paths.outputs.secrets }}/mac-development.p12
           KEYCHAIN_PATH: ${{ steps.paths.outputs.secrets }}/build.keychain
         run: |
           echo -n ${{ secrets.XCODE_DEVELOPER_ID_CERTIFICATE }} | base64 --decode -o ${{ env.DEVELOPER_ID_CERTIFICATE_PATH }}
+          echo -n ${{ secrets.XCODE_MAC_DEVELOPMENT_CERTIFICATE }} | base64 --decode -o ${{ env.MAC_DEVELOPMENT_CERTIFICATE_PATH }}
 
           KEYCHAIN_PASSWORD=$(openssl rand -base64 12)
 
@@ -156,6 +158,10 @@ jobs:
           security import ${{ env.DEVELOPER_ID_CERTIFICATE_PATH }} -k ${{ env.KEYCHAIN_PATH }}  \
             -t cert -f pkcs12 -P ${{ secrets.XCODE_DEVELOPER_ID_CERTIFICATE_PASSWORD }}         \
             -A
+          security import ${{ env.MAC_DEVELOPMENT_CERTIFICATE_PATH }} -k ${{ env.KEYCHAIN_PATH }} \
+            -t cert -f pkcs12 -P ${{ secrets.XCODE_MAC_DEVELOPMENT_CERTIFICATE_PASSWORD }}        \
+            -A
+
           security set-key-partition-list -S apple-tool:,apple: ${{ env.KEYCHAIN_PATH }}
           security list-keychain -d user -s ${{ env.KEYCHAIN_PATH }}
 
