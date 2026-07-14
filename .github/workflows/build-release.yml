@@ -280,7 +280,7 @@ jobs:
         env:
           APP_STORE_CONNECT_API_KEY_PATH: ${{ steps.paths.outputs.secrets }}/app-store-connect-api.p8
           EXPORT_PATH: ${{ steps.export-developer-id.outputs.export-path }}
-          APP_PATH: ${{ env.EXPORT_PATH }}/Michina.app
+          APP_PATH: ${{ steps.export-developer-id.outputs.export-path }}/Michina.app
         run: |
           echo -n ${{ secrets.APP_STORE_CONNECT_API_KEY }} | base64 --decode -o ${{ env.APP_STORE_CONNECT_API_KEY_PATH }}
 
