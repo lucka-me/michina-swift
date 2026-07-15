@@ -12,7 +12,7 @@ generate C++ glue code. Please follow [their official instruction](https://rust-
 and then install cxxbridge-cmd with cargo:
 
 ```shell
-cargo install cxxbridge-cmd
+cargo install --version 1.0.194 cxxbridge-cmd
 ```
 
 Then run the script to build the rust code and generate XCFramework:

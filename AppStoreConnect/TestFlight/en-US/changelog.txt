@@ -1,6 +1,8 @@
 Welcome to Michina.
 
-Build #20
+Build #40
+The CI is switched from Xcode Cloud to GitHub Actions, which delivers faster with more transparency.
+
 - Added: Persist versioning JSON for Core ML optimization files.
 
 Build #19

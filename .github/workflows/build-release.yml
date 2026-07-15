@@ -3,9 +3,8 @@ name: Build Release
 on:
   push:
     branches:
-      - improve-ci
+      - main
     paths:
-      - .github/workflows/**
       - Magearna/**
       - Michina/**
       - ONNXRuntime/**
@@ -51,16 +50,16 @@ jobs:
           SECRETS_PATH: ${{ runner.temp }}/Secrets
         run: |
           mkdir -p ${{ env.ARTIFACTS_PATH }}
-          echo "artifacts=${{ env.ARTIFACTS_PATH }}" >> $GITHUB_OUTPUT
+          echo 'artifacts=${{ env.ARTIFACTS_PATH }}' >> $GITHUB_OUTPUT
 
           mkdir -p ${{ env.DERIVED_DATA_PATH }}
-          echo "derived-data=${{ env.DERIVED_DATA_PATH }}" >> $GITHUB_OUTPUT
+          echo 'derived-data=${{ env.DERIVED_DATA_PATH }}' >> $GITHUB_OUTPUT
 
           mkdir -p ${{ env.EXPORTS_PATH }}
-          echo "exports=${{ env.EXPORTS_PATH }}" >> $GITHUB_OUTPUT
+          echo 'exports=${{ env.EXPORTS_PATH }}' >> $GITHUB_OUTPUT
 
           mkdir -p ${{ env.SECRETS_PATH }}
-          echo "secrets=${{ env.SECRETS_PATH }}" >> $GITHUB_OUTPUT
+          echo 'secrets=${{ env.SECRETS_PATH }}' >> $GITHUB_OUTPUT
 
       - name: Download Artifacts
         uses: actions/download-artifact@v8
@@ -133,7 +132,7 @@ jobs:
 
           echo -n ${{ secrets.APP_STORE_CONNECT_API_KEY }}                  \
             | base64 --decode -o ${{ env.APP_STORE_CONNECT_API_KEY_PATH }}
-          echo "app-store-connect-api-key-path=${{ env.APP_STORE_CONNECT_API_KEY_PATH }}" >> $GITHUB_OUTPUT
+          echo 'app-store-connect-api-key-path=${{ env.APP_STORE_CONNECT_API_KEY_PATH }}' >> $GITHUB_OUTPUT
 
       - name: Manage Build Number
         id: version
@@ -141,7 +140,7 @@ jobs:
           XCODE_PROJECT_FILE: Michina/Michina.xcodeproj/project.pbxproj
           BUILD_NUMBER: ${{ github.run_number }}
         run: |
-          echo "Set build number to ${{ env.BUILD_NUMBER }}"
+          echo 'Set build number to ${{ env.BUILD_NUMBER }}'
           sed -i '' 's/CURRENT_PROJECT_VERSION = .*/CURRENT_PROJECT_VERSION = ${{ env.BUILD_NUMBER }};/g' \
             ${{ env.XCODE_PROJECT_FILE }}
           MARKETING_VERSION=$(                                                                            \
@@ -149,7 +148,7 @@ jobs:
           )
 
           echo "version=$MARKETING_VERSION" >> $GITHUB_OUTPUT
-          echo "build=${{ env.BUILD_NUMBER }}" >> $GITHUB_OUTPUT
+          echo 'build=${{ env.BUILD_NUMBER }}' >> $GITHUB_OUTPUT
 
       - name: Prepare Packages
         run: |
@@ -182,6 +181,7 @@ jobs:
         id: archive
         env:
           ARCHIVE_PATH: ${{ runner.temp }}/Michina.xcarchive
+        # FIXME: xcodebuild still compiles lot of files with cached derived data
         run: |
           set -o pipefail
 
@@ -195,7 +195,7 @@ jobs:
             | xcpretty
 
           ditto -c -k --keepParent ${{ env.ARCHIVE_PATH }} ${{ env.ARCHIVE_PATH }}.zip
-          echo "archive-path=${{ env.ARCHIVE_PATH }}" >> $GITHUB_OUTPUT
+          echo 'archive-path=${{ env.ARCHIVE_PATH }}' >> $GITHUB_OUTPUT
 
       - name: Export and Notarize App for Developer ID
         id: export-developer-id
@@ -225,7 +225,7 @@ jobs:
           rm ${{ env.APP_PATH }}.zip
 
           ditto -c -k --keepParent ${{ env.EXPORT_PATH }} ${{ env.EXPORT_PATH }}.zip
-          echo "export-path=${{ env.EXPORT_PATH }}" >> $GITHUB_OUTPUT
+          echo 'export-path=${{ env.EXPORT_PATH }}' >> $GITHUB_OUTPUT
 
       - name: Export and Upload Package to App Store Connect
         id: export-app-store-connect
