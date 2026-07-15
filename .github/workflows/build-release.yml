@@ -236,6 +236,7 @@ jobs:
         background: true
         timeout-minutes: 20
         env:
+          API_PRIVATE_KEYS_DIR: ${{ steps.paths.outputs.secrets }}
           EXPORT_OPTIONS_PATH: ${{ steps.paths.outputs.exports }}/app-store-connect.plist
           EXPORT_PATH: ${{ steps.paths.outputs.exports }}/app-store-connect
         run: |
@@ -309,4 +310,3 @@ jobs:
         with:
           path: ${{ steps.export-app-store-connect.outputs.export-path }}.zip
           archive: false
-
