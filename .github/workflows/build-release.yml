@@ -5,6 +5,7 @@ on:
     branches:
       - fix-upload
     paths:
+      - .github/**
       - Magearna/**
       - Michina/**
       - ONNXRuntime/**
