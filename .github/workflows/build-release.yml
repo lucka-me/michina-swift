@@ -231,12 +231,13 @@ jobs:
       - name: Export and Upload Package to App Store Connect
         id: export-app-store-connect
         background: true
+        timeout-minutes: 20
         env:
           EXPORT_OPTIONS_PATH: ${{ steps.paths.outputs.exports }}/app-store-connect.plist
           EXPORT_PATH: ${{ steps.paths.outputs.exports }}/app-store-connect
 
           API_PRIVATE_KEYS_DIR: ${{ steps.paths.outputs.secrets }}
-          APP_STORE_TEXT_PATH: ${{ steps.paths.outputs.exports }}/app-store-connect/TestFlight
+          APP_STORE_TEXT_PATH: ${{ steps.paths.outputs.exports }}/app-store-connect/AppStore
           APP_IDENTIFIER: dev.lucka.Michina
         # FIXME: xcrun altool --beta-app-store-text doesn't actually work
         run: |
@@ -272,7 +273,8 @@ jobs:
             --bundle-short-version-string '${{ steps.version.outputs.version }}'      \
             --bundle-version '${{ steps.version.outputs.build }}'                     \
             --api-key ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}                     \
-            --api-issuer ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+            --api-issuer ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}           \
+            --verbose
 
           echo 'export-path=${{ env.EXPORT_PATH }}' >> $GITHUB_OUTPUT
 
