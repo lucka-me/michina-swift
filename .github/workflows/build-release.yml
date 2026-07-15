@@ -3,9 +3,8 @@ name: Build Release
 on:
   push:
     branches:
-      - fix-upload
+      - main
     paths:
-      - .github/**
       - Magearna/**
       - Michina/**
       - ONNXRuntime/**
