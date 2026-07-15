@@ -91,7 +91,8 @@ jobs:
           MAC_INSTALLER_DISTRIBUTION_CERTIFICATE_PATH: ${{ steps.paths.outputs.secrets }}/mac-installer-distribution.p12
           KEYCHAIN_PATH: ${{ steps.paths.outputs.secrets }}/build.keychain
 
-          APP_STORE_CONNECT_API_KEY_PATH: ${{ steps.paths.outputs.secrets }}/app-store-connect-api.p8
+          APP_STORE_CONNECT_API_KEY_PATH: >
+            ${{ steps.paths.outputs.secrets }}/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8
         run: |
           KEYCHAIN_PASSWORD=$(openssl rand -base64 12)
 
@@ -135,10 +136,20 @@ jobs:
           echo "app-store-connect-api-key-path=${{ env.APP_STORE_CONNECT_API_KEY_PATH }}" >> $GITHUB_OUTPUT
 
       - name: Manage Build Number
+        id: version
+        env:
+          XCODE_PROJECT_FILE: Michina/Michina.xcodeproj/project.pbxproj
+          BUILD_NUMBER: ${{ github.run_number }}
         run: |
-          echo "Set build number to ${{ github.run_number }}"
-          sed -i '' 's/CURRENT_PROJECT_VERSION = .*/CURRENT_PROJECT_VERSION = ${{ github.run_number }};/g' \
-            Michina/Michina.xcodeproj/project.pbxproj
+          echo "Set build number to ${{ env.BUILD_NUMBER }}"
+          sed -i '' 's/CURRENT_PROJECT_VERSION = .*/CURRENT_PROJECT_VERSION = ${{ env.BUILD_NUMBER }};/g' \
+            ${{ env.XCODE_PROJECT_FILE }}
+          MARKETING_VERSION=$(                                                                            \
+            sed -nE 's/\t+MARKETING_VERSION = ([0-9\.]+);/\1/p' ${{ env.XCODE_PROJECT_FILE }} | head -n 1 \
+          )
+
+          echo "version=$MARKETING_VERSION" >> $GITHUB_OUTPUT
+          echo "build=${{ env.BUILD_NUMBER }}" >> $GITHUB_OUTPUT
 
       - name: Prepare Packages
         run: |
@@ -222,7 +233,6 @@ jobs:
         env:
           EXPORT_OPTIONS_PATH: ${{ steps.paths.outputs.exports }}/app-store-connect.plist
           EXPORT_PATH: ${{ steps.paths.outputs.exports }}/app-store-connect
-          PACKAGE_PATH: ${{ steps.paths.outputs.exports }}/app-store-connect/Michina.pkg
         run: |
           plutil -create xml1 ${{ env.EXPORT_OPTIONS_PATH }}
           plutil -insert method -string app-store-connect ${{ env.EXPORT_OPTIONS_PATH }}
@@ -240,6 +250,28 @@ jobs:
             -hideShellScriptEnvironment
 
           echo "export-path=${{ env.EXPORT_PATH }}" >> $GITHUB_OUTPUT
+
+      - name: Upload TestFlight Text to App Store Connect
+        background: true
+        env:
+          API_PRIVATE_KEYS_DIR: ${{ steps.paths.outputs.secrets }}
+          TEST_FLIGHT_UPLOAD_TEXT_PATH: ${{ steps.paths.outputs.exports }}/app-store-connect/TestFlight
+          APP_IDENTIFIER: dev.lucka.Michina
+        run: |
+          textDirectory=${{ env.TEST_FLIGHT_UPLOAD_TEXT_PATH }}/beta-${{ env.APP_IDENTIFIER }}/upload/MACOS
+          mkdir -p $textDirectory
+          for file in TestFlight/WhatToTest.*.txt
+          do
+            textFile=$textDirectory/$(basename $file | sed -nE 's/WhatToTest.//p')
+            touch $textFile
+            echo "\"whatsNew\" = \"$(cat $file)\";" >> $textFile
+          done
+          xcrun altool --beta-app-store-text ${{ env.TEST_FLIGHT_UPLOAD_TEXT_PATH }} --upload \
+            --apple-id ${{ env.APP_IDENTIFIER }} --platform macos                             \
+            --bundle-short-version-string '${{ steps.version.outputs.version }}'              \
+            --bundle-version '${{ steps.version.outputs.build }}'                             \
+            --api-key ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}                             \
+            --api-issuer ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
 
       - name: Wait for Export Steps
         wait-all:
