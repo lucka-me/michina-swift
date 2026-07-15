@@ -8,23 +8,27 @@
 
 Immich Machine Learning Server on macOS.
 
-[Join TestFlight](https://testflight.apple.com/join/rJP9acvk).
+[![Build Release][workflow-build-release-badge]][workflow-build-release]
+[![TestFlight](https://img.shields.io/badge/TestFlight-join-blue)](https://testflight.apple.com/join/rJP9acvk)
 
-## ⚠️ Disclaimer
+[workflow-build-release]: https://github.com/lucka-me/michina-swift/actions/workflows/build-release.yml
+[workflow-build-release-badge]: https://github.com/lucka-me/michina-swift/actions/workflows/build-release.yml/badge.svg
 
-This project is still under development. **Use AT YOUR OWN RISK, and do not forget to BACKUP your database before
-running massive machine learning jobs on your Immich instance with Michina.**
-
-Because of the differences in image processing ecosystem between of Swift (Core Image, Core Graphic, vImage...) and
-Python (Pillow, OpenCV, NumPy...), Machina doesn't always behave exactly the same as the original official
-implementation does, which may lead to slight differences in the outputs.  
-But these differences are expected to be toleratable, like the facial recognition embedding being different but still
-close enough to be classified as the same person.
+> [!IMPORTANT]
+> This project is still under development. **Use AT YOUR OWN RISK, and do not forget to BACKUP your database before
+> running massive machine learning jobs on your Immich instance with Michina.**
 
 ## Glance
 
 In a nutshell, Michina is a Swift implementation of
 [immich/machine_learning](https://github.com/immich-app/immich/tree/main/machine-learning), with a GUI, for macOS.
+
+> [!NOTE]
+> Because of the differences in image processing ecosystem between of Swift (Core Image, Core Graphic, vImage...) and
+> Python (Pillow, OpenCV, NumPy...), Machina doesn't always behave exactly the same as the original official
+> implementation does, which may lead to slight differences in the outputs.  
+> But these differences are expected to be toleratable, like the facial recognition embedding being different but still
+> close enough to be classified as the same person.
 
 ## Packages
 
