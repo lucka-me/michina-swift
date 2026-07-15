@@ -300,6 +300,7 @@ jobs:
 
       - name: Export and Upload to App Store Connect
         id: export-app-store-connect
+        if: ${{ false }}
         background: true
         env:
           EXPORT_OPTIONS_PATH: ${{ steps.paths.outputs.exports }}/app-store-connect.plist
@@ -334,6 +335,7 @@ jobs:
           name: developer-id
           path: ${{ steps.export-developer-id.outputs.export-path }}
       - name: Upload App Store Connect Archive
+        if: ${{ false }}
         uses: actions/upload-artifact@v7
         with:
           name: app-store-connect
