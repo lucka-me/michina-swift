@@ -3,7 +3,7 @@ name: Build Release
 on:
   push:
     branches:
-      - main
+      - fix-upload
     paths:
       - Magearna/**
       - Michina/**
@@ -241,7 +241,6 @@ jobs:
         run: |
           plutil -create xml1 ${{ env.EXPORT_OPTIONS_PATH }}
           plutil -insert method -string app-store-connect ${{ env.EXPORT_OPTIONS_PATH }}
-          plutil -insert destination -string upload ${{ env.EXPORT_OPTIONS_PATH }}
 
           mkdir -p ${{ env.EXPORT_PATH }}
           xcodebuild -exportArchive                                                             \
@@ -253,6 +252,11 @@ jobs:
             -authenticationKeyID ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}                    \
             -authenticationKeyIssuerID ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}       \
             -hideShellScriptEnvironment
+
+          xcrun altool --upload-package ${{ env.EXPORT_PATH }}/Michina.pkg  \
+            --platform macos --wait                                         \
+            --api-key ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}           \
+            --api-issuer ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
 
           testFlightTextDirectory=${{ env.APP_STORE_TEXT_PATH }}/beta-${{ env.APP_IDENTIFIER }}/upload/MACOS
           mkdir -p $testFlightTextDirectory
@@ -269,6 +273,8 @@ jobs:
             --api-key ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}                     \
             --api-issuer ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
 
+          echo 'export-path=${{ env.EXPORT_PATH }}' >> $GITHUB_OUTPUT
+
       - name: Wait for Export Steps
         wait-all:
 
@@ -282,3 +288,9 @@ jobs:
         with:
           path: ${{ steps.export-developer-id.outputs.export-path }}.zip
           archive: false
+      - name: Upload App Store Connect Archive
+        uses: actions/upload-artifact@v7
+        with:
+          path: ${{ steps.export-app-store-connect.outputs.export-path }}.zip
+          archive: false
+
