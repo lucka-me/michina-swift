@@ -157,7 +157,7 @@ jobs:
 
           SPM_SECURITY_PATH=~/Library/org.swift.swiftpm/security
           mkdir -p $SPM_SECURITY_PATH
-          cp ci_scripts/ci_post_clone/Security/plugins.json $SPM_SECURITY_PATH
+          cp .github/security/plugins.json $SPM_SECURITY_PATH
 
       - name: Resolve Package Dependencies
         run: |
@@ -225,7 +225,7 @@ jobs:
           rm ${{ env.APP_PATH }}.zip
 
           ditto -c -k --keepParent ${{ env.EXPORT_PATH }} ${{ env.EXPORT_PATH }}.zip
-          echo "export-path=${{ env.EXPORT_PATH }}.zip" >> $GITHUB_OUTPUT
+          echo "export-path=${{ env.EXPORT_PATH }}" >> $GITHUB_OUTPUT
 
       - name: Export and Upload Package to App Store Connect
         id: export-app-store-connect
@@ -233,6 +233,11 @@ jobs:
         env:
           EXPORT_OPTIONS_PATH: ${{ steps.paths.outputs.exports }}/app-store-connect.plist
           EXPORT_PATH: ${{ steps.paths.outputs.exports }}/app-store-connect
+
+          API_PRIVATE_KEYS_DIR: ${{ steps.paths.outputs.secrets }}
+          APP_STORE_TEXT_PATH: ${{ steps.paths.outputs.exports }}/app-store-connect/TestFlight
+          APP_IDENTIFIER: dev.lucka.Michina
+        # FIXME: xcrun altool --beta-app-store-text doesn't actually work
         run: |
           plutil -create xml1 ${{ env.EXPORT_OPTIONS_PATH }}
           plutil -insert method -string app-store-connect ${{ env.EXPORT_OPTIONS_PATH }}
@@ -249,28 +254,19 @@ jobs:
             -authenticationKeyIssuerID ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}       \
             -hideShellScriptEnvironment
 
-          echo "export-path=${{ env.EXPORT_PATH }}" >> $GITHUB_OUTPUT
-
-      - name: Upload TestFlight Text to App Store Connect
-        background: true
-        env:
-          API_PRIVATE_KEYS_DIR: ${{ steps.paths.outputs.secrets }}
-          TEST_FLIGHT_UPLOAD_TEXT_PATH: ${{ steps.paths.outputs.exports }}/app-store-connect/TestFlight
-          APP_IDENTIFIER: dev.lucka.Michina
-        run: |
-          textDirectory=${{ env.TEST_FLIGHT_UPLOAD_TEXT_PATH }}/beta-${{ env.APP_IDENTIFIER }}/upload/MACOS
-          mkdir -p $textDirectory
-          for file in TestFlight/WhatToTest.*.txt
+          testFlightTextDirectory=${{ env.APP_STORE_TEXT_PATH }}/beta-${{ env.APP_IDENTIFIER }}/upload/MACOS
+          mkdir -p $testFlightTextDirectory
+          for localization in AppStoreConnect/TestFlight/*
           do
-            textFile=$textDirectory/$(basename $file | sed -nE 's/WhatToTest.//p')
+            textFile=$testFlightTextDirectory/$(basename $localization)
             touch $textFile
-            echo "\"whatsNew\" = \"$(cat $file)\";" >> $textFile
+            echo "\"whatsNew\" = \"$(sed 's/"/\\"/g' $localization/changelog.txt)\";" >> $textFile
           done
-          xcrun altool --beta-app-store-text ${{ env.TEST_FLIGHT_UPLOAD_TEXT_PATH }} --upload \
-            --apple-id ${{ env.APP_IDENTIFIER }} --platform macos                             \
-            --bundle-short-version-string '${{ steps.version.outputs.version }}'              \
-            --bundle-version '${{ steps.version.outputs.build }}'                             \
-            --api-key ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}                             \
+          xcrun altool --beta-app-store-text ${{ env.APP_STORE_TEXT_PATH }} --upload  \
+            --apple-id ${{ env.APP_IDENTIFIER }} --platform macos                     \
+            --bundle-short-version-string '${{ steps.version.outputs.version }}'      \
+            --bundle-version '${{ steps.version.outputs.build }}'                     \
+            --api-key ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}                     \
             --api-issuer ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
 
       - name: Wait for Export Steps
@@ -284,10 +280,5 @@ jobs:
       - name: Upload Developer ID Archive
         uses: actions/upload-artifact@v7
         with:
-          name: developer-id
-          path: ${{ steps.export-developer-id.outputs.export-path }}
-      - name: Upload App Store Connect Archive
-        uses: actions/upload-artifact@v7
-        with:
-          name: app-store-connect
-          path: ${{ steps.export-app-store-connect.outputs.export-path }}
+          path: ${{ steps.export-developer-id.outputs.export-path }}.zip
+          archive: false
