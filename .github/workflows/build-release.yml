@@ -168,7 +168,6 @@ jobs:
           MAC_INSTALLER_DISTRIBUTION_CERTIFICATE_PATH: ${{ steps.paths.outputs.secrets }}/mac-installer-distribution.p12
           KEYCHAIN_PATH: ${{ steps.paths.outputs.secrets }}/build.keychain
 
-          PROVISIONING_PROFILES_PATH: ~/Library/MobileDevice/Provisioning\ Profiles
           APP_STORE_CONNECT_API_KEY_PATH: ${{ steps.paths.outputs.secrets }}/app-store-connect-api.p8
         run: |
           KEYCHAIN_PASSWORD=$(openssl rand -base64 12)
@@ -207,10 +206,6 @@ jobs:
 
           security set-key-partition-list -S apple-tool:,apple: ${{ env.KEYCHAIN_PATH }}
           security list-keychain -d user -s ${{ env.KEYCHAIN_PATH }}
-
-          mkdir -p ${{ env.PROVISIONING_PROFILES_PATH }}
-          echo -n ${{ secrets.MAC_APP_STORE_CONNECT_PROVISION_PROFILE }}  \
-            | base64 --decode -o ${{ env.PROVISIONING_PROFILES_PATH }}/${{ secrets.MAC_APP_STORE_CONNECT_PROVISION_PROFILE_UUID }}.provisionprofile
 
           echo -n ${{ secrets.APP_STORE_CONNECT_API_KEY }}                  \
             | base64 --decode -o ${{ env.APP_STORE_CONNECT_API_KEY_PATH }}
@@ -300,7 +295,6 @@ jobs:
 
       - name: Export and Upload to App Store Connect
         id: export-app-store-connect
-        if: ${{ false }}
         background: true
         env:
           EXPORT_OPTIONS_PATH: ${{ steps.paths.outputs.exports }}/app-store-connect.plist
@@ -312,11 +306,14 @@ jobs:
           plutil -insert method -string app-store-connect ${{ env.EXPORT_OPTIONS_PATH }}
 
           mkdir -p ${{ env.EXPORT_PATH }}
-          xcodebuild -exportArchive                                                                     \
-            -archivePath ${{ steps.archive.outputs.archive-path }}                                      \
-            -exportPath ${{ env.EXPORT_PATH }}                                                          \
-            -exportOptionsPlist ${{ env.EXPORT_OPTIONS_PATH }}                                          \
-            PROVISIONING_PROFILE_SPECIFIER=${{ secrets.MAC_APP_STORE_CONNECT_PROVISION_PROFILE_UUID }}  \
+          xcodebuild -exportArchive                                                             \
+            -archivePath ${{ steps.archive.outputs.archive-path }}                              \
+            -exportPath ${{ env.EXPORT_PATH }}                                                  \
+            -exportOptionsPlist ${{ env.EXPORT_OPTIONS_PATH }}                                  \
+            -allowProvisioningUpdates                                                           \
+            -authenticationKeyPath ${{ steps.secrets.outputs.app-store-connect-api-key-path }}  \
+            -authenticationKeyID ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}                    \
+            -authenticationKeyIssuerID ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}       \
             -hideShellScriptEnvironment
 
           echo "export-path=${{ env.EXPORT_PATH }}" >> $GITHUB_OUTPUT
@@ -335,7 +332,6 @@ jobs:
           name: developer-id
           path: ${{ steps.export-developer-id.outputs.export-path }}
       - name: Upload App Store Connect Archive
-        if: ${{ false }}
         uses: actions/upload-artifact@v7
         with:
           name: app-store-connect
