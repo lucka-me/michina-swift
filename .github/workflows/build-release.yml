@@ -268,6 +268,7 @@ jobs:
             touch $textFile
             echo "\"whatsNew\" = \"$(sed 's/"/\\"/g' $localization/changelog.txt)\";" >> $textFile
           done
+          sleep 30s
           xcrun altool --beta-app-store-text ${{ env.APP_STORE_TEXT_PATH }} --upload  \
             --apple-id ${{ env.APP_IDENTIFIER }} --platform macos                     \
             --bundle-short-version-string '${{ steps.version.outputs.version }}'      \
