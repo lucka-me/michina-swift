@@ -206,6 +206,8 @@ jobs:
           EXPORT_PATH: ${{ steps.paths.outputs.exports }}/developer-id
           APP_PATH: ${{ steps.paths.outputs.exports }}/developer-id/Michina.app
         run: |
+          set -o pipefail
+
           plutil -create xml1 ${{ env.EXPORT_OPTIONS_PATH }}
           plutil -insert method -string developer-id ${{ env.EXPORT_OPTIONS_PATH }}
 
@@ -214,7 +216,8 @@ jobs:
             -archivePath ${{ steps.archive.outputs.archive-path }}  \
             -exportPath ${{ env.EXPORT_PATH }}                      \
             -exportOptionsPlist ${{ env.EXPORT_OPTIONS_PATH }}      \
-            -hideShellScriptEnvironment
+            -hideShellScriptEnvironment                             \
+            | xcpretty
 
           ditto -c -k --keepParent ${{ env.APP_PATH }} ${{ env.APP_PATH }}.zip
           xcrun notarytool submit ${{ env.APP_PATH }}.zip                     \
@@ -235,12 +238,9 @@ jobs:
         env:
           EXPORT_OPTIONS_PATH: ${{ steps.paths.outputs.exports }}/app-store-connect.plist
           EXPORT_PATH: ${{ steps.paths.outputs.exports }}/app-store-connect
-
-          API_PRIVATE_KEYS_DIR: ${{ steps.paths.outputs.secrets }}
-          APP_STORE_TEXT_PATH: ${{ steps.paths.outputs.exports }}/app-store-connect/AppStore
-          APP_IDENTIFIER: dev.lucka.Michina
-        # FIXME: xcrun altool --beta-app-store-text doesn't actually work
         run: |
+          set -o pipefail
+
           plutil -create xml1 ${{ env.EXPORT_OPTIONS_PATH }}
           plutil -insert method -string app-store-connect ${{ env.EXPORT_OPTIONS_PATH }}
 
@@ -253,34 +253,46 @@ jobs:
             -authenticationKeyPath ${{ steps.secrets.outputs.app-store-connect-api-key-path }}  \
             -authenticationKeyID ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}                    \
             -authenticationKeyIssuerID ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}       \
-            -hideShellScriptEnvironment
+            -hideShellScriptEnvironment                                                         \
+            | xcpretty
 
           xcrun altool --upload-package ${{ env.EXPORT_PATH }}/Michina.pkg  \
             --platform macos --wait                                         \
             --api-key ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}           \
             --api-issuer ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
 
+      - wait:
+          - export-app-store-connect
+
+      - name: Collect and Upload App Store Text
+        background: true
+        continue-on-error: true
+        env:
+          API_PRIVATE_KEYS_DIR: ${{ steps.paths.outputs.secrets }}
+          APP_STORE_TEXT_PATH: ${{ steps.paths.outputs.exports }}/app-store-connect/AppStore
+          APP_IDENTIFIER: dev.lucka.Michina
+        # FIXME: xcrun altool --beta-app-store-text doesn't actually work
+        run: |
+          sleep 30s
+
           testFlightTextDirectory=${{ env.APP_STORE_TEXT_PATH }}/beta-${{ env.APP_IDENTIFIER }}/upload/MACOS
           mkdir -p $testFlightTextDirectory
+
           for localization in AppStoreConnect/TestFlight/*
           do
             textFile=$testFlightTextDirectory/$(basename $localization)
             touch $textFile
             echo "\"whatsNew\" = \"$(sed 's/"/\\"/g' $localization/changelog.txt)\";" >> $textFile
           done
-          sleep 30s
+
           xcrun altool --beta-app-store-text ${{ env.APP_STORE_TEXT_PATH }} --upload  \
             --apple-id ${{ env.APP_IDENTIFIER }} --platform macos                     \
             --bundle-short-version-string '${{ steps.version.outputs.version }}'      \
             --bundle-version '${{ steps.version.outputs.build }}'                     \
             --api-key ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}                     \
-            --api-issuer ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}           \
-            --verbose
+            --api-issuer ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
 
-          echo 'export-path=${{ env.EXPORT_PATH }}' >> $GITHUB_OUTPUT
-
-      - name: Wait for Export Steps
-        wait-all:
+      - wait-all:
 
       - name: Upload Archive
         uses: actions/upload-artifact@v7
