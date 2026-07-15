@@ -4,9 +4,11 @@ on:
   workflow_call:
     outputs:
       onnxruntime:
-        value: ${{ jobs.build-onnxruntime.outputs }}
+        value: ${{ jobs.build-onnxruntime.outputs.xcframework }}
       tokenizers:
-        value: ${{ jobs.build-tokenizers.outputs }}
+        value: ${{ jobs.build-tokenizers.outputs.xcframework }}
+      tokenizers-generated-sources:
+        value: ${{ jobs.build-tokenizers.outputs.generated-sources }}
 
 jobs:
   build-onnxruntime:

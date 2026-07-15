@@ -13,94 +13,15 @@ on:
       - '!**.md'
 
 jobs:
-  build-onnxruntime:
-    name: Build ONNXRuntime XCFramework
-    runs-on: macos-26
-    outputs:
-      xcframework: ${{ steps.upload-xcframework.outputs.artifact-id }}
-    env:
-      GENERATED_XCFRAMEWORK_PATH: ONNXRuntime/onnxruntime/build/onnxruntime.xcframework
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-        with:
-          submodules: true
-      - name: Setup Cache
-        id: cache-onnxruntime
-        uses: actions/cache@v6
-        with:
-          key: cache-onnxruntime-${{ hashFiles('ONNXRuntime/onnxruntime', 'ONNXRuntime/Scripts/**') }}
-          path: ${{ env.GENERATED_XCFRAMEWORK_PATH }}
-      - name: Setup Build Cache
-        id: cache-onnxruntime-build
-        if: steps.cache-onnxruntime.outputs.cache-hit != 'true'
-        uses: actions/cache@v6
-        with:
-          key: cache-onnxruntime-build-${{ hashFiles('ONNXRuntime/onnxruntime') }}
-          path: ONNXRuntime/onnxruntime/build
-      - name: Build
-        if: steps.cache-onnxruntime.outputs.cache-hit != 'true'
-        env:
-          ORT_UPDATE_CMAKE: ${{ case(steps.cache-onnxruntime-build.outputs.cache-hit != 'true', true, '') }}
-        run: ONNXRuntime/Scripts/build-onnxruntime.sh
-      - name: Archive
-        run: aa archive -D ${{ env.GENERATED_XCFRAMEWORK_PATH }} -o ${{ env.GENERATED_XCFRAMEWORK_PATH }}.aar
-      - name: Upload XCFramework
-        id: upload-xcframework
-        uses: actions/upload-artifact@v7
-        with:
-          path: ${{ env.GENERATED_XCFRAMEWORK_PATH }}.aar
-          archive: false
-
-  build-tokenizers:
-    name: Build Tokenizers XCFramework
-    runs-on: macos-26
-    outputs:
-      xcframework: ${{ steps.upload-xcframework.outputs.artifact-id }}
-      generated-sources: ${{ steps.upload-generated-sources.outputs.artifact-id }}
-    env:
-      GENERATED_XCFRAMEWORK_PATH: Tokenizers/Rust/target/tokenizers.xcframework
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-      - name: Setup Cache
-        id: cache-tokenizers
-        uses: actions/cache@v6
-        with:
-          key: cache-tokenizers-${{ hashFiles('Tokenizers/Rust/Cargo.lock', 'Tokenizers/Rust/src/**', 'Tokenizers/Scripts/**') }}
-          path: |
-            ${{ env.GENERATED_XCFRAMEWORK_PATH }}
-            Tokenizers/Sources/Tokenizers/*bridge.rs.*
-      - name: Setup Tools
-        if: steps.cache-tokenizers.outputs.cache-hit != 'true'
-        run: cargo install --version 1.0.194 cxxbridge-cmd
-      - name: Build
-        if: steps.cache-tokenizers.outputs.cache-hit != 'true'
-        run: Tokenizers/Scripts/build-tokenizers.sh
-      - name: Archive
-        run: |
-          aa archive -D ${{ env.GENERATED_XCFRAMEWORK_PATH }} -o ${{ env.GENERATED_XCFRAMEWORK_PATH }}.aar
-          aa archive -D Tokenizers/Sources/Tokenizers -o ${{ env.GENERATED_XCFRAMEWORK_PATH }}.generated-sources.aar \
-            -include-regex 'bridge.rs.'
-      - name: Upload XCFramework
-        id: upload-xcframework
-        uses: actions/upload-artifact@v7
-        with:
-          path: ${{ env.GENERATED_XCFRAMEWORK_PATH }}.aar
-          archive: false
-      - name: Upload Additional Sources
-        id: upload-generated-sources
-        uses: actions/upload-artifact@v7
-        with:
-          path: ${{ env.GENERATED_XCFRAMEWORK_PATH }}.generated-sources.aar
-          archive: false
+  build-xcframeworks:
+    name: Build XCFrameworks
+    uses: ./.github/workflows/build-xcframeworks.yml
 
   build-machina:
     name: Build Machina
     runs-on: macos-26
     needs:
-      - build-onnxruntime
-      - build-tokenizers
+      - build-xcframeworks
     env:
       XCODE_WORKSPACE: ${{ github.workspace }}/Michina.xcworkspace
     steps:
@@ -145,10 +66,11 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           artifact-ids: >
-            ${{ needs.build-onnxruntime.outputs.xcframework }},
-            ${{ needs.build-tokenizers.outputs.xcframework }},
-            ${{ needs.build-tokenizers.outputs.generated-sources }}
+            ${{ needs.build-xcframeworks.outputs.onnxruntime }},
+            ${{ needs.build-xcframeworks.outputs.tokenizers }},
+            ${{ needs.build-xcframeworks.outputs.tokenizers-generated-sources }}
           path: ${{ steps.paths.outputs.artifacts }}
+          merge-multiple: true
       - name: Extract Artifacts
         env:
           ARTIFACTS_PATH: ${{ steps.paths.outputs.artifacts }}
