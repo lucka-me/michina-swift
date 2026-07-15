@@ -168,6 +168,7 @@ jobs:
           MAC_INSTALLER_DISTRIBUTION_CERTIFICATE_PATH: ${{ steps.paths.outputs.secrets }}/mac-installer-distribution.p12
           KEYCHAIN_PATH: ${{ steps.paths.outputs.secrets }}/build.keychain
 
+          PROVISIONING_PROFILES_PATH: ~/Library/MobileDevice/Provisioning\ Profiles
           APP_STORE_CONNECT_API_KEY_PATH: ${{ steps.paths.outputs.secrets }}/app-store-connect-api.p8
         run: |
           KEYCHAIN_PASSWORD=$(openssl rand -base64 12)
@@ -207,9 +208,9 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple: ${{ env.KEYCHAIN_PATH }}
           security list-keychain -d user -s ${{ env.KEYCHAIN_PATH }}
 
-          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          mkdir -p ${{ env.PROVISIONING_PROFILES_PATH }}
           echo -n ${{ secrets.MAC_APP_STORE_CONNECT_PROVISION_PROFILE }}  \
-            | base64 --decode -o ~/Library/MobileDevice/Provisioning\ Profiles/mac-app-store-connect.provisionprofile
+            | base64 --decode -o ${{ env.PROVISIONING_PROFILES_PATH }}/${{ secrets.MAC_APP_STORE_CONNECT_PROVISION_PROFILE_UUID }}.provisionprofile
 
           echo -n ${{ secrets.APP_STORE_CONNECT_API_KEY }}                  \
             | base64 --decode -o ${{ env.APP_STORE_CONNECT_API_KEY_PATH }}
