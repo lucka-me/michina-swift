@@ -20,7 +20,7 @@ let package = Package(
         ),
         .binaryTarget(
             name: "TokenizersRust",
-            path: "Rust/target/tokenizers.xcframework"
+            path: "Frameworks/tokenizers/tokenizers.xcframework"
         )
     ],
     cxxLanguageStandard: .cxx17

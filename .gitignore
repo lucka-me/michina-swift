@@ -10,6 +10,3 @@ xcuserdata/
 
 ## Finder
 .DS_Store
-
-## ONNXRuntime
-ONNXRuntime/onnxruntime.xcframework

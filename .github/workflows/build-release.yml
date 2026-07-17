@@ -76,10 +76,10 @@ jobs:
           ARTIFACTS_PATH: ${{ steps.paths.outputs.artifacts }}
         run: |
           mkdir -p ONNXRuntime/onnxruntime/build
-          aa extract -i ${{ env.ARTIFACTS_PATH }}/onnxruntime.xcframework.aar -d ONNXRuntime/onnxruntime/build
+          aa extract -i ${{ env.ARTIFACTS_PATH }}/onnxruntime.xcframework.aar -d ONNXRuntime/Frameworks/onnxruntime
 
           mkdir -p Tokenizers/Rust/target
-          aa extract -i ${{ env.ARTIFACTS_PATH }}/tokenizers.xcframework.aar -d Tokenizers/Rust/target
+          aa extract -i ${{ env.ARTIFACTS_PATH }}/tokenizers.xcframework.aar -d Tokenizers/Frameworks/tokenizers
           aa extract -i ${{ env.ARTIFACTS_PATH }}/tokenizers.xcframework.generated-sources.aar -d Tokenizers/Sources
 
       - name: Setup Secrets

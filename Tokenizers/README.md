@@ -18,5 +18,5 @@ cargo install --version 1.0.194 cxxbridge-cmd
 Then run the script to build the rust code and generate XCFramework:
 
 ```shell
-./Scripts/build-tokenizers.sh
+./Frameworks/tokenizers/build.sh
 ```

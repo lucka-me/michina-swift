@@ -17,7 +17,7 @@ let package = Package(
         .target(
             name: "ONNXRuntime",
             dependencies: [ "onnxruntime-framework" ],
-            path: "onnxruntime/objectivec",
+            path: "Frameworks/onnxruntime/source/objectivec",
             exclude: [
                 "ReadMe.md", "format_objc.sh", "test", "docs",
                 "ort_checkpoint.mm",
@@ -34,7 +34,7 @@ let package = Package(
         ),
         .binaryTarget(
             name: "onnxruntime-framework",
-            path: "onnxruntime/build/onnxruntime.xcframework"
+            path: "Frameworks/onnxruntime/onnxruntime.xcframework"
         ),
         // .binaryTarget(
         //     name: "onnxruntime-framework",

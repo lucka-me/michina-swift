@@ -17,32 +17,41 @@ jobs:
     outputs:
       xcframework: ${{ steps.upload-xcframework.outputs.artifact-id }}
     env:
-      GENERATED_XCFRAMEWORK_PATH: ONNXRuntime/onnxruntime/build/onnxruntime.xcframework
+      GENERATED_XCFRAMEWORK_PATH: ONNXRuntime/Frameworks/onnxruntime/onnxruntime.xcframework
     steps:
       - name: Checkout
         uses: actions/checkout@v7
         with:
           submodules: true
+
+      - name: Generate Cache Key
+        id: cache-key
+        env:
+          KEY_HASH: ${{ hashFiles('ONNXRuntime/Frameworks/onnxruntime/**') }}
+        run: echo 'key=cache-onnxruntime-${{ env.KEY_HASH }}' >> $GITHUB_OUTPUT
+
       - name: Setup Cache
         id: cache-onnxruntime
         uses: actions/cache@v6
         with:
-          key: cache-onnxruntime-${{ hashFiles('ONNXRuntime/onnxruntime', 'ONNXRuntime/Scripts/**') }}
+          key: ${{ steps.cache-key.outputs.key }}
           path: ${{ env.GENERATED_XCFRAMEWORK_PATH }}
       - name: Setup Build Cache
         id: cache-onnxruntime-build
         if: steps.cache-onnxruntime.outputs.cache-hit != 'true'
         uses: actions/cache@v6
         with:
-          key: cache-onnxruntime-build-${{ hashFiles('ONNXRuntime/onnxruntime') }}
-          path: ONNXRuntime/onnxruntime/build
+          key: cache-onnxruntime-build-${{ hashFiles('ONNXRuntime/Frameworks/onnxruntime/source') }}
+          path: ONNXRuntime/Frameworks/onnxruntime/source/build
       - name: Build
         if: steps.cache-onnxruntime.outputs.cache-hit != 'true'
         env:
           ORT_UPDATE_CMAKE: ${{ case(steps.cache-onnxruntime-build.outputs.cache-hit != 'true', true, '') }}
         run: ONNXRuntime/Scripts/build-onnxruntime.sh
+
       - name: Archive
         run: aa archive -D ${{ env.GENERATED_XCFRAMEWORK_PATH }} -o ${{ env.GENERATED_XCFRAMEWORK_PATH }}.aar
+
       - name: Upload XCFramework
         id: upload-xcframework
         uses: actions/upload-artifact@v7
@@ -57,29 +66,39 @@ jobs:
       xcframework: ${{ steps.upload-xcframework.outputs.artifact-id }}
       generated-sources: ${{ steps.upload-generated-sources.outputs.artifact-id }}
     env:
-      GENERATED_XCFRAMEWORK_PATH: Tokenizers/Rust/target/tokenizers.xcframework
+      GENERATED_XCFRAMEWORK_PATH: Tokenizers/Frameworks/tokenizers/tokenizers.xcframework
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+
+      - name: Generate Cache Keys
+        id: cache-key
+        env:
+          KEY_HASH: ${{ hashFiles('Tokenizers/Frameworks/tokenizers/**') }}
+        run: echo 'key=cache-tokenizers-${{ env.KEY_HASH }}' >> $GITHUB_OUTPUT
+
       - name: Setup Cache
         id: cache-tokenizers
         uses: actions/cache@v6
         with:
-          key: cache-tokenizers-${{ hashFiles('Tokenizers/Rust/Cargo.lock', 'Tokenizers/Rust/src/**', 'Tokenizers/Scripts/**') }}
+          key: ${{ steps.cache-key.outputs.key }}
           path: |
             ${{ env.GENERATED_XCFRAMEWORK_PATH }}
             Tokenizers/Sources/Tokenizers/*bridge.rs.*
+
       - name: Setup Tools
         if: steps.cache-tokenizers.outputs.cache-hit != 'true'
         run: cargo install --version 1.0.194 cxxbridge-cmd
       - name: Build
         if: steps.cache-tokenizers.outputs.cache-hit != 'true'
         run: Tokenizers/Scripts/build-tokenizers.sh
+
       - name: Archive
         run: |
           aa archive -D ${{ env.GENERATED_XCFRAMEWORK_PATH }} -o ${{ env.GENERATED_XCFRAMEWORK_PATH }}.aar
           aa archive -D Tokenizers/Sources/Tokenizers -o ${{ env.GENERATED_XCFRAMEWORK_PATH }}.generated-sources.aar \
             -include-regex 'bridge.rs.'
+
       - name: Upload XCFramework
         id: upload-xcframework
         uses: actions/upload-artifact@v7

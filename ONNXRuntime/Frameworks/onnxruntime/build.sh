@@ -2,6 +2,8 @@
 
 set -e
 
+currentDirectory=$(realpath $(dirname $0))
+
 if [ -z $PYTHON_EXECUTABLE ]
 then
     PYTHON_EXECUTABLE=$(which python3)
@@ -21,17 +23,17 @@ then
     cmakeExtraDefines+=(CMAKE_XCODE_ATTRIBUTE_GCC_GENERATE_DEBUGGING_SYMBOLS='YES')
 fi
 
-projectPath=$(realpath $(dirname $0)/../onnxruntime)
+sourcePath=$currentDirectory/source
 
-buildPath=$projectPath/build
+buildPath=$sourcePath/build
 
-if [ ! -f $buildPath/$ORT_BUILD_CONFIG/CMakeCache.txt ] || [ ! -z ORT_UPDATE_CMAKE ]
+if [ ! -f $buildPath/$ORT_BUILD_CONFIG/CMakeCache.txt ] || [ ! -z $ORT_UPDATE_CMAKE ]
 then
     buildArguments+=(--update)
 fi
 
-cd $projectPath && $PYTHON_EXECUTABLE               \
-    $projectPath/tools/ci_build/build.py            \
+cd $sourcePath && $PYTHON_EXECUTABLE                \
+    $sourcePath/tools/ci_build/build.py             \
     --build_dir $buildPath                          \
     --config $ORT_BUILD_CONFIG                      \
     --build                                         \
@@ -56,7 +58,7 @@ cd $projectPath && $PYTHON_EXECUTABLE               \
     --use_coreml                                    \
     ${buildArguments[@]}
 
-xcframeworkPath=$buildPath/onnxruntime.xcframework
+xcframeworkPath=$currentDirectory/onnxruntime.xcframework
 if [ -d $xcframeworkPath ]
 then
     rm -r $xcframeworkPath

@@ -23,5 +23,5 @@ brew install cmake
 Then run the script to build the onnxruntime and generate XCFramework:
 
 ```shell
-./Scripts/build-onnxruntime.sh
+./Frameworks/onnxruntime/build.sh
 ```

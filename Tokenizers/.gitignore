@@ -11,3 +11,6 @@
 # Generated Sources
 *.rs.h
 *.rs.cc
+
+# XCFrameworks
+*.xcframework
