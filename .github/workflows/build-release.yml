@@ -62,25 +62,21 @@ jobs:
           mkdir -p ${{ env.SECRETS_PATH }}
           echo 'secrets=${{ env.SECRETS_PATH }}' >> $GITHUB_OUTPUT
 
-      - name: Download Artifacts
-        uses: actions/download-artifact@v8
+      - name: Restore ONNXRuntime XCFrameworks Cache
+        uses: actions/cache@v6
         with:
-          artifact-ids: >
-            ${{ needs.build-xcframeworks.outputs.onnxruntime }},
-            ${{ needs.build-xcframeworks.outputs.tokenizers }},
-            ${{ needs.build-xcframeworks.outputs.tokenizers-generated-sources }}
-          path: ${{ steps.paths.outputs.artifacts }}
-          merge-multiple: true
-      - name: Extract Artifacts
-        env:
-          ARTIFACTS_PATH: ${{ steps.paths.outputs.artifacts }}
-        run: |
-          mkdir -p ONNXRuntime/onnxruntime/build
-          aa extract -i ${{ env.ARTIFACTS_PATH }}/onnxruntime.xcframework.aar -d ONNXRuntime/Frameworks/onnxruntime
+          key: ${{ needs.build-xcframeworks.outputs.onnxruntime }}
+          path: ONNXRuntime/Frameworks/onnxruntime/onnxruntime.xcframework
+          fail-on-cache-miss: true
 
-          mkdir -p Tokenizers/Rust/target
-          aa extract -i ${{ env.ARTIFACTS_PATH }}/tokenizers.xcframework.aar -d Tokenizers/Frameworks/tokenizers
-          aa extract -i ${{ env.ARTIFACTS_PATH }}/tokenizers.xcframework.generated-sources.aar -d Tokenizers/Sources
+      - name: Restore Tokenizers XCFrameworks Cache
+        uses: actions/cache@v6
+        with:
+          key: ${{ needs.build-xcframeworks.outputs.tokenizers }}
+          path: |
+            Tokenizers/Frameworks/tokenizers/tokenizers.xcframework
+            Tokenizers/Sources/Tokenizers/*bridge.rs.*
+          fail-on-cache-miss: true
 
       - name: Setup Secrets
         id: secrets

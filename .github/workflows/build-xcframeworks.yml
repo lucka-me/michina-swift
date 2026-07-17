@@ -4,18 +4,16 @@ on:
   workflow_call:
     outputs:
       onnxruntime:
-        value: ${{ jobs.build-onnxruntime.outputs.xcframework }}
+        value: ${{ jobs.build-onnxruntime.outputs.cache-key }}
       tokenizers:
-        value: ${{ jobs.build-tokenizers.outputs.xcframework }}
-      tokenizers-generated-sources:
-        value: ${{ jobs.build-tokenizers.outputs.generated-sources }}
+        value: ${{ jobs.build-tokenizers.outputs.cache-key }}
 
 jobs:
   build-onnxruntime:
     name: Build ONNXRuntime XCFramework
     runs-on: macos-26
     outputs:
-      xcframework: ${{ steps.upload-xcframework.outputs.artifact-id }}
+      cache-key: ${{ steps.cache-key.outputs.key }}
     env:
       GENERATED_XCFRAMEWORK_PATH: ONNXRuntime/Frameworks/onnxruntime/onnxruntime.xcframework
     steps:
@@ -50,10 +48,12 @@ jobs:
         run: ONNXRuntime/Scripts/build-onnxruntime.sh
 
       - name: Archive
+        if: steps.cache-onnxruntime.outputs.cache-hit != 'true'
         run: aa archive -D ${{ env.GENERATED_XCFRAMEWORK_PATH }} -o ${{ env.GENERATED_XCFRAMEWORK_PATH }}.aar
 
       - name: Upload XCFramework
         id: upload-xcframework
+        if: steps.cache-onnxruntime.outputs.cache-hit != 'true'
         uses: actions/upload-artifact@v7
         with:
           path: ${{ env.GENERATED_XCFRAMEWORK_PATH }}.aar
@@ -63,8 +63,7 @@ jobs:
     name: Build Tokenizers XCFramework
     runs-on: macos-26
     outputs:
-      xcframework: ${{ steps.upload-xcframework.outputs.artifact-id }}
-      generated-sources: ${{ steps.upload-generated-sources.outputs.artifact-id }}
+      cache-key: ${{ steps.cache-key.outputs.key }}
     env:
       GENERATED_XCFRAMEWORK_PATH: Tokenizers/Frameworks/tokenizers/tokenizers.xcframework
     steps:
@@ -94,6 +93,7 @@ jobs:
         run: Tokenizers/Scripts/build-tokenizers.sh
 
       - name: Archive
+        if: steps.cache-tokenizers.outputs.cache-hit != 'true'
         run: |
           aa archive -D ${{ env.GENERATED_XCFRAMEWORK_PATH }} -o ${{ env.GENERATED_XCFRAMEWORK_PATH }}.aar
           aa archive -D Tokenizers/Sources/Tokenizers -o ${{ env.GENERATED_XCFRAMEWORK_PATH }}.generated-sources.aar \
@@ -101,12 +101,14 @@ jobs:
 
       - name: Upload XCFramework
         id: upload-xcframework
+        if: steps.cache-tokenizers.outputs.cache-hit != 'true'
         uses: actions/upload-artifact@v7
         with:
           path: ${{ env.GENERATED_XCFRAMEWORK_PATH }}.aar
           archive: false
       - name: Upload Additional Sources
         id: upload-generated-sources
+        if: steps.cache-tokenizers.outputs.cache-hit != 'true'
         uses: actions/upload-artifact@v7
         with:
           path: ${{ env.GENERATED_XCFRAMEWORK_PATH }}.generated-sources.aar
