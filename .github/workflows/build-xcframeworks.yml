@@ -45,7 +45,7 @@ jobs:
         if: steps.cache-onnxruntime.outputs.cache-hit != 'true'
         env:
           ORT_UPDATE_CMAKE: ${{ case(steps.cache-onnxruntime-build.outputs.cache-hit != 'true', true, '') }}
-        run: ONNXRuntime/Scripts/build-onnxruntime.sh
+        run: ONNXRuntime/Frameworks/onnxruntime/build.sh
 
       - name: Archive
         if: steps.cache-onnxruntime.outputs.cache-hit != 'true'
@@ -90,7 +90,7 @@ jobs:
         run: cargo install --version 1.0.194 cxxbridge-cmd
       - name: Build
         if: steps.cache-tokenizers.outputs.cache-hit != 'true'
-        run: Tokenizers/Scripts/build-tokenizers.sh
+        run: Tokenizers/Frameworks/tokenizers/build.sh
 
       - name: Archive
         if: steps.cache-tokenizers.outputs.cache-hit != 'true'
