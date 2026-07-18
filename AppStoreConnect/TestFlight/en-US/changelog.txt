@@ -1,6 +1,9 @@
 Welcome to Michina.
 
-Build #40
+Build #50
+- Changed: Support running models with Core ML in NeuralNetwork format, which is older but supports those MLProgram-incompatible models and loads inefficient models faster than MLProgram.
+
+Build #45
 The CI is switched from Xcode Cloud to GitHub Actions, which delivers faster with more transparency.
 
 - Added: Persist versioning JSON for Core ML optimization files.

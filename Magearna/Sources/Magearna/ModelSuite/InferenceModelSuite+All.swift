@@ -52,7 +52,7 @@ public extension InferenceModelSuite {
                 "ViT-B-32__laion400m_e32"
                 "ViT-B-32__openai"
             }
-            immichApp(in: .search, compatibility: .inefficient) {
+            immichApp(in: .search, compatibility: .inefficientCoreML) {
                 "ViT-H-14-378-quickgelu__dfn5b"
                 "ViT-H-14-quickgelu__dfn5b"
                 "ViT-H-14__laion2b-s32b-b79k"
@@ -60,8 +60,8 @@ public extension InferenceModelSuite {
             immichApp(
                 in: .search,
                 compatibilities: [
-                    .visual : .inefficient,
-                    .textual : .compatible
+                    .visual : .inefficientCoreML,
+                    .textual : .efficientCoreML
                 ]
             ) {
                 "ViT-L-14-336__openai"
@@ -71,7 +71,7 @@ public extension InferenceModelSuite {
                 "ViT-L-14__laion400m_e32"
                 "ViT-L-14__openai"
             }
-            immichApp(in: .search, compatibility: .inefficient) {
+            immichApp(in: .search, compatibility: .inefficientCoreML) {
                 "ViT-L-16-SigLIP-256__webli"
                 "ViT-L-16-SigLIP-384__webli"
                 
@@ -80,14 +80,14 @@ public extension InferenceModelSuite {
             immichApp(in: .search) {
                 "XLM-Roberta-Base-ViT-B-32__laion5b_s13b_b90k"
             }
-            immichApp(in: .search, compatibility: .inefficient) {
+            immichApp(in: .search, compatibility: .inefficientCoreML) {
                 "XLM-Roberta-Large-ViT-H-14__frozen_laion5b_s13b_b90k"
             }
             immichApp(in: .search) {
                 "nllb-clip-base-siglip__mrl"
                 "nllb-clip-base-siglip__v1"
             }
-            immichApp(in: .search, compatibility: .inefficient) {
+            immichApp(in: .search, compatibility: .inefficientCoreML) {
                 "nllb-clip-large-siglip__mrl"
                 "nllb-clip-large-siglip__v1"
             }
@@ -95,7 +95,7 @@ public extension InferenceModelSuite {
                 "ViT-B-16-SigLIP2__webli"
                 "ViT-B-32-SigLIP2-256__webli"
             }
-            immichApp(in: .search, compatibility: .inefficient) {
+            immichApp(in: .search, compatibility: .inefficientCoreML) {
                 "ViT-L-16-SigLIP2-256__webli"
                 "ViT-L-16-SigLIP2-384__webli"
                 "ViT-L-16-SigLIP2-512__webli"
@@ -111,8 +111,8 @@ public extension InferenceModelSuite {
                 in: .search,
                 compatibilities: [
                     // CoreML.Specification.Model exceeded maximum protobuf size of 2GB: 4635334187
-                    .visual : .incompatible,
-                    .textual : .inefficient
+                    .visual : .neuralNetworkCoreML,
+                    .textual : .inefficientCoreML
                 ]
             ) {
                 "ViT-gopt-16-SigLIP2-256__webli"
@@ -121,8 +121,8 @@ public extension InferenceModelSuite {
             immichApp(
                 in: .search,
                 compatibilities: [
-                    .visual : .inefficient,
-                    .textual : .compatible
+                    .visual : .inefficientCoreML,
+                    .textual : .efficientCoreML
                 ]
             ) {
                 "LABSE-Vit-L-14"
@@ -130,21 +130,23 @@ public extension InferenceModelSuite {
             immichApp(
                 in: .search,
                 compatibilities: [
-                    .visual : .compatible,
-                    .textual : .inefficient
+                    .visual : .efficientCoreML,
+                    .textual : .inefficientCoreML
                 ]
             ) {
                 "XLM-Roberta-Large-Vit-B-16Plus"
                 "XLM-Roberta-Large-Vit-B-32"
             }
-            immichApp(in: .search, compatibility: .inefficient) {
+            immichApp(in: .search, compatibility: .inefficientCoreML) {
                 "XLM-Roberta-Large-Vit-L-14"
             }
         },
         .characterRecognition: Array {
             // Failed to parse the model specification. Error: Unable to parse ML Program: in
             // operation MaxPool.0: ceil_mode must be False when pad_type is equal to same
-            rapidOCR(compatibility: .incompatible) { "PP-OCRv5_server" }
+            rapidOCR(compatibility: .neuralNetworkCoreML) {
+                "PP-OCRv5_server"
+            }
             rapidOCR {
                 "PP-OCRv5_mobile"
                 "EN__PP-OCRv5_mobile"
@@ -179,7 +181,7 @@ fileprivate extension InferenceModelSuite {
                     suiteName: name,
                     category: $1,
                     provider: .apple,
-                    compatibility: .compatible
+                    compatibility: .efficientCoreML
                 )
             }
         )
@@ -188,7 +190,7 @@ fileprivate extension InferenceModelSuite {
     @ArrayBuilder<Self>
     static func immichApp(
         in category: Category,
-        compatibility: InferenceModel.Compatibility = .compatible,
+        compatibility: InferenceModel.Compatibility = .efficientCoreML,
         @ArrayBuilder<String> names: () -> [ String ]
     ) -> [ Self ] {
         for name in names() {
@@ -232,7 +234,7 @@ fileprivate extension InferenceModelSuite {
     
     @ArrayBuilder<Self>
     static func rapidOCR(
-        compatibility: InferenceModel.Compatibility = .compatible,
+        compatibility: InferenceModel.Compatibility = .efficientCoreML,
         @ArrayBuilder<String> names: () -> [ String ]
     ) -> [ Self ] {
         for name in names() {

@@ -8,22 +8,28 @@
 public extension InferenceSession {
     struct Options : Sendable {
         public let persistOptimizations: Bool
-        public let executionProviderPreference: ExecutionProviderPreference
+        public let executionProvider: ExecutionProvider
         
         public init(
             persistOptimizations: Bool = true,
-            executionProviderPreference: ExecutionProviderPreference = .coreML
+            executionProvider: ExecutionProvider = .coreML(format: .mlProgram)
         ) {
             self.persistOptimizations = persistOptimizations
-            self.executionProviderPreference = executionProviderPreference
+            self.executionProvider = executionProvider
         }
     }
 }
 
 public extension InferenceSession.Options {
-    enum ExecutionProviderPreference : Sendable {
-        case coreML
-        case efficientCoreML
-        case alwaysCPU
+    enum ExecutionProvider : Sendable {
+        case coreML(format: CoreMLFormat)
+        case cpu
+    }
+}
+
+public extension InferenceSession.Options.ExecutionProvider {
+    enum CoreMLFormat : Sendable {
+        case mlProgram
+        case neuralNetwork
     }
 }

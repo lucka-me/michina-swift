@@ -258,6 +258,8 @@ jobs:
             --api-key ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}           \
             --api-issuer ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
 
+          echo 'export-path=${{ env.EXPORT_PATH }}' >> $GITHUB_OUTPUT
+
       - wait:
           - export-app-store-connect
 
@@ -271,6 +273,14 @@ jobs:
         # FIXME: xcrun altool --beta-app-store-text doesn't actually work
         run: |
           sleep 30s
+
+          mkdir -p ${{ env.APP_STORE_TEXT_PATH }}
+          xcrun altool --beta-app-store-text ${{ env.APP_STORE_TEXT_PATH }} --download  \
+            --apple-id ${{ env.APP_IDENTIFIER }} --platform macos                       \
+            --bundle-short-version-string '${{ steps.version.outputs.version }}'        \
+            --bundle-version '${{ steps.version.outputs.build }}'                       \
+            --api-key ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}                       \
+            --api-issuer ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
 
           testFlightTextDirectory=${{ env.APP_STORE_TEXT_PATH }}/beta-${{ env.APP_IDENTIFIER }}/upload/MACOS
           mkdir -p $testFlightTextDirectory

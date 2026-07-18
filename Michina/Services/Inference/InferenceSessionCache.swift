@@ -92,7 +92,7 @@ extension InferenceSessionCache {
                 try await fetch(suite: model.suite)
             }
             
-            let options = settings.session.inferenceSessionOptions
+            let options = settings.inferenceSessionOptions(for: model.compatibility)
             let taskName = model.id.replacingOccurrences(of: "/", with: ".")
             session = try await Task
                 .detached(name: "InferenceSession.\(taskName)", priority: .utility) {
@@ -196,7 +196,7 @@ fileprivate extension InferenceSessionCache {
                 } else if let preferredLifespan = preferredLifespans[touching.model] {
                     lifespan = preferredLifespan
                 } else {
-                    lifespan = .seconds(await settings.cache.lifespan)
+                    lifespan = .seconds(await settings.loadedLifespan)
                 }
                 
                 checkTasks[touching.model]?.cancel()

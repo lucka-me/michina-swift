@@ -5,19 +5,13 @@
       location = "group:Michina/Michina.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:ONNXRuntime">
-   </FileRef>
-   <FileRef
       location = "group:Magearna">
    </FileRef>
    <FileRef
+      location = "group:ONNXRuntime">
+   </FileRef>
+   <FileRef
       location = "group:Tokenizers">
-   </FileRef>
-   <FileRef
-      location = "group:ci_scripts">
-   </FileRef>
-   <FileRef
-      location = "group:TestFlight">
    </FileRef>
    <FileRef
       location = "group:README.md">

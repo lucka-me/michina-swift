@@ -32,39 +32,27 @@ public final class InferenceSession : Sendable {
             value: "1"
         )
         
-        let executionProvider: ExecutionProvider
-        switch options.executionProviderPreference {
-        case .coreML:
-            executionProvider = switch model.compatibility {
-            case .compatible, .inefficient: .coreML
-            case .incompatible: .cpu
-            }
-        case .efficientCoreML:
-            executionProvider = switch model.compatibility {
-            case .compatible: .coreML
-            case .inefficient, .incompatible: .cpu
-            }
-        case .alwaysCPU:
-            executionProvider = .cpu
-        }
-        
         let optimizationVersioning: OptimizationVersioning?
-        switch executionProvider {
-        case .coreML:
+        switch options.executionProvider {
+        case .coreML(let format):
+            let modelFormat = switch format {
+            case .mlProgram: "MLProgram"
+            case .neuralNetwork: "NeuralNetwork"
+            }
             // https://onnxruntime.ai/docs/api/objectivec/Classes/ORTSessionOptions.html
             var executionProviderOptions = [
-                "ModelFormat" : "MLProgram",
+                "ModelFormat" :  modelFormat,
                 "MLComputeUnits" : "ALL",
-                "EnableOnSubgraphs": "1",
+                "EnableOnSubgraphs" : "1",
                 "SpecializationStrategy" : "FastPrediction",
-                "AllowLowPrecisionAccumulationOnGPU": "1",
+                "AllowLowPrecisionAccumulationOnGPU" : "1",
             ]
             
             if options.persistOptimizations {
                 let versioning = OptimizationVersioning(
                     model: model,
                     cacheDirectory: cacheDirectory,
-                    executionProvider: executionProvider
+                    executionProvider: .coreML
                 )
                 if try versioning.checkOutdated() {
                     try FileManager.default.createDirectory(
@@ -102,7 +90,7 @@ public final class InferenceSession : Sendable {
                 let versioning = OptimizationVersioning(
                     model: model,
                     cacheDirectory: cacheDirectory,
-                    executionProvider: executionProvider
+                    executionProvider: .cpu
                 )
                 try FileManager.default.createDirectory(
                     at: versioning.directory,
@@ -139,17 +127,17 @@ public final class InferenceSession : Sendable {
             model: model,
             cacheDirectory: cacheDirectory,
             outputNamesCount: self.outputNames.count,
-            isCoreMLExecutionProviderEnabled: executionProvider == .coreML
+            isCoreMLExecutionProviderEnabled: options.executionProvider.isCoreML
         )
     }
 }
 
-fileprivate enum ExecutionProvider {
-    case coreML
-    case cpu
-}
-
 fileprivate struct OptimizationVersioning {
+    enum ExecutionProvider : String {
+        case coreML = "CoreML"
+        case cpu = "CPU"
+    }
+    
     private struct Versions : Codable {
         var onnxRuntime: String?
     }
@@ -163,14 +151,9 @@ fileprivate struct OptimizationVersioning {
         cacheDirectory: URL,
         executionProvider: ExecutionProvider
     ) {
-        let folder = switch executionProvider {
-        case .coreML: "CoreML"
-        case .cpu: "CPU"
-        }
-        
         self.directory = model
             .directoryURL(in: cacheDirectory)
-            .appending(components: ".optimizations", folder)
+            .appending(components: ".optimizations", executionProvider.rawValue)
         self.versionsFile = directory
             .appending(component: "versions")
             .appendingPathExtension("json")
@@ -199,5 +182,14 @@ fileprivate struct OptimizationVersioning {
         try JSONEncoder()
             .encode(Versions(onnxRuntime: ORTVersion()))
             .write(to: versionsFile)
+    }
+}
+
+fileprivate extension InferenceSession.Options.ExecutionProvider {
+    var isCoreML : Bool {
+        switch self {
+        case .coreML: true
+        case .cpu: false
+        }
     }
 }

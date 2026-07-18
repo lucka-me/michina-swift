@@ -12,19 +12,26 @@ import SwiftUI
 @MainActor
 @Observable
 final class InferenceServiceSettings {
-    let session = SessionSettings.shared
-    let cache = CacheSettings.shared
+    let executionProvider = ExecutionProviderSettings.shared
     
     var preloadModels: [ InferenceModel ] {
         didSet {
-            storage.preloadModels = preloadModels.map(\.id).joined(separator: ",")
+            storage.preloadModels = preloadModels
+                .map(\.id)
+                .joined(separator: ",")
         }
     }
     
     var immichAppEndpointURL: URL? {
-        didSet {
-            storage.immichAppEndpointURL = immichAppEndpointURL
-        }
+        didSet { storage.immichAppEndpointURL = immichAppEndpointURL }
+    }
+    
+    var persistOptimizations: Bool {
+        didSet { storage.persistOptimizations = persistOptimizations }
+    }
+    
+    var loadedLifespan: Int {
+        didSet { storage.loadedLifespan = loadedLifespan }
     }
     
     private let storage = Storage()
@@ -34,6 +41,8 @@ final class InferenceServiceSettings {
             .split(separator: ",")
             .compactMap(InferenceModel.find(id:))
         self.immichAppEndpointURL = storage.immichAppEndpointURL
+        self.persistOptimizations = storage.persistOptimizations
+        self.loadedLifespan = storage.loadedLifespan
     }
 }
 
@@ -51,6 +60,17 @@ extension InferenceServiceSettings {
     }
 }
 
+extension InferenceServiceSettings {
+    func inferenceSessionOptions(
+        for compatibility: InferenceModel.Compatibility
+    ) -> InferenceSession.Options {
+        return .init(
+            persistOptimizations: self.persistOptimizations,
+            executionProvider: executionProvider.executionProvider(for: compatibility)
+        )
+    }
+}
+
 fileprivate extension InferenceServiceSettings {
     struct Storage {
         @AppStorage("InferenceService.PreloadModels")
@@ -58,5 +78,11 @@ fileprivate extension InferenceServiceSettings {
         
         @AppStorage("InferenceService.Endpoint.ImmichApp")
         var immichAppEndpointURL: URL?
+        
+        @AppStorage("InferenceService.Cache.Lifespan")
+        var loadedLifespan = 300
+        
+        @AppStorage("InferenceService.Session.PersistOptimizations")
+        var persistOptimizations = true
     }
 }

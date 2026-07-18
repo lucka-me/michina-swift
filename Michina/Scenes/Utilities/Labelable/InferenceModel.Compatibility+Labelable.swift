@@ -11,17 +11,19 @@ import SwiftUI
 extension InferenceModel.Compatibility : Labelable {
     var titleKey: LocalizedStringKey {
         switch self {
-        case .compatible: "InferenceModel.Compatibility.Compatible"
-        case .inefficient: "InferenceModel.Compatibility.Inefficient"
-        case .incompatible: "InferenceModel.Compatibility.Incompatible"
+        case .efficientCoreML: "InferenceModel.Compatibility.EfficientCoreML"
+        case .inefficientCoreML: "InferenceModel.Compatibility.InefficientCoreML"
+        case .neuralNetworkCoreML: "InferenceModel.Compatibility.NeuralNetworkCoreML"
+        case .cpuOnly: "InferenceModel.Compatibility.CPUOnly"
         }
     }
     
     var systemImage: String {
         switch self {
-        case .compatible: "checkmark"
-        case .inefficient: "exclamationmark"
-        case .incompatible: "xmark"
+        case .efficientCoreML: "hare"
+        case .inefficientCoreML: "tortoise"
+        case .neuralNetworkCoreML: "brain"
+        case .cpuOnly: "cpu"
         }
     }
 }
@@ -29,17 +31,19 @@ extension InferenceModel.Compatibility : Labelable {
 extension InferenceModel.Compatibility {
     var helpTitleKey: LocalizedStringKey {
         switch self {
-        case .compatible: "InferenceModel.Compatibility.Compatible.Help"
-        case .inefficient: "InferenceModel.Compatibility.Inefficient.Help"
-        case .incompatible: "InferenceModel.Compatibility.Incompatible.Help"
+        case .efficientCoreML: "InferenceModel.Compatibility.EfficientCoreML.Help"
+        case .inefficientCoreML: "InferenceModel.Compatibility.InefficientCoreML.Help"
+        case .neuralNetworkCoreML: "InferenceModel.Compatibility.NeuralNetworkCoreML.Help"
+        case .cpuOnly: "InferenceModel.Compatibility.CPUOnly.Help"
         }
     }
     
     var color: Color {
         switch self {
-        case .compatible: .green
-        case .inefficient: .orange
-        case .incompatible: .red
+        case .efficientCoreML: .green
+        case .inefficientCoreML: .yellow
+        case .neuralNetworkCoreML: .orange
+        case .cpuOnly: .red
         }
     }
 }

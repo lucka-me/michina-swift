@@ -14,7 +14,8 @@ struct InferenceServiceSettingsTab : TabContent {
     var body: some TabContent<Never> {
         Tab(Self.titleKey, systemImage: Self.systemImage) {
             Form {
-                sessionSections
+                optimizationSection
+                executionProviderSection
                 preloadModelsSection
                 endpointsSection
                 cacheSection
@@ -31,26 +32,7 @@ fileprivate extension InferenceServiceSettingsTab {
 
 fileprivate extension InferenceServiceSettingsTab {
     @ViewBuilder
-    var sessionSections: some View {
-        @Bindable var settings = settings.session
-        
-        Section {
-            Toggle(
-                "InferenceServiceSettingsTab.ExecutionProviders.PreferCoreML",
-                isOn: $settings.preferCoreML
-            )
-            if settings.preferCoreML {
-                Toggle(
-                    "InferenceServiceSettingsTab.ExecutionProviders.PreferEfficiency",
-                    isOn: $settings.preferEfficiency
-                )
-            }
-        } header: {
-            Text("InferenceServiceSettingsTab.ExecutionProviders")
-        } footer: {
-            Text("InferenceServiceSettingsTab.ExecutionProviders.Footer")
-        }
-        
+    var optimizationSection: some View {
         Section {
             Toggle(
                 "InferenceServiceSettingsTab.Optimization.PersistOptimizations",
@@ -61,6 +43,54 @@ fileprivate extension InferenceServiceSettingsTab {
         } footer: {
             Text("InferenceServiceSettingsTab.Optimization.Footer")
         }
+    }
+    
+    @ViewBuilder
+    var executionProviderSection: some View {
+        @Bindable var settings = settings.executionProvider
+        
+        Section {
+            Picker(
+                "InferenceServiceSettingsTab.ExecutionProvider.EfficientCoreML",
+                selection: $settings.efficientCoreML
+            ) {
+                ForEach(
+                    InferenceServiceSettings.ExecutionProviderSettings.Option.allCases
+                ) { option in
+                    Text(option.titleKey)
+                        .tag(option)
+                }
+            }
+            
+            Picker(
+                "InferenceServiceSettingsTab.ExecutionProvider.InefficientCoreML",
+                selection: $settings.inefficientCoreML
+            ) {
+                ForEach(
+                    InferenceServiceSettings.ExecutionProviderSettings.Option.allCases
+                ) { option in
+                    Text(option.titleKey)
+                        .tag(option)
+                }
+            }
+            
+            Picker(
+                "InferenceServiceSettingsTab.ExecutionProvider.NeuralNetworkCoreML",
+                selection: $settings.neuralNetworkCoreML
+            ) {
+                ForEach(
+                    InferenceServiceSettings.ExecutionProviderSettings.Option.casesForNeuralNetwork
+                ) { option in
+                    Text(option.titleKey)
+                        .tag(option)
+                }
+            }
+        } header: {
+            Text("InferenceServiceSettingsTab.ExecutionProvider")
+        } footer: {
+            Text("InferenceServiceSettingsTab.ExecutionProvider.Footer")
+        }
+        .pickerStyle(.segmented)
     }
 }
 
@@ -162,12 +192,10 @@ fileprivate extension InferenceServiceSettingsTab {
 fileprivate extension InferenceServiceSettingsTab {
     @ViewBuilder
     var cacheSection: some View {
-        @Bindable var settings = settings.cache
-        
         Section {
             TextField(
                 "InferenceServiceSettingsTab.Cache.Lifespan",
-                value: $settings.lifespan,
+                value: $settings.loadedLifespan,
                 format: .number.grouping(.never),
                 prompt: Text("InferenceServiceSettingsTab.Cache.Lifespan.Prompt")
             )

@@ -32,6 +32,12 @@ public struct InferenceModel : Sendable {
 }
 
 extension InferenceModel : Hashable {
+    public static func == (lhs: InferenceModel, rhs: InferenceModel) -> Bool {
+        lhs.suiteCategory == rhs.suiteCategory &&
+        lhs.suiteName == rhs.suiteName &&
+        lhs.category == rhs.category
+    }
+    
     public func hash(into hasher: inout Hasher) {
         suiteCategory.hash(into: &hasher)
         suiteName.hash(into: &hasher)

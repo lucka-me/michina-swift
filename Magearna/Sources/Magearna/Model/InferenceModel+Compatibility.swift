@@ -6,9 +6,10 @@
 //
 
 public extension InferenceModel {
-    enum Compatibility : Sendable {
-        case compatible
-        case inefficient
-        case incompatible
+    enum Compatibility : Equatable, Sendable {
+        case efficientCoreML
+        case inefficientCoreML
+        case neuralNetworkCoreML
+        case cpuOnly
     }
 }

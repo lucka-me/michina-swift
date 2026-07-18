@@ -457,47 +457,47 @@
         }
       }
     },
-    "InferenceModel.Compatibility.Compatible" : {
+    "InferenceModel.Compatibility.CPUOnly" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Compatible"
+            "value" : "CPU Only"
           }
         }
       }
     },
-    "InferenceModel.Compatibility.Compatible.Help" : {
+    "InferenceModel.Compatibility.CPUOnly.Help" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This model can be run with Core ML, and loaded in less than 1 min."
+            "value" : "This model is not compatible with Core ML at all."
           }
         }
       }
     },
-    "InferenceModel.Compatibility.Incompatible" : {
+    "InferenceModel.Compatibility.EfficientCoreML" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Incompatible"
+            "value" : "Full"
           }
         }
       }
     },
-    "InferenceModel.Compatibility.Incompatible.Help" : {
+    "InferenceModel.Compatibility.EfficientCoreML.Help" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Error will occur when load or run this model with Core ML, some parts of it are not supported by Core ML"
+            "value" : "This model is compatible with Core ML in MLProgram format."
           }
         }
       }
     },
-    "InferenceModel.Compatibility.Inefficient" : {
+    "InferenceModel.Compatibility.InefficientCoreML" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -507,12 +507,32 @@
         }
       }
     },
-    "InferenceModel.Compatibility.Inefficient.Help" : {
+    "InferenceModel.Compatibility.InefficientCoreML.Help" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This model can be run with Core ML, but it will take significantly longer time (several minutes) to load with Core ML than with CPU."
+            "value" : "This model is compatible with Core ML in MLProgram format, but it will take significantly long time (several minutes) to load."
+          }
+        }
+      }
+    },
+    "InferenceModel.Compatibility.NeuralNetworkCoreML" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neural Network"
+          }
+        }
+      }
+    },
+    "InferenceModel.Compatibility.NeuralNetworkCoreML.Help" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This model is compatible with Core ML, but only in Neural Network format."
           }
         }
       }
@@ -652,7 +672,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Core ML Compatibility"
+            "value" : "Compatibility"
           }
         }
       }
@@ -857,6 +877,36 @@
         }
       }
     },
+    "InferenceServiceSettings.ExecutionProviderSettings.Option.CoreML+MLProgram" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MLProgram"
+          }
+        }
+      }
+    },
+    "InferenceServiceSettings.ExecutionProviderSettings.Option.CoreML+NeuralNetwork" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neural Network"
+          }
+        }
+      }
+    },
+    "InferenceServiceSettings.ExecutionProviderSettings.Option.CPU" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CPU"
+          }
+        }
+      }
+    },
     "InferenceServiceSettingsTab.Cache" : {
       "localizations" : {
         "en" : {
@@ -957,42 +1007,52 @@
         }
       }
     },
-    "InferenceServiceSettingsTab.ExecutionProviders" : {
+    "InferenceServiceSettingsTab.ExecutionProvider" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Execution Providers"
+            "value" : "Execution Provider"
           }
         }
       }
     },
-    "InferenceServiceSettingsTab.ExecutionProviders.Footer" : {
+    "InferenceServiceSettingsTab.ExecutionProvider.EfficientCoreML" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Some models will cause error when running with Core ML, they will always run with CPU."
+            "value" : "Fully Compatible Models"
           }
         }
       }
     },
-    "InferenceServiceSettingsTab.ExecutionProviders.PreferCoreML" : {
+    "InferenceServiceSettingsTab.ExecutionProvider.Footer" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prefer Core ML"
+            "value" : "- MLProgram: A new format of Core ML model, inference faster, load slower.\n- Neural Network: An old format of Core ML model, inference slower, load faster.\n- CPU: No acceleration, inference slowest, load fast."
           }
         }
       }
     },
-    "InferenceServiceSettingsTab.ExecutionProviders.PreferEfficiency" : {
+    "InferenceServiceSettingsTab.ExecutionProvider.InefficientCoreML" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Run Inefficient Models with CPU"
+            "value" : "Inefficient Models"
+          }
+        }
+      }
+    },
+    "InferenceServiceSettingsTab.ExecutionProvider.NeuralNetworkCoreML" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neural Network Models"
           }
         }
       }
