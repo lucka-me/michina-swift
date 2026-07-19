@@ -1,0 +1,9 @@
+details {
+    > summary {
+        &:hover {
+            background-color: var(--color-accent);
+            color: var(--color-primary);
+            cursor: pointer;
+        }
+    }
+}

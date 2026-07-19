@@ -1,0 +1,6 @@
+<details {% if open | default(value=false) == true %}open{% endif %}>
+<summary>{{ summary | markdown(inline=true) | safe }}</summary>
+
+{{ body | markdown | safe }}
+
+</details>

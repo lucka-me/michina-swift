@@ -17,3 +17,7 @@ template: index.html
 [Join TestFlight](https://testflight.apple.com/join/rJP9acvk)
 
 </section>
+
+## Documents
+
+- [Benchmarks](./benckmarks)

@@ -7,12 +7,18 @@ $color-accent: #EF5350;
     --color-primary: #{darken($color-background-light, 90%)};
     --color-secondary: #{darken($color-background-light, 60%)};
 
+    --color-border-primary: #{darken($color-background-light, 40%)};
+    --color-border-secondary: #{darken($color-background-light, 20%)};
+
     --color-accent: #{lighten($color-accent, 10%)};
 
     @media (prefers-color-scheme: dark) {
         --color-background: #{$color-background-dark};
         --color-primary: #{lighten($color-background-dark, 90%)};
         --color-secondary: #{lighten($color-background-dark, 60%)};
+
+        --color-border-primary: #{lighten($color-background-dark, 40%)};
+        --color-border-secondary: #{lighten($color-background-dark, 20%)};
 
         --color-accent: #{darken($color-accent, 10%)};
     }

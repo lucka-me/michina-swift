@@ -35,6 +35,11 @@ main {
 .text-center { text-align: center; }
 
 @import "components/anchor.scss";
+@import "components/blockquote.scss";
+@import "components/code.scss";
+@import "components/details.scss";
 @import "components/heading.scss";
+@import "components/table.scss";
 
 @import "components/header.scss";
+
