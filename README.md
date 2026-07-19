@@ -42,3 +42,8 @@ This Xcode Workspace contains following local packages, READMEs are available.
 
 Some XCFramework and source file of the packages need to be built or generated before resolving, please refer to their
 `README.md` for details of building.
+
+## Execution Providers
+
+Backed by ONNXRuntime, Michina can run models with Core ML framework or directly with CPU, please refer to the
+[benchmark](./docs/content/benckmarks.md) ([web page](https://michina.lucka.dev/benckmarks)) for their comparison.
