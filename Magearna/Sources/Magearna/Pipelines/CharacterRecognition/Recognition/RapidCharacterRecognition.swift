@@ -27,58 +27,53 @@ struct RapidCharacterRecognition : CharacterRecognitionFunction {
         in image: CIImage,
         minimalConfidence: Float
     ) throws -> Output {
-        let data = try boxes
-            .map { try normalize(box: $0, in: image) }
-            .map {
-                try $0.decodeForONNX(
-                    mean: StaticConfigurations.decodeMean,
-                    scale: StaticConfigurations.decodeScale
-                )
-            }
-            .reduce(into: Data()) { partial, data in
-                partial.append(data)
-            }
-        let inputShape = StaticConfigurations.inputShape(batchSize: boxes.count)
-        precondition(
-            data.count == inputShape.map(\.intValue).reduce(1, *) * MemoryLayout<Float>.size,
-            "The length of input data doesn't match the input shape, check the processing."
-        )
-        
-        let inputValue = try ORTValue(
-            tensorData: .init(data: data),
-            elementType: .float,
-            shape: [
-                boxes.count as NSNumber,
-                StaticConfigurations.channelCount,
-                StaticConfigurations.inputSize.height as NSNumber,
-                StaticConfigurations.inputSize.width as NSNumber,
-            ]
-        )
-        let outputs = try session.session.run(
-            withInputs: [ session.inputNames[0] : inputValue ],
-            outputNames: .init(session.outputNames),
-            runOptions: nil
-        )
-        
-        return try parse(outputs: outputs, minimalConfidence: minimalConfidence)
+        try boxes.map { box in
+            let normalizedImage = try normalize(box: box, in: image)
+            let data = try normalizedImage.decodeForONNX(
+                mean: StaticConfigurations.decodeMean,
+                scale: StaticConfigurations.decodeScale,
+                reverseChannels: true
+            )
+            
+            let inputShape = StaticConfigurations.inputShape(width: normalizedImage.width)
+            precondition(
+                data.count == inputShape.map(\.intValue).reduce(1, *) * MemoryLayout<Float>.size,
+                "The length of input data doesn't match the input shape, check the processing."
+            )
+            
+            let inputValue = try ORTValue(
+                tensorData: .init(data: data),
+                elementType: .float,
+                shape: inputShape
+            )
+            let outputs = try session.session.run(
+                withInputs: [ session.inputNames[0] : inputValue ],
+                outputNames: .init(session.outputNames),
+                runOptions: nil
+            )
+            
+            return try parse(outputs: outputs, minimalConfidence: minimalConfidence)
+        }
     }
 }
 
 fileprivate extension RapidCharacterRecognition {
     enum StaticConfigurations {
-        static let inputSize = CGSize(width: 320, height: 48)
+        static let inputHeight: Int = 48
+        static let rotateRatioThreshold = 1.5
         
         static let decodeMean: Float = 127.5
         static let decodeScale: Float = 1 / 127.5
         
+        static let batchSize: NSNumber = 1
         static let channelCount: NSNumber = 3
         
-        static func inputShape(batchSize: Int) -> [ NSNumber ] {
+        static func inputShape(width: Int) -> [ NSNumber ] {
             [
-                batchSize as NSNumber,
+                batchSize,
                 StaticConfigurations.channelCount,
-                StaticConfigurations.inputSize.height as NSNumber,
-                StaticConfigurations.inputSize.width as NSNumber,
+                inputHeight as NSNumber,
+                width as NSNumber,
             ]
         }
     }
@@ -86,65 +81,41 @@ fileprivate extension RapidCharacterRecognition {
 
 fileprivate extension RapidCharacterRecognition {
     func normalize(box: Quadrilateral, in image: CIImage) throws -> CGImage {
-        let boundingBox = box.boundingBox
         let height = box.height
         let width = box.width
         
-        let destinationRect: CGRect = .init(
-            origin: boundingBox.origin,
-            size: StaticConfigurations.inputSize
-        )
+        let anchor: CGPoint
+        let rotation: CGFloat
+        let scale: CGFloat
+        let cropSize: CGSize
         
-        let source: [ CGPoint ]
-        let destinationRight: CGFloat
-        let destinationBottom: CGFloat
-        
-        if width > height {
-            source = box.points
-            
-            if width / height > StaticConfigurations.inputSize.ratio {
-                destinationRight = destinationRect.maxX
-                destinationBottom = destinationRect.minY
-                    + height * StaticConfigurations.inputSize.width / width
-            } else {
-                destinationRight = destinationRect.minX
-                    + width * StaticConfigurations.inputSize.height / height
-                destinationBottom = destinationRect.maxY
-            }
+        if height / width < StaticConfigurations.rotateRatioThreshold {
+            anchor = box.bottomLeft
+            rotation = box.rotation
+            scale = Double(StaticConfigurations.inputHeight) / height
+            cropSize = .init(width: Int(width * scale), height: StaticConfigurations.inputHeight)
         } else {
-            // Rotate 90 degree
-            source = [ box.topRight, box.bottomRight, box.bottomLeft, box.topLeft ]
-            
-            if height / width > StaticConfigurations.inputSize.ratio {
-                destinationRight = destinationRect.maxX
-                destinationBottom = destinationRect.minY
-                    + width * StaticConfigurations.inputSize.height / width
-            } else {
-                destinationRight = destinationRect.minX
-                    + height * StaticConfigurations.inputSize.width / height
-                destinationBottom = destinationRect.maxY
-            }
+            anchor = box.topLeft
+            rotation = box.rotation + (.pi / 2)
+            scale = Double(StaticConfigurations.inputHeight) / width
+            cropSize = .init(width: Int(height * scale), height: StaticConfigurations.inputHeight)
         }
         
-        let destinationLeft = destinationRect.origin.x
-        let destinationTop = destinationRect.origin.y
-        let destination: [ CGPoint ] = [
-            .init(x: destinationLeft, y: destinationTop),
-            .init(x: destinationRight, y: destinationTop),
-            .init(x: destinationRight, y: destinationBottom),
-            .init(x: destinationLeft, y: destinationBottom),
-        ]
-        let transformedImage = image.transformed(
-            by: .similarityTransform(
-                from: source.map { $0.verticallyFlipped(in: image.extent.size) },
-                to: destination.map { $0.verticallyFlipped(in: image.extent.size) }
+        let transformedImage = image
+            .transformed(by: .identity
+                .translatedBy(x: -anchor.x, y: -(image.extent.height - anchor.y))
+                .concatenating(.identity.rotated(by: rotation))
+                .concatenating(.identity.scaledBy(x: scale, y: scale))
             )
-        )
+            .cropped(to: .init(origin: .zero, size: cropSize))
         
         guard
             let cgImage = CIContext.pipelineShared.createCGImage(
                 transformedImage,
-                from: destinationRect.verticallyFlipped(in: image.extent.size)
+                from: .init(
+                    origin: transformedImage.extent.origin,
+                    size: cropSize
+                )
             )
         else {
             throw .runtime("Unable to create CGImage")
@@ -154,51 +125,63 @@ fileprivate extension RapidCharacterRecognition {
 }
 
 fileprivate extension RapidCharacterRecognition {
-    func parse(outputs: [ String : ORTValue ], minimalConfidence: Float) throws -> Output {
+    func parse(
+        outputs: [ String : ORTValue ],
+        minimalConfidence: Float
+    ) throws -> Output.Element {
         let value = outputs[session.outputNames[0]]!
         let shape = try value.tensorTypeAndShapeInfo().shape
         let flatValues = try value.array(of: Float.self)
         
-        let lengthPerItem = flatValues.count / shape[0].intValue
-        let tokensPerItem = shape[1].intValue
-        let lengthPerToken = shape[2].intValue
+        let lengthPerCharacter = shape[2].intValue
         
-        return stride(from: flatValues.startIndex, to: flatValues.endIndex, by: lengthPerItem)
-            .map { itemIndex in
-                let itemSlice = flatValues[itemIndex ..< itemIndex + lengthPerItem]
-                let (text, accumulatedConfidence) = stride(
-                    from: itemSlice.startIndex,
-                    to: itemSlice.endIndex,
-                    by: lengthPerToken
-                )
-                .map { tokenIndex -> (character: String, confidence: Float) in
-                    let element = itemSlice[tokenIndex ..< tokenIndex + lengthPerToken]
-                        .enumerated()
-                        .max { $0.element < $1.element }!
-                    return (
-                        character: sidecar.characters[element.offset],
-                        confidence: element.element
-                    )
-                }
-                .reduce(into: (text: "", confidence: Float.zero)) { partial, token in
-                    guard !partial.text.hasSuffix(token.character) else {
-                        // Duplicated
-                        return
-                    }
-                    partial.text.append(token.character)
-                    partial.confidence += token.confidence
-                }
-                
-                guard !text.isEmpty else {
-                    return nil
-                }
-                
-                let confidence = accumulatedConfidence / .init(text.count)
-                guard confidence >= minimalConfidence else {
-                    return nil
-                }
-                return .init(confidence: confidence, item: text)
+        let indices: [ Confident<Int> ] = stride(
+            from: flatValues.startIndex,
+            to: flatValues.endIndex,
+            by: lengthPerCharacter
+        )
+        .map { characterStartIndex -> Confident<Int> in
+            let element = flatValues[
+                characterStartIndex ..< characterStartIndex + lengthPerCharacter
+            ]
+            .enumerated()
+            .max { $0.element < $1.element }!
+            
+            return .init(
+                confidence: element.element,
+                item: element.offset
+            )
+        }
+        .reduce(into: [ ]) { partial, character in
+            guard
+                let previous = partial.last,
+                previous.item == character.item
+            else {
+                partial.append(character)
+                return
             }
+            guard previous.confidence < character.confidence else {
+                return
+            }
+            partial[partial.endIndex - 1] = character
+        }
+        .filter {
+            $0.item > 0
+        }
+        
+        print(indices.map { sidecar.characters[$0.item] })
+        
+        let confidence = indices.reduce(Float.zero) { $0 + $1.confidence } / .init(indices.count)
+        guard confidence >= minimalConfidence else {
+            return nil
+        }
+        
+        return .init(
+            confidence: confidence,
+            item: indices.reduce(into: "") {
+                $0.append(sidecar.characters[$1.item])
+            }
+        )
     }
 }
 

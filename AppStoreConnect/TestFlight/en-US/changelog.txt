@@ -6,6 +6,7 @@ Notices
 Build #51
 - Added: Reset statistics button in Inference page
 - Changed: Improve image pickers in Inference window
+- Fixed: Several mistakes in OCR pipeline, the OCR result should be much better than before
 
 Build #50
 - Changed: Support running models with Core ML in NeuralNetwork format, which is older but supports those MLProgram-incompatible models and loads inefficient models faster than MLProgram.
