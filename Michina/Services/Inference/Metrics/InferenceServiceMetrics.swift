@@ -68,6 +68,10 @@ extension InferenceServiceMetrics {
 }
 
 extension InferenceServiceMetrics {
+    func reset() {
+        self.pipelines = InferencePipelineMetric.initials
+    }
+    
     func terminate() {
         self.countTimer.invalidate()
         self.countContinuation.finish()

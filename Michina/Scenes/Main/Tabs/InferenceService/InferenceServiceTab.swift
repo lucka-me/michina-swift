@@ -71,6 +71,15 @@ fileprivate extension InferenceServiceTab {
                 isOn: $values.showCharts
             )
         }
+        
+        ToolbarItem(placement: .destructiveAction) {
+            Button(
+                "InferenceServiceTab.Reset",
+                systemImage: "arrow.counterclockwise",
+                role: .destructive,
+                action: metrics.reset
+            )
+        }
     }
 }
 

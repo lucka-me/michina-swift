@@ -1157,6 +1157,16 @@
         }
       }
     },
+    "InferenceServiceTab.Reset" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest"
+          }
+        }
+      }
+    },
     "InferenceServiceTab.ShowCharts" : {
       "localizations" : {
         "en" : {
