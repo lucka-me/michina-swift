@@ -203,7 +203,8 @@ fileprivate extension RapidCharacterDetection {
         
         let imageSize = CGSize(width: cgImage.width, height: cgImage.height)
         
-        let handler = ImageRequestHandler(cgImage)
+        // Flip vertically to match the coordinate system of output.
+        let handler = ImageRequestHandler(cgImage, orientation: .downMirrored)
         var request = DetectContoursRequest()
         request.detectsDarkOnLight = false
         let contours = try await handler.perform(request)
@@ -212,7 +213,6 @@ fileprivate extension RapidCharacterDetection {
             let path = contour.normalizedPath
             
             let boundingBox = contour.boundingBox
-                .verticallyFlipped()
                 .toImageCoordinates(imageSize)
             let rowRange = (Int(boundingBox.minY) ..< Int(boundingBox.maxY))
             let colRange = (Int(boundingBox.minX) ..< Int(boundingBox.maxX))
@@ -222,7 +222,7 @@ fileprivate extension RapidCharacterDetection {
                 accumulated = colRange.reduce(into: accumulated) { accumulated, col in
                     let point = CGPoint(
                         x: .init(col) / imageSize.width,
-                        y: 1.0 - .init(row) / imageSize.height
+                        y: .init(row) / imageSize.height
                     )
                     guard path.contains(point) else {
                         return
@@ -235,24 +235,21 @@ fileprivate extension RapidCharacterDetection {
             }
             
             let boundingRectangle = contour.minimalBoundingRectangle()
-            let quadrilateral = Quadrilateral(
-                topLeft: boundingRectangle.topLeft
-                    .verticallyFlipped()
-                    .toImageCoordinates(originalImageSize),
-                topRight: boundingRectangle.topRight
-                    .verticallyFlipped()
-                    .toImageCoordinates(originalImageSize),
-                bottomRight: boundingRectangle.bottomRight
-                    .verticallyFlipped()
-                    .toImageCoordinates(originalImageSize),
-                bottomLeft: boundingRectangle.bottomLeft
-                    .verticallyFlipped()
-                    .toImageCoordinates(originalImageSize)
-            )
-            
             return .init(
                 confidence: .init(accumulated.confidence / .init(accumulated.count)),
-                item: quadrilateral.expand(by: StaticConfigurations.expandRatio)
+                // The image was flipped vertically, but the coordinate system of contour remains,
+                // the "bottom" and "top" is in the opposite side
+                item: .init(
+                    topLeft: boundingRectangle.bottomLeft
+                        .toImageCoordinates(originalImageSize),
+                    topRight: boundingRectangle.bottomRight
+                        .toImageCoordinates(originalImageSize),
+                    bottomRight: boundingRectangle.topRight
+                        .toImageCoordinates(originalImageSize),
+                    bottomLeft: boundingRectangle.topLeft
+                        .toImageCoordinates(originalImageSize)
+                )
+                .expand(by: StaticConfigurations.expandRatio)
             )
         }
     }
@@ -262,16 +259,16 @@ fileprivate extension Quadrilateral {
     func expand(by ratio: Double) -> Self {
         let distance = self.area * ratio / self.perimeter
         return .init(
-            topLeft: topLeft.extend(a: bottomLeft, b: topRight, by: distance),
-            topRight: topRight.extend(a: topLeft, b: bottomRight, by: distance),
-            bottomRight: bottomRight.extend(a: topRight, b: bottomLeft, by: distance),
-            bottomLeft: bottomLeft.extend(a: bottomRight, b: topLeft, by: distance)
+            topLeft: topLeft.offset(a: bottomLeft, b: topRight, by: distance),
+            topRight: topRight.offset(a: topLeft, b: bottomRight, by: distance),
+            bottomRight: bottomRight.offset(a: topRight, b: bottomLeft, by: distance),
+            bottomLeft: bottomLeft.offset(a: bottomRight, b: topLeft, by: distance)
         )
     }
 }
 
 fileprivate extension CGPoint {
-    func extend(a: Self, b: Self, by distance: Double) -> Self {
+    func offset(a: Self, b: Self, by distance: Double) -> Self {
         let dx1 = self.x - a.x
         let dy1 = self.y - a.y
         
