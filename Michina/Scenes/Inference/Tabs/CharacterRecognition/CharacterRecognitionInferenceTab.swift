@@ -359,7 +359,7 @@ fileprivate extension CharacterRecognitionInferenceTab {
             
             self.box = box
             self.boundingBox = box.data.shape.item.boundingBox
-            self.rotationAngle = box.data.shape.item.rotationAngle
+            self.rotationAngle = .init(radians: box.data.shape.item.rotation)
         }
         
         var body: some View {
@@ -470,17 +470,3 @@ fileprivate extension CGRect {
     }
 }
 
-fileprivate extension Quadrilateral {
-    var rotationAngle: Angle {
-        let dx = self.topRight.x - self.topLeft.x
-        let dy = self.topRight.y - self.topLeft.y
-        
-        return if dy.isZero {
-            .zero
-        } else if dx.isZero {
-            .degrees(90)
-        } else {
-            .radians(atan2(dy, dx))
-        }
-    }
-}

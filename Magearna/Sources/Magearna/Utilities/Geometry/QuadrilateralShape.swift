@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Vision
 
 public protocol QuadrilateralShape {
     associatedtype Point: PointShape
@@ -35,31 +34,27 @@ public extension QuadrilateralShape {
     var ratio: Double {
         width / height
     }
+    
+    var rotation: Double {
+        let dx = self.topRight.x - self.topLeft.x
+        let dy = self.topRight.y - self.topLeft.y
+        
+        return if dy.isZero {
+            .zero
+        } else if dx.isZero {
+            .pi / 2
+        } else {
+            atan2(dy, dx)
+        }
+    }
 }
 
 extension QuadrilateralShape {
     var area: Double {
-        let sides = [
-            topLeft.distance(to: topRight),
-            topRight.distance(to: bottomRight),
-            bottomRight.distance(to: bottomLeft),
-            bottomLeft.distance(to: topLeft),
-        ]
-        let crossLength = topLeft.distance(to: bottomRight)
-        let s1 = (sides[0] + sides[1] + crossLength) / 2
-        let s2 = (sides[2] + sides[3] + crossLength) / 2
-        return sqrt(s1 * (s1 - sides[0]) * (s1 - sides[1]) * (s1 - crossLength))
-            + sqrt(s2 * (s2 - sides[2]) * (s2 - sides[3]) * (s2 - crossLength))
+        width * height
     }
     
     var perimeter: Double {
-        topLeft.distance(to: topRight)
-        + topRight.distance(to: bottomRight)
-        + bottomRight.distance(to: bottomLeft)
-        + bottomLeft.distance(to: topLeft)
+        (width + height) * 2
     }
-}
-
-extension RectangleObservation : QuadrilateralShape {
-    
 }
