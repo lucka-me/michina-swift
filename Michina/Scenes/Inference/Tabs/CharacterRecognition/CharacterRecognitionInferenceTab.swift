@@ -144,12 +144,18 @@ fileprivate extension CharacterRecognitionInferenceTab {
     @ViewBuilder
     var inputSections: some View {
         Section("CharacterRecognitionInferenceTab.Inspector.Photo") {
-            if let image = imageData?.image {
-                image
-                    .aspectRatio(contentMode: .fit)
+            UnifiedPhotoPicker(selection: $imageData) {
+                if let image = imageData?.image {
+                    image
+                        .aspectRatio(contentMode: .fit)
+                } else {
+                    Label(
+                        "UnifiedPhotoPicker.DefaultLabel",
+                        systemImage: "plus.viewfinder"
+                    )
+                }
             }
-            
-            UnifiedPhotoPicker(selection: $imageData)
+            .buttonStyle(.plain)
         }
         
         Section("CharacterRecognitionInferenceTab.Inspector.Parameters") {

@@ -142,12 +142,18 @@ fileprivate extension FacialRecognitionInferenceTab {
     @ViewBuilder
     var inputSections: some View {
         Section("FacialRecognitionInferenceTab.Inspector.Input.Photo") {
-            if let image = imageData?.image {
-                image
-                    .aspectRatio(contentMode: .fit)
+            UnifiedPhotoPicker(selection: $imageData) {
+                if let image = imageData?.image {
+                    image
+                        .aspectRatio(contentMode: .fit)
+                } else {
+                    Label(
+                        "UnifiedPhotoPicker.DefaultLabel",
+                        systemImage: "plus.viewfinder"
+                    )
+                }
             }
-            
-            UnifiedPhotoPicker(selection: $imageData)
+            .buttonStyle(.plain)
         }
         
         Section("FacialRecognitionInferenceTab.Inspector.Input.Parameters") {
@@ -295,6 +301,7 @@ fileprivate extension FacialRecognitionInferenceTab {
     func section(output: Output) -> some View {
         Section {
             OutputView(output: output, selection: $selection)
+                .listRowSeparator(.hidden)
         } header: {
             HStack(spacing: 12) {
                 Label(
