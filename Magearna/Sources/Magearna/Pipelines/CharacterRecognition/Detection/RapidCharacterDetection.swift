@@ -33,7 +33,8 @@ struct RapidCharacterDetection : CharacterDetectionFunction {
         let scaledImage = try scale(image: image, maximalResolution: maximalResolution)
         let data = try scaledImage.decodeForONNX(
             mean: StaticConfigurations.decodeMean,
-            scale: StaticConfigurations.decodeScale
+            scale: StaticConfigurations.decodeScale,
+            reverseChannels: true
         )
         let inputShape = StaticConfigurations.inputShape(for: scaledImage)
         precondition(
@@ -44,12 +45,7 @@ struct RapidCharacterDetection : CharacterDetectionFunction {
         let inputValue = try ORTValue(
             tensorData: .init(data: data),
             elementType: .float,
-            shape: [
-                StaticConfigurations.batchSize,
-                StaticConfigurations.channelCount,
-                scaledImage.height as NSNumber,
-                scaledImage.width as NSNumber,
-            ]
+            shape: inputShape
         )
         let outputs = try session.session.run(
             withInputs: [ session.inputNames[0] : inputValue ],
@@ -75,7 +71,7 @@ fileprivate extension RapidCharacterDetection {
         static let batchSize: NSNumber = 1
         static let channelCount: NSNumber = 3
         
-        static let expandRatio = 1.6
+        static let expandRatio = 1.0
         
         static func inputShape(for image: CGImage) -> [ NSNumber ] {
             [
@@ -85,35 +81,49 @@ fileprivate extension RapidCharacterDetection {
                 image.width as NSNumber,
             ]
         }
+        
+        static func align(length: CGFloat) -> CGFloat {
+            round(length / inputSizeBase) * inputSizeBase
+        }
     }
 }
 
 fileprivate extension RapidCharacterDetection {
     func scale(image: CIImage, maximalResolution: Int) throws -> CGImage {
         let imageSize = image.extent.size
-        let maxSize = floor(
-            .init(maximalResolution) / StaticConfigurations.inputSizeBase
-        ) * StaticConfigurations.inputSizeBase
+        let maxSize = StaticConfigurations.align(length: .init(maximalResolution))
         
         let scale: CGFloat
         let aspectRatio: CGFloat
         let scaledSize: CGSize
         
-        if imageSize.width > imageSize.height {
-            let heightScale = maxSize / imageSize.width
-            let resizedHeight = floor(
-                imageSize.height * heightScale / StaticConfigurations.inputSizeBase
-            ) * StaticConfigurations.inputSizeBase
+        // Immich uses maximalResolution as shorter edge
+        if imageSize.width < imageSize.height {
+            // Scale down only
+            let resizedWidth = if imageSize.width < maxSize {
+                StaticConfigurations.align(length: imageSize.width)
+            } else {
+                maxSize
+            }
+            
+            let heightScale = resizedWidth / imageSize.width
+            let resizedHeight = StaticConfigurations.align(
+                length: imageSize.height * heightScale
+            )
             scale = resizedHeight / imageSize.height
             aspectRatio = heightScale / scale
-            scaledSize = .init(width: Int(maxSize), height: Int(resizedHeight))
+            scaledSize = .init(width: resizedWidth, height: resizedHeight)
         } else {
-            scale = maxSize / imageSize.height
-            let resizedWidth = floor(
-                imageSize.width * scale / StaticConfigurations.inputSizeBase
-            ) * StaticConfigurations.inputSizeBase
+            let resizedHeight = if imageSize.height < maxSize {
+                StaticConfigurations.align(length: imageSize.height)
+            } else {
+                maxSize
+            }
+            
+            scale = resizedHeight / imageSize.height
+            let resizedWidth = StaticConfigurations.align(length: imageSize.width * scale)
             aspectRatio = resizedWidth / imageSize.width / scale
-            scaledSize = .init(width: Int(resizedWidth), height: Int(maxSize))
+            scaledSize = .init(width: resizedWidth, height: resizedHeight)
         }
         
         let scaleFilter = CIFilter.lanczosScaleTransform()

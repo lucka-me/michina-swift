@@ -8,7 +8,7 @@
 import Accelerate
 
 extension CGImage {
-    func decodeForONNX(mean: Float, scale: Float) throws -> Data {
+    func decodeForONNX(mean: Float, scale: Float, reverseChannels: Bool = false) throws -> Data {
         var imageFormat = vImage_CGImageFormat(
             bitsPerComponent: 32,
             bitsPerPixel: 32 * Self.decodePixelFormat.channelCount,
@@ -40,11 +40,17 @@ extension CGImage {
         // vImage buffer is horizontially aligned to underlying device, the actual width is larger
         // than the image's width, so we should not read from the buffer pointer directly but
         // from the array copy.
-        return imageBuffer
-            .planarBuffers()
+        let planarBuffers: [ vImage.PixelBuffer<vImage.PlanarF> ]
+        if reverseChannels {
+            planarBuffers = imageBuffer.planarBuffers().reversed()
+        } else {
+            planarBuffers = imageBuffer.planarBuffers()
+        }
+        
+        return planarBuffers
             .reduce(into: Data()) { partial, buffer in
                 buffer.array.withUnsafeBufferPointer { pointer in
-                    partial.append(.init(buffer: pointer))
+                    partial.append(pointer)
                 }
             }
     }
