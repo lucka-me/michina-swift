@@ -8,7 +8,7 @@
 import Accelerate
 
 extension CGImage {
-    func decodeForONNX(mean: Float, scale: Float, reverseChannels: Bool = false) throws -> Data {
+    func decodeForONNX(gamma: Gamma, reverseChannels: Bool = false) throws -> Data {
         var imageFormat = vImage_CGImageFormat(
             bitsPerComponent: 32,
             bitsPerPixel: 32 * Self.decodePixelFormat.channelCount,
@@ -26,15 +26,17 @@ extension CGImage {
             pixelFormat: Self.decodePixelFormat
         )
         
-        // cv2.dnn.blobFromImage(image, scale, size, (mean, mean, mean), swapRB=True)
-        // cv2: ([0, 255] - mean) * scale
-        // vImage: [0, 1] * scale + bias
-        imageBuffer.applyGamma(
-            linearParameters: (scale: scale * 255, bias: -mean * scale),
-            exponentialParameters: (1, 0, 1, 0),
-            boundary: 2.0,
-            destination: imageBuffer
-        )
+        if !gamma.isIdentity {
+            // cv2.dnn.blobFromImage(image, scale, size, (mean, mean, mean), swapRB=True)
+            // cv2: ([0, 255] - mean) * scale
+            // vImage: [0, 1] * scale + bias
+            imageBuffer.applyGamma(
+                linearParameters: gamma.parameters,
+                exponentialParameters: (1, 0, 1, 0),
+                boundary: 2.0,
+                destination: imageBuffer
+            )
+        }
         
         // Convert to planar format, like matrix (batchs = 1, channels, Height, Width)
         // vImage buffer is horizontially aligned to underlying device, the actual width is larger
@@ -55,7 +57,7 @@ extension CGImage {
             }
     }
     
-    func decodeForONNX(means: [ 3 of Float], scales: [ 3 of Float]) throws -> Data {
+    func decodeForONNX(gammas: [ 3 of Gamma]) throws -> Data {
         var imageFormat = vImage_CGImageFormat(
             bitsPerComponent: 32,
             bitsPerPixel: 32 * Self.decodePixelFormat.channelCount,
@@ -77,24 +79,60 @@ extension CGImage {
             .planarBuffers()
             .enumerated()
             .reduce(into: Data()) { partial, buffer in
-                buffer.element.applyGamma(
-                    linearParameters: (
-                        scale: scales[buffer.offset] * 255,
-                        bias: -means[buffer.offset] * scales[buffer.offset]
-                    ),
-                    exponentialParameters: (1, 0, 1, 0),
-                    boundary: 2.0,
-                    destination: buffer.element
-                )
+                let gamma = gammas[buffer.offset]
+                if !gamma.isIdentity {
+                    buffer.element.applyGamma(
+                        linearParameters: gamma.parameters,
+                        exponentialParameters: (1, 0, 1, 0),
+                        boundary: 2.0,
+                        destination: buffer.element
+                    )
+                }
                 
                 buffer.element.array.withUnsafeBufferPointer { pointer in
-                    partial.append(.init(buffer: pointer))
+                    partial.append(pointer)
                 }
             }
+    }
+}
+
+extension CGImage {
+    struct Gamma : Sendable {
+        let parameters: (scale: Float, bias: Float)
+        
+        private init(scale: Float, bias: Float) {
+            self.parameters = (scale, bias)
+        }
+    }
+}
+
+extension CGImage.Gamma {
+    static var identity: Self {
+        .init(scale: 1, bias: 0)
+    }
+    
+    static func openCV(scaleFactor: Float, mean: Float) -> Self {
+        .init(
+            scale: scaleFactor * 255,
+            bias: -mean * scaleFactor
+        )
+    }
+    
+    static func range(_ range: ClosedRange<Float>) -> Self {
+        .init(
+            scale: range.upperBound - range.lowerBound,
+            bias: range.lowerBound
+        )
     }
 }
 
 fileprivate extension CGImage {
     static let defaultColorSpace = CGColorSpace(name: CGColorSpace.sRGB)!
     static let decodePixelFormat = vImage.InterleavedFx3.self
+}
+
+fileprivate extension CGImage.Gamma {
+    var isIdentity: Bool {
+        parameters.scale == 1 && parameters.bias == .zero
+    }
 }

@@ -59,11 +59,7 @@ public actor VisualSearchInferencePipeline : InferencePipeline {
                 .process(image: input.image)
             // There is a "mode" : "RGB" in preprocess_cfg.json, will there be any exception like
             // BGR?
-            let data = try processedImage
-                .decodeForONNX(
-                    means: sidecar.decodeMeans,
-                    scales: sidecar.decodeScales
-                )
+            let data = try processedImage.decodeForONNX(gammas: sidecar.gammas)
             let inputShape = sidecar.inputShape
             precondition(
                 data.count == inputShape.map(\.intValue).reduce(1, *) * MemoryLayout<Float>.size,

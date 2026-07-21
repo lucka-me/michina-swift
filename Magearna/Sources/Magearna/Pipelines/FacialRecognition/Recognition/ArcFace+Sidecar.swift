@@ -5,15 +5,14 @@
 //  Created by Lucka on 2026-06-10.
 //
 
+import CoreImage
 import Foundation
 import SwiftProtobuf
 
 extension ArcFace {
     struct Sidecar : Sendable {
         let supportsBatch: Bool
-        
-        let decodeMean: Float
-        let decodeScale: Float
+        let gamma: CGImage.Gamma
         
         init(model: InferenceModel, cacheDirectory: URL, isCoreMLExecutionProviderEnabled: Bool) throws {
             // Invalid shape for output feature '_513'. (Underlying error: MultiArray shape
@@ -38,10 +37,10 @@ extension ArcFace {
                     subAndMul.mul = true
                 }
             }
-            (self.decodeMean, self.decodeScale) = if subAndMul.sub, subAndMul.mul {
-                (0, 1)
+            self.gamma = if subAndMul.sub, subAndMul.mul {
+                .range(0 ... 255)
             } else {
-                (127.5, 1 / 127.5)
+                .range(-1 ... 1)
             }
         }
     }

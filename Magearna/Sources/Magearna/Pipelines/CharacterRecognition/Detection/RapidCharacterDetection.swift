@@ -32,8 +32,7 @@ struct RapidCharacterDetection : CharacterDetectionFunction {
         
         let scaledImage = try scale(image: image, maximalResolution: maximalResolution)
         let data = try scaledImage.decodeForONNX(
-            mean: StaticConfigurations.decodeMean,
-            scale: StaticConfigurations.decodeScale,
+            gamma: StaticConfigurations.gamma,
             reverseChannels: true
         )
         let inputShape = StaticConfigurations.inputShape(for: scaledImage)
@@ -65,8 +64,7 @@ fileprivate extension RapidCharacterDetection {
     enum StaticConfigurations {
         static let inputSizeBase: CGFloat = 32
         
-        static let decodeMean: Float = 0.5
-        static let decodeScale: Float = 1 / (0.5 * 255)
+        static let gamma = CGImage.Gamma.openCV(scaleFactor: 1 / (0.5 * 255), mean: 0.5)
         
         static let batchSize: NSNumber = 1
         static let channelCount: NSNumber = 3

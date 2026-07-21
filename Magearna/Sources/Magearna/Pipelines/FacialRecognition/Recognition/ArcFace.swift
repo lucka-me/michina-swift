@@ -32,10 +32,7 @@ extension ArcFace {
         let dataBatch = try faces
             .map { try normalize(face: $0, in: image) }
             .map {
-                try $0.decodeForONNX(
-                    mean: sidecar.decodeMean,
-                    scale: sidecar.decodeScale
-                )
+                try $0.decodeForONNX(gamma: sidecar.gamma)
             }
         
         return if sidecar.supportsBatch || faces.count == 1 {

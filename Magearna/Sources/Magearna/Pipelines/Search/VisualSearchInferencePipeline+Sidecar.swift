@@ -16,8 +16,7 @@ extension VisualSearchInferencePipeline {
         let resizeMode: ResizeMode
         let interpolation: Interpolation
         
-        let decodeMeans: [ 3 of Float ]
-        let decodeScales: [ 3 of Float ]
+        let gammas: [ 3 of CGImage.Gamma ]
         
         init(model: InferenceModel, cacheDirectory: URL) throws {
             let preprocessConfiguration = try JSONDecoder()
@@ -39,8 +38,12 @@ extension VisualSearchInferencePipeline {
             self.interpolation = preprocessConfiguration.interpolation
             
             // In OpenClipVisualEncoder.transform, the to_numpy already normalized to [0, 1]
-            self.decodeMeans = .init { preprocessConfiguration.mean[$0] * 255 }
-            self.decodeScales = .init { 1 / preprocessConfiguration.std[$0] / 255 }
+            self.gammas = .init {
+                .openCV(
+                    scaleFactor: 1 / preprocessConfiguration.std[$0] / 255,
+                    mean: preprocessConfiguration.mean[$0] * 255
+                )
+            }
         }
     }
 }

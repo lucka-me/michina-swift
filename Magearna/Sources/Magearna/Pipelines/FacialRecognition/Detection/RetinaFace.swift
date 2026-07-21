@@ -23,10 +23,7 @@ struct RetinaFace : FaceDetectionFunction {
     
     func detect(image: CIImage, minimalConfidence: Float) throws -> Output {
         let (scaledImage, scale) = try scale(image: image)
-        let data = try scaledImage.decodeForONNX(
-            mean: StaticConfigurations.decodeMean,
-            scale: StaticConfigurations.decodeScale
-        )
+        let data = try scaledImage.decodeForONNX(gamma: StaticConfigurations.gamma)
         precondition(
             data.count == StaticConfigurations.inputShape.map(\.intValue).reduce(1, *) * MemoryLayout<Float>.size,
             "The length of input data doesn't match the input shape, check the processing."
@@ -49,8 +46,7 @@ struct RetinaFace : FaceDetectionFunction {
 
 fileprivate extension RetinaFace {
     enum StaticConfigurations {
-        static let decodeMean: Float = 127.5
-        static let decodeScale: Float = 1 / 128
+        static let gamma = CGImage.Gamma.range(-127.5 / 128 ... 127.5 / 128)
         
         static let batchSize: NSNumber = 1
         static let channelCount: NSNumber = 3

@@ -30,8 +30,7 @@ struct RapidCharacterRecognition : CharacterRecognitionFunction {
         try boxes.map { box in
             let normalizedImage = try normalize(box: box, in: image)
             let data = try normalizedImage.decodeForONNX(
-                mean: StaticConfigurations.decodeMean,
-                scale: StaticConfigurations.decodeScale,
+                gamma: StaticConfigurations.gamma,
                 reverseChannels: true
             )
             
@@ -62,8 +61,7 @@ fileprivate extension RapidCharacterRecognition {
         static let inputHeight: Int = 48
         static let rotateRatioThreshold = 1.5
         
-        static let decodeMean: Float = 127.5
-        static let decodeScale: Float = 1 / 127.5
+        static let gamma = CGImage.Gamma.range(-1 ... 1)
         
         static let batchSize: NSNumber = 1
         static let channelCount: NSNumber = 3
