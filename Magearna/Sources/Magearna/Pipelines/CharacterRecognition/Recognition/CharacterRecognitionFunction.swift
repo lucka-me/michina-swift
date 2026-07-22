@@ -8,10 +8,11 @@
 import CoreImage
 
 protocol CharacterRecognitionFunction : Sendable {
+    typealias Rectangle = CharacterRecognitionInferencePipeline.Output.Rectangle
     typealias Output = [ Confident<String>? ]
     
     func recognize(
-        boxes: [ Quadrilateral ],
+        rectangles: [ Rectangle ],
         in image: CIImage,
         minimalConfidence: Float
     ) async throws -> Output

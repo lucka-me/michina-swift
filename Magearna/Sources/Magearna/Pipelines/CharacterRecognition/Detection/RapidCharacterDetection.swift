@@ -255,7 +255,7 @@ fileprivate extension RapidCharacterDetection {
     }
 }
 
-fileprivate extension Quadrilateral {
+fileprivate extension CharacterRecognitionInferencePipeline.Output.Rectangle {
     func expand(by ratio: Double) -> Self {
         let distance = self.area * ratio / self.perimeter
         return .init(

@@ -199,7 +199,7 @@
         }
       }
     },
-    "CharacterRecognitionInferenceTab.Output.ShapeConfidence %@" : {
+    "CharacterRecognitionInferenceTab.Output.RectangleConfidence %@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {

@@ -1,5 +1,5 @@
 //
-//  Quadrilateral.swift
+//  QuadrilateralRepresentable.swift
 //  Magearna
 //
 //  Created by Lucka on 2026-06-02.
@@ -7,14 +7,22 @@
 
 import Foundation
 
-public struct Quadrilateral : Sendable, QuadrilateralShape {
-    public let topLeft: CGPoint
-    public let topRight: CGPoint
-    public let bottomRight: CGPoint
-    public let bottomLeft: CGPoint
+public protocol QuadrilateralRepresentable {
+    associatedtype Point: PointRepresentable
+    
+    var topLeft: Point { get }
+    var topRight: Point { get }
+    var bottomRight: Point { get }
+    var bottomLeft: Point { get }
 }
 
-public extension Quadrilateral {
+public extension QuadrilateralRepresentable {
+    var points: [ Point ] {
+        [ topLeft, topRight, bottomRight, bottomLeft ]
+    }
+}
+
+public extension RectangleRepresentable {
     var boundingBox: CGRect {
         let allX = [ topLeft.x, topRight.x, bottomRight.x, bottomLeft.x ].sorted()
         let allY = [ topLeft.y, topRight.y, bottomRight.y, bottomLeft.y ].sorted()

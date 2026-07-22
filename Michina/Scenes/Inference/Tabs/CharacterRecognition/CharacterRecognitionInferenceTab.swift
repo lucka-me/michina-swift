@@ -358,15 +358,15 @@ fileprivate extension CharacterRecognitionInferenceTab {
             self._hovering = hovering
             
             self.box = box
-            self.boundingBox = box.data.shape.item.boundingBox
-            self.rotationAngle = .init(radians: box.data.shape.item.rotation)
+            self.boundingBox = box.data.rectangle.item.boundingBox
+            self.rotationAngle = .init(radians: box.data.rectangle.item.rotation)
         }
         
         var body: some View {
             RoundedRectangle(cornerRadius: 6)
                 .size(
-                    width: box.data.shape.item.width * scale,
-                    height: box.data.shape.item.height * scale,
+                    width: box.data.rectangle.item.width * scale,
+                    height: box.data.rectangle.item.height * scale,
                     anchor: .center
                 )
                 .rotation(rotationAngle, anchor: .center)
@@ -403,8 +403,8 @@ fileprivate extension CharacterRecognitionInferenceTab {
                         HStack(spacing: 8) {
                             Text(
                                 """
-                                CharacterRecognitionInferenceTab.Output.ShapeConfidence \
-                                \(box.data.shape.confidence, format: .confidence)
+                                CharacterRecognitionInferenceTab.Output.RectangleConfidence \
+                                \(box.data.rectangle.confidence, format: .confidence)
                                 """
                             )
                             Text(

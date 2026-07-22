@@ -47,7 +47,7 @@ actor AppleVisionCharacterAnalyzer :
     }
     
     func recognize(
-        boxes: [ Quadrilateral ],
+        rectangles: [ Rectangle ],
         in image: CIImage,
         minimalConfidence: Float
     ) throws -> CharacterRecognitionFunction.Output {

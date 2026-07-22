@@ -1,28 +1,17 @@
 //
-//  QuadrilateralShape.swift
+//  RectangleGeometry.swift
 //  Magearna
 //
-//  Created by Lucka on 2026-06-02.
+//  Created by Lucka on 2026-07-22.
 //
 
 import Foundation
 
-public protocol QuadrilateralShape {
-    associatedtype Point: PointShape
+public protocol RectangleRepresentable : QuadrilateralRepresentable {
     
-    var topLeft: Point { get }
-    var topRight: Point { get }
-    var bottomRight: Point { get }
-    var bottomLeft: Point { get }
 }
 
-public extension QuadrilateralShape {
-    var points: [ Point ] {
-        [ topLeft, topRight, bottomRight, bottomLeft ]
-    }
-}
-
-public extension QuadrilateralShape {
+public extension RectangleRepresentable {
     var height: Double {
         max(topLeft.distance(to: bottomLeft), topRight.distance(to: bottomRight))
     }
@@ -30,11 +19,23 @@ public extension QuadrilateralShape {
     var width: Double {
         max(topLeft.distance(to: topRight), bottomLeft.distance(to: bottomRight))
     }
+}
     
+public extension RectangleRepresentable {
     var ratio: Double {
         width / height
     }
     
+    var area: Double {
+        width * height
+    }
+    
+    var perimeter: Double {
+        (width + height) * 2
+    }
+}
+
+public extension RectangleRepresentable {
     var rotation: Double {
         let dx = self.topRight.x - self.topLeft.x
         let dy = self.topRight.y - self.topLeft.y
@@ -46,15 +47,5 @@ public extension QuadrilateralShape {
         } else {
             atan2(dy, dx)
         }
-    }
-}
-
-extension QuadrilateralShape {
-    var area: Double {
-        width * height
-    }
-    
-    var perimeter: Double {
-        (width + height) * 2
     }
 }

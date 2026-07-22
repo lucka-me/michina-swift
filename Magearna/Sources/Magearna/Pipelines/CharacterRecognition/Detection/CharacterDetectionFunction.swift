@@ -8,7 +8,8 @@
 import CoreImage
 
 protocol CharacterDetectionFunction : Sendable {
-    typealias Output = [ Confident<Quadrilateral> ]
+    typealias Rectangle = CharacterRecognitionInferencePipeline.Output.Rectangle
+    typealias Output = [ Confident<Rectangle> ]
     
     func detect(
         image: CIImage,

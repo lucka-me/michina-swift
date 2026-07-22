@@ -86,7 +86,7 @@ public actor CharacterRecognitionInferencePipeline : InferencePipeline {
         
         let recognitionElapse = try await clock.measure {
             recognitionOutputs = try await recognition.recognize(
-                boxes: detectionOutputs.map(\.item),
+                rectangles: detectionOutputs.map(\.item),
                 in: image,
                 minimalConfidence: input.recognitionMinimalConfidence
             )
@@ -97,9 +97,9 @@ public actor CharacterRecognitionInferencePipeline : InferencePipeline {
         
         return .init(
             characterBoxes: zip(detectionOutputs, recognitionOutputs)
-                .compactMap { box, text in
+                .compactMap { rectangle, text in
                     if let text {
-                        .init(text: text, shape: box)
+                        .init(text: text, rectangle: rectangle)
                     } else {
                         nil
                     }
@@ -139,7 +139,15 @@ public extension CharacterRecognitionInferencePipeline {
     struct Output : Sendable {
         public struct CharacterBox : Sendable {
             public let text: Confident<String>
-            public let shape: Confident<Quadrilateral>
+            // TODO: Consider converting to normalized shape
+            public let rectangle: Confident<Rectangle>
+        }
+        
+        public struct Rectangle : Sendable, RectangleRepresentable {
+            public let topLeft: CGPoint
+            public let topRight: CGPoint
+            public let bottomRight: CGPoint
+            public let bottomLeft: CGPoint
         }
         
         public let characterBoxes: [ CharacterBox ]

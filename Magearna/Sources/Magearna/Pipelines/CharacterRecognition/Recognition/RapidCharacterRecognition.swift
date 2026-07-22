@@ -23,12 +23,13 @@ struct RapidCharacterRecognition : CharacterRecognitionFunction {
     }
     
     func recognize(
-        boxes: [ Quadrilateral ],
+        rectangles: [ Rectangle ],
         in image: CIImage,
         minimalConfidence: Float
     ) throws -> Output {
-        try boxes.map { box in
-            let normalizedImage = try normalize(box: box, in: image)
+        // TODO: Consider to batch same-sized boxes at once
+        try rectangles.map { rectangle in
+            let normalizedImage = try normalize(rectangle: rectangle, in: image)
             let data = try normalizedImage.decodeForONNX(
                 gamma: StaticConfigurations.gamma,
                 reverseChannels: true
@@ -78,9 +79,9 @@ fileprivate extension RapidCharacterRecognition {
 }
 
 fileprivate extension RapidCharacterRecognition {
-    func normalize(box: Quadrilateral, in image: CIImage) throws -> CGImage {
-        let height = box.height
-        let width = box.width
+    func normalize(rectangle: Rectangle, in image: CIImage) throws -> CGImage {
+        let height = rectangle.height
+        let width = rectangle.width
         
         let anchor: CGPoint
         let rotation: CGFloat
@@ -88,13 +89,13 @@ fileprivate extension RapidCharacterRecognition {
         let cropSize: CGSize
         
         if height / width < StaticConfigurations.rotateRatioThreshold {
-            anchor = box.bottomLeft
-            rotation = box.rotation
+            anchor = rectangle.bottomLeft
+            rotation = rectangle.rotation
             scale = Double(StaticConfigurations.inputHeight) / height
             cropSize = .init(width: Int(width * scale), height: StaticConfigurations.inputHeight)
         } else {
-            anchor = box.topLeft
-            rotation = box.rotation + (.pi / 2)
+            anchor = rectangle.topLeft
+            rotation = rectangle.rotation + (.pi / 2)
             scale = Double(StaticConfigurations.inputHeight) / width
             cropSize = .init(width: Int(height * scale), height: StaticConfigurations.inputHeight)
         }

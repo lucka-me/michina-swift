@@ -129,10 +129,10 @@ fileprivate struct CharacterRecognitionResults : Encodable {
         self.text = output.characterBoxes.map(\.text.item)
         self.textScore = output.characterBoxes.map(\.text.confidence)
         self.box = output.characterBoxes.flatMap { box in
-            box.shape.item.points.flatMap { point in
+            box.rectangle.item.points.flatMap { point in
                 [ point.x / imageSize.width, point.y / imageSize.height ]
             }
         }
-        self.boxScore = output.characterBoxes.map(\.shape.confidence)
+        self.boxScore = output.characterBoxes.map(\.rectangle.confidence)
     }
 }
