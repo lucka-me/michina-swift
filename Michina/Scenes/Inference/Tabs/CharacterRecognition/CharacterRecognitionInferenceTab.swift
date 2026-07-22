@@ -261,7 +261,7 @@ fileprivate extension CharacterRecognitionInferenceTab {
                 input: imageData.image,
                 inputSize: image.extent.size,
                 elapse: elapse,
-                boxes: output.characterBoxes.map { .init(data: $0) }
+                characterBoxes: output.characterBoxes.map { .init(data: $0) }
             )
         )
     }
@@ -277,7 +277,7 @@ fileprivate extension CharacterRecognitionInferenceTab {
         let inputSize: CGSize
         
         let elapse: Duration
-        let boxes: [ PresentableCharacterBox ]
+        let characterBoxes: [ PresentableCharacterBox ]
     }
     
     struct PresentableCharacterBox : Identifiable, Sendable {
@@ -302,7 +302,12 @@ fileprivate extension CharacterRecognitionInferenceTab {
                 
                 Text(output.elapse, format: .elapse)
                 Divider()
-                Text("CharacterRecognitionInferenceTab.Output.BoxCount \(output.boxes.count)")
+                Text(
+                    """
+                    CharacterRecognitionInferenceTab.Output.BoxCount \
+                    \(output.characterBoxes.count)
+                    """
+                )
             }
             .monospaced()
         }
@@ -325,9 +330,9 @@ fileprivate extension CharacterRecognitionInferenceTab {
                 .clipShape(.rect(cornerRadius: 12))
                 .overlay {
                     GeometryReader { proxy in
-                        ForEach(output.boxes) { box in
-                            CharacterBoxQuadrilateral(
-                                box: box,
+                        ForEach(output.characterBoxes) { characterBox in
+                            CharacterBoxRectangle(
+                                characterBox: characterBox,
                                 hovering: $hovering
                             )
                         }
@@ -340,33 +345,33 @@ fileprivate extension CharacterRecognitionInferenceTab {
         }
     }
     
-    struct CharacterBoxQuadrilateral : View {
+    struct CharacterBoxRectangle : View {
         @Binding var hovering: UUID?
         
         @Environment(\.scale) private var scale
         
         @State var captionHeight = CGFloat.zero
         
-        private let box: PresentableCharacterBox
+        private let characterBox: PresentableCharacterBox
         private let boundingBox: CGRect
         private let rotationAngle: Angle
         
         init(
-            box: PresentableCharacterBox,
+            characterBox: PresentableCharacterBox,
             hovering: Binding<UUID?>
         ) {
             self._hovering = hovering
             
-            self.box = box
-            self.boundingBox = box.data.rectangle.item.boundingBox
-            self.rotationAngle = .init(radians: box.data.rectangle.item.rotation)
+            self.characterBox = characterBox
+            self.boundingBox = characterBox.data.rectangle.item.boundingBox
+            self.rotationAngle = .init(radians: characterBox.data.rectangle.item.rotation)
         }
         
         var body: some View {
             RoundedRectangle(cornerRadius: 6)
                 .size(
-                    width: box.data.rectangle.item.width * scale,
-                    height: box.data.rectangle.item.height * scale,
+                    width: characterBox.data.rectangle.item.width * scale,
+                    height: characterBox.data.rectangle.item.height * scale,
                     anchor: .center
                 )
                 .rotation(rotationAngle, anchor: .center)
@@ -381,8 +386,8 @@ fileprivate extension CharacterRecognitionInferenceTab {
                     // contentShape seems not work well with rotated shape, maybe use
                     // onContinuousHover + CGPath to track if it's inside the shape.
                     if $0 {
-                        hovering = box.id
-                    } else if hovering == box.id {
+                        hovering = characterBox.id
+                    } else if hovering == characterBox.id {
                         hovering = nil
                     }
                 }
@@ -392,7 +397,7 @@ fileprivate extension CharacterRecognitionInferenceTab {
                 )
                 .safeAreaInset(edge: .bottom, spacing: 4) {
                     VStack(spacing: 4) {
-                        Text(box.data.text.item)
+                        Text(characterBox.data.text.item)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
                             .background(
@@ -404,13 +409,13 @@ fileprivate extension CharacterRecognitionInferenceTab {
                             Text(
                                 """
                                 CharacterRecognitionInferenceTab.Output.RectangleConfidence \
-                                \(box.data.rectangle.confidence, format: .confidence)
+                                \(characterBox.data.rectangle.confidence, format: .confidence)
                                 """
                             )
                             Text(
                                 """
                                 CharacterRecognitionInferenceTab.Output.TextConfidence \
-                                \(box.data.text.confidence, format: .confidence)
+                                \(characterBox.data.text.confidence, format: .confidence)
                                 """
                             )
                         }
@@ -422,7 +427,7 @@ fileprivate extension CharacterRecognitionInferenceTab {
                     .onGeometryChange(for: CGFloat.self, of: \.size.height) {
                         captionHeight = $0
                     }
-                    .opacity(hovering == box.id ? 1 : 0)
+                    .opacity(hovering == characterBox.id ? 1 : 0)
                 }
                 .zIndex(zIndex)
                 .position(
@@ -433,14 +438,14 @@ fileprivate extension CharacterRecognitionInferenceTab {
         
         private var opacity: CGFloat {
             switch hovering {
-            case box.id: 1.0
+            case characterBox.id: 1.0
             case nil: 0.6
             default: 0.3
             }
         }
         
         private var frameColor: Color {
-            if let hovering, hovering != box.id {
+            if let hovering, hovering != characterBox.id {
                 .gray
             } else {
                 .green
@@ -449,7 +454,7 @@ fileprivate extension CharacterRecognitionInferenceTab {
         
         private var zIndex: Double {
             switch hovering {
-            case box.id: 10
+            case characterBox.id: 10
             default: 0
             }
         }
