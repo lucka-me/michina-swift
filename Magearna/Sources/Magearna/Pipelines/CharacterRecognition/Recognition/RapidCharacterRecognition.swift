@@ -168,8 +168,6 @@ fileprivate extension RapidCharacterRecognition {
             $0.item > 0
         }
         
-        print(indices.map { sidecar.characters[$0.item] })
-        
         let confidence = indices.reduce(Float.zero) { $0 + $1.confidence } / .init(indices.count)
         guard confidence >= minimalConfidence else {
             return nil
