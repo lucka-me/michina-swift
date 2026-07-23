@@ -10,15 +10,15 @@ import Vision
 
 extension ContoursObservation.Contour {
     func minimalBoundingRectangle() -> RectangleObservation {
-        let points = self.points
-        let edges = Self.convexHullEdges(of: points)
+        let edges = Self.convexHullEdges(of: self.points)
+        let vertices = edges.map { $0[0] }
         
         var minimalArea = Double.infinity
         var minimalRectangle: RectangleObservation? = nil
         for edge in edges {
             guard
                 let (rectangle, area) = Self.rectangle(
-                    mapping: points,
+                    mapping: vertices,
                     to: edge,
                     maximalArea: minimalArea
                 )
