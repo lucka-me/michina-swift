@@ -95,11 +95,9 @@ fileprivate extension ContoursObservation.Contour {
             into: (minM: Double.infinity, maxM: -Double.infinity, minN: Double.infinity)
         ) { results, point in
             let m = dot(edge[0], edge[1], point) / length
-            if m < results.minM {
-                results.minM = m
-            } else if m > results.maxM {
-                results.maxM = m
-            }
+            results.minM = min(results.minM, m)
+            results.maxM = max(results.maxM, m)
+            
             let n = cross(edge[0], edge[1], point) / length
             if n < results.minN {
                 results.minN = n

@@ -3,6 +3,9 @@ Welcome to Michina.
 Notices
 - We received several crash reports that occurred on macOS 27, from Smart Search Visual inference task. We can't reproduce the crash because we don't have a macOS 27 environment at this moment. If this crash is reproducible, please give us a feedback about the details through TestFlight (like which model and what image leads to the crash), thank you.
 
+Build #52
+- Fixed: Crash when the contour of detected characters matches certain shape
+
 Build #51
 - Added: Reset statistics button in Inference page
 - Changed: Improve image pickers in Inference window
