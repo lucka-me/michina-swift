@@ -216,12 +216,9 @@ fileprivate extension View {
             .lineLimit(1)
             .padding(8)
             .background {
-                ConcentricRectangle(
-                    corners: .concentric(minimum: 8),
-                    isUniform: true
-                )
-                .fill(.thinMaterial.opacity(0.5))
-                .stroke(.separator)
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .fill(.thinMaterial.opacity(0.5))
+                    .stroke(.separator)
             }
     }
 }

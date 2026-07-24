@@ -199,7 +199,7 @@ fileprivate extension FacialRecognitionInferenceTab {
                 Button(
                     "FacialRecognitionInferenceTab.Action.RunInference",
                     systemImage: "play",
-                    role: .confirm
+                    role: .BackDeployed.confirm
                 ) {
                     alert.whenTrying(runInference)
                 }
@@ -267,7 +267,10 @@ fileprivate extension FacialRecognitionInferenceTab {
                     return .init(
                         index: index,
                         recognitionModel: recognitionModel,
-                        data: face
+                        data: face,
+                        landmarks: face.geometry.item.landmarks.map {
+                            .init(data: $0)
+                        }
                     )
                 }
             )
@@ -295,6 +298,14 @@ fileprivate extension FacialRecognitionInferenceTab {
         let recognitionModel: InferenceModel
         
         let data: Pipeline.Output.Face
+        
+        let landmarks: [ PresentableLandmark ]
+    }
+    
+    struct PresentableLandmark: Identifiable, Sendable {
+        let id = UUID()
+        
+        let data: CGPoint
     }
     
     @ViewBuilder
@@ -385,18 +396,15 @@ fileprivate extension FacialRecognitionInferenceTab {
         
         var body: some View {
             if hovering == face.id {
-                ForEach(
-                    face.data.geometry.item.landmarks.enumerated(),
-                    id:\.offset
-                ) { landmark in
+                ForEach(face.landmarks) { landmark in
                     Circle()
                         .stroke(frameColor, lineWidth: 2)
                         .frame(width: 4, height: 4)
                         .opacity(opacity)
                         .zIndex(zIndex)
                         .position(
-                            x: landmark.element.x * scale,
-                            y: landmark.element.y * scale
+                            x: landmark.data.x * scale,
+                            y: landmark.data.y * scale
                         )
                 }
             }

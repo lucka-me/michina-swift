@@ -987,6 +987,16 @@
         }
       }
     },
+    "InferenceServiceSettingsTab.Endpoints.Reset" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset"
+          }
+        }
+      }
+    },
     "InferenceServiceSettingsTab.Endpoints.Verified" : {
       "localizations" : {
         "en" : {
@@ -1113,6 +1123,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Load selected models automatically when Michina launches.\nThe preloaded models will never be unloaded automatically, except you unload and load them manually."
+          }
+        }
+      }
+    },
+    "InferenceServiceSettingsTab.PreloadModels.Remove" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove"
           }
         }
       }

@@ -16,7 +16,13 @@ struct SettingsScene : Scene {
                 InferenceServiceSettingsTab()
             }
             .formStyle(.grouped)
-            .windowResizeAnchor(.top)
+            .applying {
+                if #available(macOS 26, *) {
+                    $0.windowResizeAnchor(.leading)
+                } else {
+                    $0
+                }
+            }
             .windowResizeBehavior(.enabled)
             .alertable()
         }

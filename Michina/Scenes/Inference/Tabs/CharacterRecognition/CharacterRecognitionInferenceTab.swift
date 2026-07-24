@@ -198,7 +198,7 @@ fileprivate extension CharacterRecognitionInferenceTab {
                 Button(
                     "CharacterRecognitionInferenceTab.Action.RunInference",
                     systemImage: "play",
-                    role: .confirm
+                    role: .BackDeployed.confirm
                 ) {
                     alert.whenTrying(runInference)
                 }

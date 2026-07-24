@@ -98,29 +98,18 @@ fileprivate extension InferenceServiceSettingsTab {
     @ViewBuilder
     var preloadModelsSection: some View {
         Section {
-            ForEach(
-                settings.preloadModels.enumerated(),
-                id: \.element.id
-            ) { enumeration in
-                HStack {
-                    VStack(alignment: .leading) {
-                        HStack(spacing: 6) {
-                            Text(enumeration.element.suiteCategory.titleKey)
-                            Divider()
-                            Text(enumeration.element.category.titleKey)
-                        }
-                        .font(.caption)
-                        
-                        Text(enumeration.element.suiteName)
-                            .monospaced()
-                    }
-                    
-                    Spacer()
-                    
-                    Button(role: .destructive) {
-                        settings.preloadModels.remove(at: enumeration.offset)
-                    }
-                }
+            if #available(macOS 26, *) {
+                ForEach(
+                    settings.preloadModels.enumerated(),
+                    id: \.element.id,
+                    content: preloadModelRow(_:)
+                )
+            } else {
+                ForEach(
+                    Array(settings.preloadModels.enumerated()),
+                    id: \.element.id,
+                    content: preloadModelRow(_:)
+                )
             }
             
             addPreloadModelMenu
@@ -149,6 +138,35 @@ fileprivate extension InferenceServiceSettingsTab {
                         }
                     }
                 }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    func preloadModelRow(
+        _ item: EnumeratedSequence<[ InferenceModel ]>.Element
+    ) -> some View {
+        HStack {
+            VStack(alignment: .leading) {
+                HStack(spacing: 6) {
+                    Text(item.element.suiteCategory.titleKey)
+                    Divider()
+                    Text(item.element.category.titleKey)
+                }
+                .font(.caption)
+                
+                Text(item.element.suiteName)
+                    .monospaced()
+            }
+            
+            Spacer()
+            
+            Button(
+                "InferenceServiceSettingsTab.PreloadModels.Remove",
+                systemImage: "trash",
+                role: .destructive
+            ) {
+                settings.preloadModels.remove(at: item.offset)
             }
         }
     }
@@ -269,7 +287,11 @@ fileprivate struct EndpointField<
                     }
                 }
                 
-                Button(role: .destructive) {
+                Button(
+                    "InferenceServiceSettingsTab.Endpoints.Reset",
+                    systemImage: "arrow.counterclockwise",
+                    role: .destructive
+                ) {
                     url = nil
                     inputValue = nil
                 }

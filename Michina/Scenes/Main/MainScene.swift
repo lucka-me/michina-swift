@@ -12,7 +12,13 @@ struct MainScene : Scene {
         WindowGroup(id: Self.id) {
             MainView()
                 .alertable()
-                .windowResizeAnchor(.leading)
+                .applying {
+                    if #available(macOS 26, *) {
+                        $0.windowResizeAnchor(.leading)
+                    } else {
+                        $0
+                    }
+                }
         }
     }
 }

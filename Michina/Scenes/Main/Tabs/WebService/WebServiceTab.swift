@@ -103,15 +103,32 @@ fileprivate extension WebServiceTab {
         .monospaced()
         .contentMargins(.horizontal, 12, for: .scrollContent)
         .contentMargins(.vertical, 8, for: .scrollContent)
-        .safeAreaBar(edge: .bottom, alignment: .trailing) {
-            Button("WebServiceTab.Errors.Clear", role: .destructive) {
-                service.clearErrors()
-                isErrorsPopoverPresented = false
+        .applying {
+            if #available(macOS 26, *) {
+                $0.safeAreaBar(edge: .bottom, alignment: .trailing) {
+                    clearErrorsButton
+                }
+            } else {
+                $0.safeAreaInset(edge: .bottom, alignment: .trailing) {
+                    clearErrorsButton
+                        .safeAreaInset(edge: .top, spacing: 0) {
+                            Divider()
+                        }
+                        .background(.bar, ignoresSafeAreaEdges: .all)
+                }
             }
-            .keyboardShortcut(.delete)
-            .padding([ .horizontal, .bottom ], 12)
         }
         .frame(maxHeight: 400)
+    }
+    
+    @ViewBuilder
+    var clearErrorsButton: some View {
+        Button("WebServiceTab.Errors.Clear", role: .destructive) {
+            service.clearErrors()
+            isErrorsPopoverPresented = false
+        }
+        .keyboardShortcut(.delete)
+        .padding([ .horizontal, .bottom ], 12)
     }
 }
 

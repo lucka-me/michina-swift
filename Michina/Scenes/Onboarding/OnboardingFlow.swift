@@ -23,19 +23,22 @@ struct OnboardingFlow : View {
             case .settings: OnboardingSettingsView()
             }
         }
-        .safeAreaBar(edge: .bottom, alignment: .trailing) {
-            Group {
-                if let next {
-                    NavigationLink(value: next)
-                } else {
-                    Button("OnboardingFlow.Finish", systemImage: "checkmark") {
-                        dismissWindow()
-                    }
+        .applying {
+            if #available(macOS 26, *) {
+                $0.safeAreaBar(edge: .bottom, alignment: .trailing) {
+                    navigationButton
+                        .buttonStyle(.glassProminent)
+                }
+            } else {
+                $0.safeAreaInset(edge: .bottom, alignment: .trailing) {
+                    navigationButton
+                        .buttonStyle(.borderedProminent)
+                        .safeAreaInset(edge: .top, spacing: 0) {
+                            Divider()
+                        }
+                        .background(.bar, ignoresSafeAreaEdges: .all)
                 }
             }
-            .buttonStyle(.glassProminent)
-            .controlSize(.large)
-            .padding(24)
         }
         .navigationTitle(titleKey)
         .presentedWindowStyle(.titleBar)
@@ -85,5 +88,22 @@ fileprivate extension OnboardingFlow {
         case .introduction: .settings
         case .settings: nil
         }
+    }
+}
+
+fileprivate extension OnboardingFlow {
+    @ViewBuilder
+    var navigationButton: some View {
+        Group {
+            if let next {
+                NavigationLink(value: next)
+            } else {
+                Button("OnboardingFlow.Finish", systemImage: "checkmark") {
+                    dismissWindow()
+                }
+            }
+        }
+        .controlSize(.large)
+        .padding(24)
     }
 }
