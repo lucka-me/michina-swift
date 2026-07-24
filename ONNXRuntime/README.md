@@ -20,7 +20,7 @@ brew install python3
 brew install cmake
 ```
 
-Then run the script to build the onnxruntime and generate XCFramework:
+Then run the script to build the onnxruntime for both `arm64` and `x86_64`, and generate universal XCFramework:
 
 ```shell
 ./Frameworks/onnxruntime/build.sh

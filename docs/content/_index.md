@@ -12,12 +12,13 @@ template: index.html
 
 [Immich](https://immich.app) Machine Learning Server on macOS
 
-<span class="color-secondary">macOS 26 Tahoe + Apple Silicon</span>
+<span class="color-secondary">macOS 26 Tahoe</span>  
+<span class="color-secondary">Apple Silicon & Intel</span>
 
 [Join TestFlight](https://testflight.apple.com/join/rJP9acvk)
 
 </section>
 
-## Documents
+## Links
 
 - [Benchmarks](./benckmarks)
