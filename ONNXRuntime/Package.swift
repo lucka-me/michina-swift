@@ -6,6 +6,7 @@ import PackageDescription
 
 let package = Package(
     name: "ONNXRuntime",
+    platforms: [ .macOS(.v26) ],
     products: [
         .library(
             name: "ONNXRuntime",
