@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "Tokenizers",
-    platforms: [ .macOS(.v26) ],
+    platforms: [ .macOS(.v15) ],
     products: [
         .library(name: "Tokenizers", targets: [ "Tokenizers" ]),
     ],
