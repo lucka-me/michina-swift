@@ -15,7 +15,15 @@ and then install cxxbridge-cmd with cargo:
 cargo install --version 1.0.194 cxxbridge-cmd
 ```
 
-Then run the script to build the rust code and generate XCFramework:
+Michina supports both `arm64` and `x86_64` architectures, so should `tokenizers.xcframework`. Install cross-compile
+target with `rustup`:
+
+```shell
+rustup target add x86_64-apple-darwin   # Install x86_64 target on Apple Silicon Mac
+rustup target add aarch64-apple-darwin  # Install arm64 target on Intel Mac
+```
+
+Then run the script to build the rust code and generate universal XCFramework:
 
 ```shell
 ./Frameworks/tokenizers/build.sh

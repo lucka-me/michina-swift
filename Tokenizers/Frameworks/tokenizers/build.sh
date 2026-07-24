@@ -26,12 +26,16 @@ $CXXBRIDGE_EXECUTABLE $sourcePath/src/lib.rs -o $packageTargetPath/tokenizers-br
 
 buildTargetPath=$sourcePath/target
 
+universalLibraryPath=$buildTargetPath/libtokenizers.a
+lipo \
+    $buildTargetPath/aarch64-apple-darwin/release/libtokenizers.a   \
+    $buildTargetPath/x86_64-apple-darwin/release/libtokenizers.a    \
+    -create -output $universalLibraryPath
+
 xcframeworkPath=$currentDirectory/tokenizers.xcframework
 if [ -d $xcframeworkPath ]
 then
     rm -r $xcframeworkPath
 fi
 
-xcodebuild -create-xcframework                                              \
-    -library $buildTargetPath/aarch64-apple-darwin/release/libtokenizers.a  \
-    -output $xcframeworkPath
+xcodebuild -create-xcframework -library $universalLibraryPath -output $xcframeworkPath
