@@ -57,7 +57,7 @@ extension CGImage {
             }
     }
     
-    func decodeForONNX(gammas: [ 3 of Gamma]) throws -> Data {
+    func decodeForONNX(gammas: [ Gamma ]) throws -> Data {
         var imageFormat = vImage_CGImageFormat(
             bitsPerComponent: 32,
             bitsPerPixel: 32 * Self.decodePixelFormat.channelCount,

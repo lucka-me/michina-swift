@@ -11,7 +11,7 @@ import Vision
 extension ContoursObservation.Contour {
     func minimalBoundingRectangle() -> RectangleObservation {
         let edges = Self.convexHullEdges(of: self.points)
-        let vertices = edges.map { $0[0] }
+        let vertices = edges.map(\.0)
         
         var minimalArea = Double.infinity
         var minimalRectangle: RectangleObservation? = nil
@@ -34,7 +34,7 @@ extension ContoursObservation.Contour {
     }
 }
 
-fileprivate typealias NormalizedEdge = [ 2 of NormalizedPoint ]
+fileprivate typealias NormalizedEdge = (NormalizedPoint, NormalizedPoint)
 
 fileprivate extension ContoursObservation.Contour {
     static func convexHullEdges(
@@ -76,7 +76,7 @@ fileprivate extension ContoursObservation.Contour {
         }
         
         return deque[..<(deque.endIndex - 1)].indices.map {
-            [ deque[$0], deque[$0 + 1] ]
+            (deque[$0], deque[$0 + 1])
         }
     }
     
@@ -86,19 +86,19 @@ fileprivate extension ContoursObservation.Contour {
         maximalArea: CGFloat
     ) -> (rectangle: RectangleObservation, area: CGFloat)? {
         // Make the edge as x axis, coordinate (M, N)
-        let dX = edge[1].x - edge[0].x
-        let dY = edge[1].y - edge[0].y
+        let dX = edge.1.x - edge.0.x
+        let dY = edge.1.y - edge.0.y
         let length = hypot(dX, dY)
         
         // Map points to (M, N)
         let (minM, maxM, minN) = points.reduce(
             into: (minM: Double.infinity, maxM: -Double.infinity, minN: Double.infinity)
         ) { results, point in
-            let m = dot(edge[0], edge[1], point) / length
+            let m = dot(edge.0, edge.1, point) / length
             results.minM = min(results.minM, m)
             results.maxM = max(results.maxM, m)
             
-            let n = cross(edge[0], edge[1], point) / length
+            let n = cross(edge.0, edge.1, point) / length
             if n < results.minN {
                 results.minN = n
             }
@@ -113,20 +113,20 @@ fileprivate extension ContoursObservation.Contour {
         
         let rectangle = RectangleObservation(
             topLeft: .init(
-                x: edge[0].x + (minM * dX - maxN * dY) / length,
-                y: edge[0].y + (minM * dY + maxN * dX) / length
+                x: edge.0.x + (minM * dX - maxN * dY) / length,
+                y: edge.0.y + (minM * dY + maxN * dX) / length
             ),
             topRight: .init(
-                x: edge[0].x + (maxM * dX - maxN * dY) / length,
-                y: edge[0].y + (maxM * dY + maxN * dX) / length
+                x: edge.0.x + (maxM * dX - maxN * dY) / length,
+                y: edge.0.y + (maxM * dY + maxN * dX) / length
             ),
             bottomRight: .init(
-                x: edge[0].x + (maxM * dX - minN * dY) / length,
-                y: edge[0].y + (maxM * dY + minN * dX) / length
+                x: edge.0.x + (maxM * dX - minN * dY) / length,
+                y: edge.0.y + (maxM * dY + minN * dX) / length
             ),
             bottomLeft: .init(
-                x: edge[0].x + (minM * dX - minN * dY) / length,
-                y: edge[0].y + (minM * dY + minN * dX) / length
+                x: edge.0.x + (minM * dX - minN * dY) / length,
+                y: edge.0.y + (minM * dY + minN * dX) / length
             )
         )
         

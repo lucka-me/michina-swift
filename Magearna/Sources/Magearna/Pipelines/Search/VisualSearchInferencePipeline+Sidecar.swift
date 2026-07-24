@@ -16,7 +16,7 @@ extension VisualSearchInferencePipeline {
         let resizeMode: ResizeMode
         let interpolation: Interpolation
         
-        let gammas: [ 3 of CGImage.Gamma ]
+        let gammas: [ CGImage.Gamma ]
         
         init(model: InferenceModel, cacheDirectory: URL) throws {
             let preprocessConfiguration = try JSONDecoder()
@@ -38,11 +38,15 @@ extension VisualSearchInferencePipeline {
             self.interpolation = preprocessConfiguration.interpolation
             
             // In OpenClipVisualEncoder.transform, the to_numpy already normalized to [0, 1]
-            self.gammas = .init {
-                .openCV(
-                    scaleFactor: 1 / preprocessConfiguration.std[$0] / 255,
-                    mean: preprocessConfiguration.mean[$0] * 255
-                )
+            self.gammas = .init(capacity: 3) { span in
+                for index in 0 ..< 3 {
+                    span.append(
+                        .openCV(
+                            scaleFactor: 1 / preprocessConfiguration.std[index] / 255,
+                            mean: preprocessConfiguration.mean[index] * 255
+                        )
+                    )
+                }
             }
         }
     }
@@ -61,9 +65,9 @@ extension VisualSearchInferencePipeline.Sidecar {
 }
 
 fileprivate struct PreprocessConfiguration {
-    var size: [ 2 of Int ]
-    var mean: [ 3 of Float ]
-    var std: [ 3 of Float ]
+    var size: [ Int ]
+    var mean: [ Float ]
+    var std: [ Float ]
     
     // nearest, box, bilinear, hamming, bicubic, lanczos
     // immich-ml doesn't use it, the resize_pil uses bicubic
@@ -91,11 +95,11 @@ extension PreprocessConfiguration : Decodable {
             let size = try container.decode(Int.self, forKey: .size)
             self.size = [ size, size ]
         } catch DecodingError.typeMismatch(_, _) {
-            self.size = try container.decode(forKey: .size)
+            self.size = try container.decode(forKey: .size, count: 2)
         }
         
-        self.mean = try container.decode(forKey: .mean)
-        self.std = try container.decode(forKey: .std)
+        self.mean = try container.decode(forKey: .mean, count: 3)
+        self.std = try container.decode(forKey: .std, count: 3)
         
         self.interpolation = try container.decode(
             VisualSearchInferencePipeline.Sidecar.Interpolation.self,
@@ -109,9 +113,9 @@ extension PreprocessConfiguration : Decodable {
 }
 
 fileprivate extension KeyedDecodingContainer {
-    func decode<let count: Int, Element: Decodable>(forKey key: Key) throws -> [ count of Element ] {
+    func decode<Element: Decodable>(forKey key: Key, count: Int) throws -> [ Element ] {
         var container = try self.nestedUnkeyedContainer(forKey: key)
-        let result: [ count of Element ] = try .init { span in
+        let result: [ Element ] = try .init(capacity: count) { span in
             for _ in 0 ..< count {
                 span.append(try container.decode(Element.self))
             }
