@@ -22,14 +22,14 @@ struct AppSettingsTab : TabContent {
                 
                 iconsSection
             }
-            .frame(minWidth: 300, minHeight: 200)
+            .frame(minWidth: 300, idealWidth: 300, minHeight: 200)
         }
     }
 }
 
 extension AppSettingsTab {
     static let titleKey: LocalizedStringKey = "AppSettingsTab"
-    static let systemImage: String = "rectangle.badge.sparkles"
+    static let systemImage: String = "macwindow"
 }
 
 extension AppSettingsTab {

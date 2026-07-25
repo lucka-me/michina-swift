@@ -13,7 +13,7 @@ struct MenuBarExtraScene : Scene {
     
     var body: some Scene {
         MenuBarExtra(isInserted: $settings.insertMenuBarExtra) {
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: Self.windowCornerRadius / 2) {
                 WebServiceBlock()
                     .blockStyle()
                 
@@ -23,12 +23,22 @@ struct MenuBarExtraScene : Scene {
                 LinksBlock()
                     .blockStyle()
             }
-            .padding(8)
-            .containerShape(.rect(cornerRadius: 16))
+            .padding(Self.windowCornerRadius / 2)
+            .containerShape(.rect(cornerRadius: Self.windowCornerRadius))
         } label: {
             MenuBarExtraLabel()
         }
         .menuBarExtraStyle(.window)
+    }
+}
+
+fileprivate extension MenuBarExtraScene {
+    static var windowCornerRadius: CGFloat {
+        if #available(macOS 26, *) {
+            16
+        } else {
+            8
+        }
     }
 }
 
@@ -216,9 +226,12 @@ fileprivate extension View {
             .lineLimit(1)
             .padding(8)
             .background {
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .fill(.thinMaterial.opacity(0.5))
-                    .stroke(.separator)
+                RoundedRectangle(
+                    cornerRadius: MenuBarExtraScene.windowCornerRadius / 2,
+                    style: .continuous
+                )
+                .fill(.thinMaterial.opacity(0.5))
+                .stroke(.separator)
             }
     }
 }

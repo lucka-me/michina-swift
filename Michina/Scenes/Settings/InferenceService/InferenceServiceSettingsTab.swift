@@ -20,7 +20,7 @@ struct InferenceServiceSettingsTab : TabContent {
                 endpointsSection
                 cacheSection
             }
-            .frame(minWidth: 400, minHeight: 400)
+            .frame(minWidth: 400, idealWidth: 400, minHeight: 400)
         }
     }
 }

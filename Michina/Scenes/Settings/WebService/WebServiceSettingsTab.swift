@@ -22,7 +22,7 @@ struct WebServiceSettingsTab : TabContent {
                 
                 PortSection()
             }
-            .frame(minWidth: 400, minHeight: 300)
+            .frame(minWidth: 400, idealWidth: 400, minHeight: 300)
         }
     }
 }
