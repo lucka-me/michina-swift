@@ -161,6 +161,7 @@ jobs:
             -workspace ${{ env.XCODE_WORKSPACE }}                     \
             -derivedDataPath ${{ steps.paths.outputs.derived-data }}  \
             -scheme Michina                                           \
+            -onlyUsePackageVersionsFromResolvedFile                   \
             -hideShellScriptEnvironment
 
       - name: Restore Modification Time
@@ -188,6 +189,7 @@ jobs:
             -destination generic/platform=macOS                       \
             -archivePath ${{ env.ARCHIVE_PATH }}                      \
             -derivedDataPath ${{ steps.paths.outputs.derived-data }}  \
+            COMPILATION_CACHE_ENABLE_CACHING=1                        \
             -hideShellScriptEnvironment                               \
             | xcpretty
 
@@ -314,5 +316,5 @@ jobs:
       - name: Upload App Store Connect Archive
         uses: actions/upload-artifact@v7
         with:
-          path: ${{ steps.export-app-store-connect.outputs.export-path }}.zip
-          archive: false
+          name: app-store-connect
+          path: ${{ steps.export-app-store-connect.outputs.export-path }}
