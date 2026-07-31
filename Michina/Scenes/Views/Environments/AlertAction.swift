@@ -18,7 +18,7 @@ struct AlertAction : Sendable {
     }
     
     func callAsFunction(message: String) {
-        alertAction(.message(content: message))
+        alertAction(.localized(error: Message(message)))
     }
     
     func callAsFunction(_ error: any Error) {
@@ -56,6 +56,16 @@ struct AlertAction : Sendable {
     }
 }
 
+extension AlertAction {
+    struct Message : LocalizedError {
+        let errorDescription: String?
+        
+        init(_ message: String) {
+            self.errorDescription = message
+        }
+    }
+}
+
 extension EnvironmentValues {
     @Entry var alert = AlertAction { _ in }
 }
@@ -66,11 +76,9 @@ extension View {
     }
 }
 
-fileprivate enum AlertableError: Error, LocalizedError {
+fileprivate enum AlertableError: LocalizedError {
     case localized(error: LocalizedError)
     case generic(error: Error)
-    
-    case message(content: String)
     
     var errorDescription: String? {
         switch self {
@@ -78,8 +86,6 @@ fileprivate enum AlertableError: Error, LocalizedError {
             error.errorDescription ?? error.localizedDescription
         case .generic(let error):
             error.localizedDescription
-        case .message(let content):
-            content
         }
     }
         

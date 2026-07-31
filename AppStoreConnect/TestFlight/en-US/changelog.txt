@@ -5,6 +5,7 @@ Notices
 
 Build #55
 - Added: Some links in Help menu
+- Added: Inference window now supports loading and processing multiple photos in parallel
 
 Build #54
 - Added: Support macOS 15 Sequoia

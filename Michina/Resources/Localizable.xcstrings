@@ -1773,6 +1773,16 @@
         }
       }
     },
+    "UnifiedPhotoPicker.Multiple %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ %lld"
+          }
+        }
+      }
+    },
     "Version %@ %@" : {
       "localizations" : {
         "en" : {

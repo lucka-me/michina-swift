@@ -18,7 +18,7 @@ struct CharacterRecognitionInferenceTab : TabContent {
     @State private var detectionModel: InferenceModel
     @State private var recognitionModel: InferenceModel
     
-    @State private var imageData: ImageData? = nil
+    @State private var images: [ ImageData ] = [ ]
     
     @State private var executionProgress: Progress? = nil
     @State private var outputs: [ Output ] = [ ]
@@ -144,10 +144,22 @@ fileprivate extension CharacterRecognitionInferenceTab {
     @ViewBuilder
     var inputSections: some View {
         Section("CharacterRecognitionInferenceTab.Inspector.Photo") {
-            UnifiedPhotoPicker(selection: $imageData) {
-                if let image = imageData?.image {
+            UnifiedPhotoPicker(selection: $images) {
+                if let image = images.first?.image {
                     image
                         .aspectRatio(contentMode: .fit)
+                        .overlay(alignment: .topTrailing) {
+                            if images.count > 1 {
+                                Text("UnifiedPhotoPicker.Multiple \(images.count - 1)")
+                                    .font(.caption)
+                                    .padding(6)
+                                    .background(
+                                        .thinMaterial.opacity(0.5),
+                                        in: .rect(cornerRadius: 6, style: .continuous)
+                                    )
+                                    .padding(6)
+                            }
+                        }
                 } else {
                     Label(
                         "UnifiedPhotoPicker.DefaultLabel",
@@ -193,7 +205,7 @@ fileprivate extension CharacterRecognitionInferenceTab {
     
     @ToolbarContentBuilder
     func toolbarContent() -> some ToolbarContent {
-        if imageData != nil {
+        if !images.isEmpty {
             ToolbarItem(placement: .primaryAction) {
                 Button(
                     "CharacterRecognitionInferenceTab.Action.RunInference",
@@ -226,43 +238,81 @@ fileprivate extension CharacterRecognitionInferenceTab {
     }
     
     func runInference() async throws {
+        guard self.executionProgress == nil else {
+            return
+        }
+        
         self.executionProgress = .init()
         defer {
             self.executionProgress = nil
         }
         
-        guard
-            let imageData,
-            let image = CIImage(data: imageData.data)
-        else {
-            alert(message: "Unable to decode the image.")
-            return
+        let images = self.images
+        let detectionModel = self.detectionModel
+        let detectionMinimalConfidence = Float(values.detectionMinimalConfidence)
+        let detectionMaximalResolution = values.detectionMaximalResolution
+        let recognitionModel = self.recognitionModel
+        let recognitionMinimalConfidence = Float(values.recognitionMinimalConfidence)
+        
+        struct TaskResult : Sendable {
+            let offset: Int
+            let input: Image
+            let inputSize: CGSize
+            let elapse: Duration
+            let characterBoxes: [ PresentableCharacterBox ]
         }
         
-        let input = Pipeline.Input(
-            detectionModel: detectionModel,
-            detectionMinimalConfidence: .init(values.detectionMinimalConfidence),
-            detectionMaximalResolution: values.detectionMaximalResolution,
-            recognitionModel: recognitionModel,
-            recognitionMinimalConfidence: .init(values.recognitionMinimalConfidence),
-            image: image
-        )
+        let results = try await withThrowingTaskGroup { @Sendable group in
+            for enumeration in images.enumerated() {
+                guard let image = CIImage(data: enumeration.element.data) else {
+                    throw AlertAction.Message("Unable to decode the image.")
+                }
+                
+                group.addTask {
+                    let input = Pipeline.Input(
+                        detectionModel: detectionModel,
+                        detectionMinimalConfidence: detectionMinimalConfidence,
+                        detectionMaximalResolution: detectionMaximalResolution,
+                        recognitionModel: recognitionModel,
+                        recognitionMinimalConfidence: recognitionMinimalConfidence,
+                        image: image
+                    )
+                    
+                    let clock = ContinuousClock()
+                    let startTime = clock.now
+                    
+                    let output = try await service.run(Pipeline.self, input: input)
+                    
+                    let elapse = clock.now - startTime
+                    
+                    return TaskResult(
+                        offset: enumeration.offset,
+                        input: enumeration.element.image,
+                        inputSize: image.extent.size,
+                        elapse: elapse,
+                        characterBoxes: output.characterBoxes.map { .init(data: $0) }
+                    )
+                }
+            }
+            
+            return try await group
+                .reduce(into: [ ]) {
+                    $0.append($1)
+                }
+                .sorted(using: KeyPathComparator(\.offset))
+        }
         
-        let clock = ContinuousClock()
-        let startTime = clock.now
-        
-        let output = try await service.run(Pipeline.self, input: input)
-        
-        let elapse = clock.now - startTime
-        
+        let indexStart = self.outputs.count
         self.outputs.append(
-            .init(
-                index: self.outputs.count,
-                input: imageData.image,
-                inputSize: image.extent.size,
-                elapse: elapse,
-                characterBoxes: output.characterBoxes.map { .init(data: $0) }
-            )
+            contentsOf: results.map {
+                .init(
+                    index: indexStart + $0.offset,
+                    input: $0.input,
+                    inputSize: $0.inputSize,
+                    elapse: $0.elapse,
+                    characterBoxes: $0.characterBoxes
+                )
+            }
         )
     }
 }

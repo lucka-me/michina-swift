@@ -15,7 +15,7 @@ extension SearchInferenceTab {
         
         @Environment(\.alert) private var alert
         
-        @State private var imageData: ImageData? = nil
+        @State private var images: [ ImageData ] = [ ]
         @State private var progress: Progress? = nil
         
         private let service = InferenceService.default
@@ -88,7 +88,10 @@ fileprivate extension SearchInferenceTab.VisualGrid {
             .opacity(0.4)
             .aspectRatio(1, contentMode: .fit)
             .overlay(alignment: .top) {
-                photoPicker
+                UnifiedPhotoPicker(selection: $images) {
+                    photoPickerLabel
+                }
+                .buttonStyle(.plain)
             }
             .overlay(alignment: .bottom) {
                 inputContent
@@ -99,24 +102,33 @@ fileprivate extension SearchInferenceTab.VisualGrid {
     }
     
     @ViewBuilder
-    var photoPicker: some View {
-        UnifiedPhotoPicker(selection: $imageData) {
-            if let imageData {
-                imageData.image
-                    .scaledToFill()
-            } else {
-                Color.clear
-                    .overlay(alignment: .top) {
-                        Label(
-                            "UnifiedPhotoPicker.DefaultLabel",
-                            systemImage: "plus.viewfinder"
-                        )
-                        .padding(24)
-                    }
-                    .contentShape(.rect)
+    var photoPickerLabel: some View {
+        Color.clear
+            .overlay(alignment: images.isEmpty ? .top : .center) {
+                if let image = images.first?.image {
+                    image
+                        .scaledToFill()
+                } else {
+                    Label(
+                        "UnifiedPhotoPicker.DefaultLabel",
+                        systemImage: "plus.viewfinder"
+                    )
+                    .padding(24)
+                }
             }
-        }
-        .buttonStyle(.plain)
+            .overlay(alignment: .topTrailing) {
+                if images.count > 1 {
+                    Text("UnifiedPhotoPicker.Multiple \(images.count - 1)")
+                        .font(.caption)
+                        .padding(6)
+                        .background(
+                            .thinMaterial.opacity(0.5),
+                            in: .rect(cornerRadius: 6, style: .continuous)
+                        )
+                        .padding(6)
+                }
+            }
+            .contentShape(.rect)
     }
     
     @ViewBuilder
@@ -137,7 +149,7 @@ fileprivate extension SearchInferenceTab.VisualGrid {
                 Button("SearchInferenceTab.VisualGrid.Input.Run") {
                     alert.whenTrying(runInference)
                 }
-                .disabled(imageData == nil || progress != nil)
+                .disabled(images.isEmpty || progress != nil)
                 .opacity(progress == nil ? 1 : 0)
                 
                 if let progress {
@@ -148,10 +160,7 @@ fileprivate extension SearchInferenceTab.VisualGrid {
     }
     
     func runInference() async throws {
-        guard
-            self.progress == nil,
-            let imageData
-        else {
+        guard self.progress == nil else {
             return
         }
         
@@ -160,29 +169,58 @@ fileprivate extension SearchInferenceTab.VisualGrid {
             self.progress = nil
         }
         
-        guard let image = CIImage(data: imageData.data) else {
-            alert(message: "Unable to decode the image.")
-            return
+        struct TaskResult : Sendable {
+            let offset: Int
+            let input: Image
+            let elapse: Duration
+            let data: Pipeline.Output
         }
         
+        let images = self.images
         let model = self.model
-        let input = Pipeline.Input(model: model, image: image)
+        let results = try await withThrowingTaskGroup { @Sendable group in
+            for enumeration in images.enumerated() {
+                guard let image = CIImage(data: enumeration.element.data) else {
+                    throw AlertAction.Message("Unable to decode the image.")
+                }
+                
+                group.addTask {
+                    let input = Pipeline.Input(model: model, image: image)
+                    
+                    let clock = ContinuousClock()
+                    let startTime = clock.now
+                    
+                    let output = try await service.run(Pipeline.self, input: input)
+                    
+                    let elapse = clock.now - startTime
+                    
+                    return TaskResult(
+                        offset: enumeration.offset,
+                        input: enumeration.element.image,
+                        elapse: elapse,
+                        data: output
+                    )
+                }
+            }
+            
+            return try await group
+                .reduce(into: [ ]) {
+                    $0.append($1)
+                }
+                .sorted(using: KeyPathComparator(\.offset))
+        }
         
-        let clock = ContinuousClock()
-        let startTime = clock.now
-        
-        let output = try await service.run(Pipeline.self, input: input)
-        
-        let elapse = clock.now - startTime
-        
+        let indexStart = self.outputs.count
         self.outputs.append(
-            .init(
-                index: self.outputs.count,
-                input: imageData.image,
-                modelSuiteName: model.suiteName,
-                elapse: elapse,
-                data: output
-            )
+            contentsOf: results.map {
+                .init(
+                    index: indexStart + $0.offset,
+                    input: $0.input,
+                    modelSuiteName: model.suiteName,
+                    elapse: $0.elapse,
+                    data: $0.data
+                )
+            }
         )
     }
 }

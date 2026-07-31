@@ -15,7 +15,7 @@ struct FacialRecognitionInferenceTab : TabContent {
     
     @State private var detectionModel: InferenceModel
     @State private var recognitionModel: InferenceModel
-    @State private var imageData: ImageData? = nil
+    @State private var images: [ ImageData ] = [ ]
     
     @State private var executionProgress: Progress? = nil
     
@@ -142,10 +142,22 @@ fileprivate extension FacialRecognitionInferenceTab {
     @ViewBuilder
     var inputSections: some View {
         Section("FacialRecognitionInferenceTab.Inspector.Input.Photo") {
-            UnifiedPhotoPicker(selection: $imageData) {
-                if let image = imageData?.image {
+            UnifiedPhotoPicker(selection: $images) {
+                if let image = images.first?.image {
                     image
                         .aspectRatio(contentMode: .fit)
+                        .overlay(alignment: .topTrailing) {
+                            if images.count > 1 {
+                                Text("UnifiedPhotoPicker.Multiple \(images.count - 1)")
+                                    .font(.caption)
+                                    .padding(6)
+                                    .background(
+                                        .thinMaterial.opacity(0.5),
+                                        in: .rect(cornerRadius: 6, style: .continuous)
+                                    )
+                                    .padding(6)
+                            }
+                        }
                 } else {
                     Label(
                         "UnifiedPhotoPicker.DefaultLabel",
@@ -194,7 +206,7 @@ fileprivate extension FacialRecognitionInferenceTab {
     
     @ToolbarContentBuilder
     func toolbarContent() -> some ToolbarContent {
-        if imageData != nil {
+        if !images.isEmpty {
             ToolbarItem(placement: .primaryAction) {
                 Button(
                     "FacialRecognitionInferenceTab.Action.RunInference",
@@ -228,52 +240,87 @@ fileprivate extension FacialRecognitionInferenceTab {
     }
     
     func runInference() async throws {
+        guard self.executionProgress == nil else {
+            return
+        }
+        
         self.executionProgress = .init()
         defer {
             self.executionProgress = nil
         }
         
-        guard
-            let imageData,
-            let image = CIImage(data: imageData.data)
-        else {
-            alert(message: "Unable to decode the image.")
-            return
-        }
+        let images = self.images
+        let detectionModel = self.detectionModel
+        let detectionMinimalConfidence = Float(values.detectionMinimalConfidence)
         let recognitionModel = self.recognitionModel
         
-        let input = Pipeline.Input(
-            detectionModel: detectionModel,
-            detectionMinimalConfidence: .init(values.detectionMinimalConfidence),
-            recognitionModel: recognitionModel,
-            image: image
-        )
+        struct TaskResult : Sendable {
+            let offset: Int
+            let inputImage: Image
+            let inputImageSize: CGSize
+            let elapse: Duration
+            let faces: [ PresentableFace ]
+        }
         
-        let clock = ContinuousClock()
-        let startTime = clock.now
-        
-        let output = try await service.run(Pipeline.self, input: input)
-        
-        let elapse = clock.now - startTime
-        
-        self.outputs.append(
-            .init(
-                index: self.outputs.count,
-                inputImage: imageData.image,
-                inputImageSize: image.extent.size,
-                recognitionModel: recognitionModel,
-                elapse: elapse,
-                faces: output.faces.enumerated().map { (index, face) in
-                    return .init(
-                        index: index,
+        let results = try await withThrowingTaskGroup { @Sendable group in
+            for enumeration in images.enumerated() {
+                guard let image = CIImage(data: enumeration.element.data) else {
+                    throw AlertAction.Message("Unable to decode the image.")
+                }
+                
+                group.addTask {
+                    let input = Pipeline.Input(
+                        detectionModel: detectionModel,
+                        detectionMinimalConfidence: detectionMinimalConfidence,
                         recognitionModel: recognitionModel,
-                        data: face,
-                        landmarks: face.geometry.item.landmarks.map {
-                            .init(data: $0)
+                        image: image
+                    )
+                    
+                    let clock = ContinuousClock()
+                    let startTime = clock.now
+                    
+                    let output = try await service.run(Pipeline.self, input: input)
+                    
+                    let elapse = clock.now - startTime
+                    
+                    return TaskResult(
+                        offset: enumeration.offset,
+                        inputImage: enumeration.element.image,
+                        inputImageSize: image.extent.size,
+                        elapse: elapse,
+                        faces: output.faces.enumerated().map { (index, face) in
+                            return .init(
+                                index: index,
+                                recognitionModel: recognitionModel,
+                                data: face,
+                                landmarks: face.geometry.item.landmarks.map {
+                                    .init(data: $0)
+                                }
+                            )
                         }
                     )
                 }
-            )
+            }
+            
+            return try await group
+                .reduce(into: [ ]) {
+                    $0.append($1)
+                }
+                .sorted(using: KeyPathComparator(\.offset))
+        }
+        
+        let indexStart = self.outputs.count
+        self.outputs.append(
+            contentsOf: results.map {
+                .init(
+                    index: indexStart + $0.offset,
+                    inputImage: $0.inputImage,
+                    inputImageSize: $0.inputImageSize,
+                    recognitionModel: recognitionModel,
+                    elapse: $0.elapse,
+                    faces: $0.faces
+                )
+            }
         )
     }
 }
