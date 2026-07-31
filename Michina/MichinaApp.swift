@@ -12,15 +12,20 @@ struct MichinaApp: App {
     @NSApplicationDelegateAdaptor private var appDelegate: AppDelegate
     
     var body: some Scene {
-        MainScene()
+        Group {
+            MainScene()
+            
+            InferenceScene()
+            
+            SettingsScene()
+            
+            OnboardingScene()
+        }
+        .commands {
+            ExternalLinksCommands()
+        }
         
         MenuBarExtraScene()
-        
-        InferenceScene()
-        
-        SettingsScene()
-        
-        OnboardingScene()
     }
 }
 

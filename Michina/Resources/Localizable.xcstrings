@@ -299,6 +299,86 @@
         }
       }
     },
+    "ExternalLinksCommands.Dependencies" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dependencies"
+          }
+        }
+      }
+    },
+    "ExternalLinksCommands.Dependencies.Hummingbird" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hummingbird"
+          }
+        }
+      }
+    },
+    "ExternalLinksCommands.Dependencies.MLX" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MLX"
+          }
+        }
+      }
+    },
+    "ExternalLinksCommands.Dependencies.ONNXRuntime" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ONNXRuntime"
+          }
+        }
+      }
+    },
+    "ExternalLinksCommands.Dependencies.Tokenizers" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tokenizers"
+          }
+        }
+      }
+    },
+    "ExternalLinksCommands.SourceCode" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Source Code"
+          }
+        }
+      }
+    },
+    "ExternalLinksCommands.TestFlight" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TestFlight"
+          }
+        }
+      }
+    },
+    "ExternalLinksCommands.Website" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Website"
+          }
+        }
+      }
+    },
     "FacialRecognitionInferenceTab.Action.ClearOutputHistory" : {
       "localizations" : {
         "en" : {
