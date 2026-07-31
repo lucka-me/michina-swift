@@ -164,13 +164,12 @@ fileprivate struct OptimizationVersioning {
             return true
         }
         
-        guard FileManager.default.fileExists(at: versionsFile) else {
-            return true
-        }
-        
-        let versions = try JSONDecoder()
-            .decode(Versions.self, from: .init(contentsOf: versionsFile))
-        guard versions.onnxRuntime == ORTVersion() else {
+        guard
+            FileManager.default.fileExists(at: versionsFile),
+            let versions = try? JSONDecoder()
+                .decode(Versions.self, from: .init(contentsOf: versionsFile)),
+            versions.onnxRuntime == ORTVersion()
+        else {
             try FileManager.default.removeItem(at: directory)
             return true
         }
