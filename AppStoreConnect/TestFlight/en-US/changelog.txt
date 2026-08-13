@@ -3,6 +3,9 @@ Welcome to Michina.
 Notices
 - We received several crash reports that occurred on macOS 27, from Smart Search Visual inference task. We can't reproduce the crash because we don't have a macOS 27 environment at this moment. If this crash is reproducible, please give us a feedback about the details through TestFlight (like which model and what image leads to the crash), thank you.
 
+Build #56 (Release Candidate 2)
+- Fixed: Unable to type URL to Endpoint field in Settings
+
 Build #55 (Release Candidate 1)
 - Added: Some links in Help menu
 - Added: Inference window now supports loading and processing multiple photos in parallel

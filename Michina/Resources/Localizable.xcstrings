@@ -299,6 +299,66 @@
         }
       }
     },
+    "EndpointField.Applied" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Applied"
+          }
+        }
+      }
+    },
+    "EndpointField.Provider %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For models by %@"
+          }
+        }
+      }
+    },
+    "EndpointField.Reset" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset to Default"
+          }
+        }
+      }
+    },
+    "EndpointField.TextField" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL"
+          }
+        }
+      }
+    },
+    "EndpointField.UseDefault" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use Default"
+          }
+        }
+      }
+    },
+    "EndpointField.Verify" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verify & Apply"
+          }
+        }
+      }
+    },
     "ExternalLinksCommands.Dependencies" : {
       "localizations" : {
         "en" : {
@@ -677,6 +737,16 @@
         }
       }
     },
+    "InferenceModelSuite.Provider.ImmichAppEndpoint" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hugging Face"
+          }
+        }
+      }
+    },
     "InferenceModelSuite.Provider.RapidOCR" : {
       "localizations" : {
         "en" : {
@@ -1032,7 +1102,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Endpoint"
+            "value" : "Endpoints"
           }
         }
       }
@@ -1042,57 +1112,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Endpoints are where Michina queries information and download models from. Some websites provide “mirror” of Hugging Face, which may provide better access in some situation like behind a Fire Wall."
-          }
-        }
-      }
-    },
-    "InferenceServiceSettingsTab.Endpoints.ImmichApp" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hugging Face"
-          }
-        }
-      }
-    },
-    "InferenceServiceSettingsTab.Endpoints.Provider %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "For models by %@"
-          }
-        }
-      }
-    },
-    "InferenceServiceSettingsTab.Endpoints.Reset" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reset"
-          }
-        }
-      }
-    },
-    "InferenceServiceSettingsTab.Endpoints.Verified" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Verified"
-          }
-        }
-      }
-    },
-    "InferenceServiceSettingsTab.Endpoints.Verify" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Verify"
+            "value" : "Endpoints are where Michina queries information and download models from. Some websites provide “mirror” of Hugging Face, which may provide better access in some situation like behind a firewall."
           }
         }
       }
@@ -1202,7 +1222,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Load selected models automatically when Michina launches.\nThe preloaded models will never be unloaded automatically, except you unload and load them manually."
+            "value" : "Load selected models automatically when Michina launches.\nPreloaded models will never be unloaded automatically, except you reload them manually."
           }
         }
       }

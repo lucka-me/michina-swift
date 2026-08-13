@@ -12,6 +12,11 @@ protocol Labelable {
     var systemImage: String { get }
 }
 
+protocol LabelableMetatype {
+    static var titleKey: LocalizedStringKey { get }
+    static var systemImage: String { get }
+}
+
 extension Label<Text, Image> {
     init(_ item: some Labelable) {
         self.init(item.titleKey, systemImage: item.systemImage)
