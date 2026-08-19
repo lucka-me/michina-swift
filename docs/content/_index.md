@@ -15,7 +15,15 @@ template: index.html
 <span class="color-secondary">macOS 15 Sequoia</span>  
 <span class="color-secondary">Apple Silicon & Intel</span>
 
-[Join TestFlight](https://testflight.apple.com/join/rJP9acvk)
+[Download from GitHub Release](https://github.com/lucka-me/michina-swift/releases/latest)
+
+---
+
+If you like Michina, buy it from App Store as a tip!
+
+{{ appstore(id='6778828879') }}
+
+<span class="color-secondary">*The app is the same as the version from GitHub Release.*</span>
 
 </section>
 
