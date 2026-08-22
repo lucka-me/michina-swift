@@ -1783,6 +1783,76 @@
         }
       }
     },
+    "StartWebServiceIntent.Description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start the Web Service to accept and process machine learning requests from Immich."
+          }
+        }
+      }
+    },
+    "StartWebServiceIntent.Title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start Web Service"
+          }
+        }
+      }
+    },
+    "StopWebServiceIntent.Description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop accepting and processing machine learning requests from Immich."
+          }
+        }
+      }
+    },
+    "StopWebServiceIntent.Title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop Web Service"
+          }
+        }
+      }
+    },
+    "ToggleWebServiceIntent.Description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start or stop the Web Service."
+          }
+        }
+      }
+    },
+    "ToggleWebServiceIntent.Title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toggle Web Service"
+          }
+        }
+      }
+    },
+    "ToggleWebServiceIntent.ValueTitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start"
+          }
+        }
+      }
+    },
     "UnifiedPhotoPicker.DefaultLabel" : {
       "localizations" : {
         "en" : {
