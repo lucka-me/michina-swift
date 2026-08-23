@@ -5,3 +5,4 @@ If you like Michina, buy it from App Store as a tip!
 
 Build #57
 - Added: App Intents to start / stop / toggle the Web Service, actions available in Spotlight and Shortcut
+- Changed: Improve Endpoint field in Inference Service Settings

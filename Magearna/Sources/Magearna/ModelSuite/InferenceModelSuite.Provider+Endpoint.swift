@@ -1,5 +1,5 @@
 //
-//  InferenceModelSuite+Provider+Endpoint.swift
+//  InferenceModelSuite.Provider+Endpoint.swift
 //  Magearna
 //
 //  Created by Lucka on 2026-06-27.

@@ -17,7 +17,7 @@ struct InferenceServiceSettingsTab : TabContent {
                 optimizationSection
                 executionProviderSection
                 preloadModelsSection
-                endpointsSection
+                endpointSections
                 cacheSection
             }
             .frame(minWidth: 400, idealWidth: 400, minHeight: 400)
@@ -193,16 +193,16 @@ fileprivate extension InferenceServiceSettingsTab {
 
 fileprivate extension InferenceServiceSettingsTab {
     @ViewBuilder
-    var endpointsSection: some View {
+    var endpointSections: some View {
         Section {
             EndpointField(
                 InferenceModelSuite.Provider.ImmichAppEndpoint.self,
                 url: $settings.immichAppEndpointURL
             )
         } header: {
-            Text("InferenceServiceSettingsTab.Endpoints")
+            Text("InferenceServiceSettingsTab.ImmichAppEndpoint")
         } footer: {
-            Text("InferenceServiceSettingsTab.Endpoints.Footer")
+            Text("InferenceServiceSettingsTab.ImmichAppEndpoint.Footer")
         }
     }
 }

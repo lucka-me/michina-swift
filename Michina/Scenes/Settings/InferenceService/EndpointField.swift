@@ -9,7 +9,7 @@ import Magearna
 import SwiftUI
 
 struct EndpointField<
-    Endpoint: InferenceModelSuite.Provider.MirrorableEndpoint & LabelableMetatype
+    Endpoint: InferenceModelSuite.Provider.MirrorableEndpoint
 > : View {
     @Binding private var url: URL?
     
@@ -31,31 +31,16 @@ struct EndpointField<
     
     var body: some View {
         VStack(alignment: .trailing, spacing: 8) {
-            HStack(alignment: .firstTextBaseline) {
-                Text(Endpoint.titleKey)
-                
-                Spacer()
-                
-                Text(
-                    """
-                    EndpointField.Provider \
-                    \(Text(Endpoint.provider.titleKey).italic())
-                    """
-                )
-                .foregroundStyle(.secondary)
+            TextField(
+                "EndpointField.TextField",
+                text: $inputText,
+                prompt: Text(Endpoint.defaultBaseURL, format: Self.format)
+            )
+            .onSubmit {
+                alert.whenTrying(verify)
             }
-            .lineLimit(1)
             
             HStack {
-                TextField(
-                    "EndpointField.TextField",
-                    text: $inputText,
-                    prompt: Text(Endpoint.defaultBaseURL, format: Self.format)
-                )
-                .onSubmit {
-                    alert.whenTrying(verify)
-                }
-                
                 if let progress {
                     ProgressView(progress)
                 } else if isApplied {
