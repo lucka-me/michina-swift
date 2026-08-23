@@ -309,16 +309,6 @@
         }
       }
     },
-    "EndpointField.Provider %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "For models by %@"
-          }
-        }
-      }
-    },
     "EndpointField.Reset" : {
       "localizations" : {
         "en" : {
@@ -737,16 +727,6 @@
         }
       }
     },
-    "InferenceModelSuite.Provider.ImmichAppEndpoint" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hugging Face"
-          }
-        }
-      }
-    },
     "InferenceModelSuite.Provider.RapidOCR" : {
       "localizations" : {
         "en" : {
@@ -1097,26 +1077,6 @@
         }
       }
     },
-    "InferenceServiceSettingsTab.Endpoints" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Endpoints"
-          }
-        }
-      }
-    },
-    "InferenceServiceSettingsTab.Endpoints.Footer" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Endpoints are where Michina queries information and download models from. Some websites provide “mirror” of Hugging Face, which may provide better access in some situation like behind a firewall."
-          }
-        }
-      }
-    },
     "InferenceServiceSettingsTab.ExecutionProvider" : {
       "localizations" : {
         "en" : {
@@ -1163,6 +1123,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Neural Network Models"
+          }
+        }
+      }
+    },
+    "InferenceServiceSettingsTab.ImmichAppEndpoint" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hugging Face Endpoint"
+          }
+        }
+      }
+    },
+    "InferenceServiceSettingsTab.ImmichAppEndpoint.Footer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Michina queries information and download *ImmichApp* models from Hugging Face. Some websites provide “mirror” of Hugging Face, which may provide better access in some situation like behind a firewall."
           }
         }
       }
