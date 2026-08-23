@@ -190,7 +190,8 @@ jobs:
             -archivePath ${{ env.ARCHIVE_PATH }}                      \
             -derivedDataPath ${{ steps.paths.outputs.derived-data }}  \
             COMPILATION_CACHE_ENABLE_CACHING=1                        \
-            -hideShellScriptEnvironment
+            -hideShellScriptEnvironment                               \
+            | xcpretty
 
           ditto -c -k --keepParent ${{ env.ARCHIVE_PATH }} ${{ env.ARCHIVE_PATH }}.zip
           echo 'archive-path=${{ env.ARCHIVE_PATH }}' >> $GITHUB_OUTPUT
