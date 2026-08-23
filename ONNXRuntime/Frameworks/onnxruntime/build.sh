@@ -59,7 +59,7 @@ do
         --apple_sysroot macosx                          \
         --use_xcode                                     \
         --osx_arch $arch                                \
-        --apple_deploy_target 15.0                      \
+        --apple_deploy_target 12.0                      \
         --build_objc                                    \
         --enable_arm_neon_nchwc                         \
         --use_coreml                                    \
