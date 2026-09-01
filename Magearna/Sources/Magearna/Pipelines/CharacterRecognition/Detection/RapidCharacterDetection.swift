@@ -199,8 +199,8 @@ fileprivate extension RapidCharacterDetection {
             ) { accumulated, row in
                 accumulated = colRange.reduce(into: accumulated) { accumulated, col in
                     let point = CGPoint(
-                        x: .init(col) / bufferSize.width,
-                        y: .init(row) / bufferSize.height
+                        x: .init(col) / bufferImageSize.width,
+                        y: .init(row) / bufferImageSize.height
                     )
                     guard contour.contains(normalizedPoint: point) else {
                         return
