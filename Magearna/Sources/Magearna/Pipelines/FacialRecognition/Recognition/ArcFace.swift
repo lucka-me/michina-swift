@@ -160,9 +160,10 @@ fileprivate extension Error where Self == RuntimeError {
     }
 }
 
-fileprivate extension Array where Element == SIMD2<Double> {
-    var mean: Element {
-        let sum = reduce(Element.zero, +)
-        return sum / Double(count)
+fileprivate extension CGPoint {
+    func verticallyFlipped(in extent: CGSize) -> Self {
+        .init(
+            x: self.x, y: extent.height - self.y
+        )
     }
 }

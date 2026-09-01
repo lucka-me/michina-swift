@@ -8,7 +8,7 @@
 import Accelerate
 import CoreImage
 import ONNXRuntime
-import Vision
+import VisionDeployment
 
 struct RapidCharacterDetection : CharacterDetectionFunction {
     private let session: InferenceSession
@@ -159,10 +159,10 @@ fileprivate extension RapidCharacterDetection {
             return [ ]
         }
         
-        let confideShncesape = try confidencesValue.tensorTypeAndShapeInfo().shape
+        let confidencesShape = try confidencesValue.tensorTypeAndShapeInfo().shape
         let bufferSize = vImage.Size(
-            width: confideShncesape[3].intValue,
-            height: confideShncesape[2].intValue
+            width: confidencesShape[3].intValue,
+            height: confidencesShape[2].intValue
         )
         
         let pixelFormat = vImage.PlanarF.self
@@ -184,47 +184,25 @@ fileprivate extension RapidCharacterDetection {
             ),
             destination: dilatedBuffer
         )
-        guard
-            let cgImage = dilatedBuffer.makeCGImage(
-                cgImageFormat: .init(
-                    bitsPerComponent: 32,
-                    bitsPerPixel: 32,
-                    colorSpace: .init(name: CGColorSpace.linearGray)!,
-                    bitmapInfo: .init(
-                        alpha: .none,
-                        component: .float,
-                        byteOrder: .order32Host
-                    )
-                )!
-            )
-        else {
-            throw .runtime("Unable to create binary CGImage.")
-        }
         
-        let imageSize = CGSize(width: cgImage.width, height: cgImage.height)
+        let contours = try await ContoursVision.detect(in: dilatedBuffer)
+        let bufferImageSize = CGSize(width: bufferSize.width, height: bufferSize.height)
         
-        // Flip vertically to match the coordinate system of output.
-        let handler = ImageRequestHandler(cgImage, orientation: .downMirrored)
-        var request = DetectContoursRequest()
-        request.detectsDarkOnLight = false
-        let contours = try await handler.perform(request)
-        return contours.topLevelContours.map { contour in
+        return contours.map { contour in
             // Iterate every pixel in the bounding box, check if it's inside the contour, then accumulate
-            let path = contour.normalizedPath
+            let boundingBox = contour.boundingBox(in: bufferImageSize)
             
-            let boundingBox = contour.boundingBox
-                .toImageCoordinates(imageSize)
-            let rowRange = (Int(boundingBox.minY) ..< Int(boundingBox.maxY))
-            let colRange = (Int(boundingBox.minX) ..< Int(boundingBox.maxX))
+            let rowRange = Int(boundingBox.minY) ..< Int(boundingBox.maxY)
+            let colRange = Int(boundingBox.minX) ..< Int(boundingBox.maxX)
             let accumulated: (count: Int, confidence: Double) = rowRange.reduce(
                 into: (0, 0.0)
             ) { accumulated, row in
                 accumulated = colRange.reduce(into: accumulated) { accumulated, col in
                     let point = CGPoint(
-                        x: .init(col) / imageSize.width,
-                        y: .init(row) / imageSize.height
+                        x: .init(col) / bufferSize.width,
+                        y: .init(row) / bufferSize.height
                     )
-                    guard path.contains(point) else {
+                    guard contour.contains(normalizedPoint: point) else {
                         return
                     }
                     accumulated.count += 1
@@ -234,22 +212,13 @@ fileprivate extension RapidCharacterDetection {
                 }
             }
             
-            let boundingRectangle = contour.minimalBoundingRectangle()
             return .init(
                 confidence: .init(accumulated.confidence / .init(accumulated.count)),
                 // The image was flipped vertically, but the coordinate system of contour remains,
                 // the "bottom" and "top" is in the opposite side
-                item: .init(
-                    topLeft: boundingRectangle.bottomLeft
-                        .toImageCoordinates(originalImageSize),
-                    topRight: boundingRectangle.bottomRight
-                        .toImageCoordinates(originalImageSize),
-                    bottomRight: boundingRectangle.topRight
-                        .toImageCoordinates(originalImageSize),
-                    bottomLeft: boundingRectangle.topLeft
-                        .toImageCoordinates(originalImageSize)
-                )
-                .expand(by: StaticConfigurations.expandRatio)
+                item: contour
+                    .minimalBounding(Rectangle.self, in: originalImageSize)
+                    .expand(by: StaticConfigurations.expandRatio)
             )
         }
     }

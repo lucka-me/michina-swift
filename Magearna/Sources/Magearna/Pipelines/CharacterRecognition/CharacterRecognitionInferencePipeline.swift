@@ -7,6 +7,7 @@
 
 import CoreImage
 import ONNXRuntime
+import Geometry
 
 public actor CharacterRecognitionInferencePipeline : InferencePipeline {
     public static let category = InferenceModelSuite.Category.characterRecognition
@@ -148,6 +149,18 @@ public extension CharacterRecognitionInferencePipeline {
             public let topRight: CGPoint
             public let bottomRight: CGPoint
             public let bottomLeft: CGPoint
+            
+            public init(
+                topLeft: CGPoint,
+                topRight: CGPoint,
+                bottomRight: CGPoint,
+                bottomLeft: CGPoint
+            ) {
+                self.topLeft = topLeft
+                self.topRight = topRight
+                self.bottomRight = bottomRight
+                self.bottomLeft = bottomLeft
+            }
         }
         
         public let characterBoxes: [ CharacterBox ]

@@ -5,6 +5,7 @@
 //  Created by Lucka on 2026-05-30.
 //
 
+import Geometry
 import Magearna
 import SwiftUI
 

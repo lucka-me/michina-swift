@@ -7,6 +7,7 @@
 
 import CoreGraphics
 import Foundation
+import Geometry
 import Hummingbird
 import Magearna
 
