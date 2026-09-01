@@ -9,15 +9,24 @@ import Vision
 
 public extension ContoursVision {
     struct Contour {
-        let normalizedBoundingBox: NormalizedRect
+        let normalizedBoundingBox: CGRect
         let normalizedPath: CGPath
-        let normalizedPoints: [ NormalizedPoint ]
+        let normalizedPoints: [ SIMD2<Double> ]
     }
 }
 
 public extension ContoursVision.Contour {
     func boundingBox(in imageSize: CGSize) -> CGRect {
-        normalizedBoundingBox.toImageCoordinates(imageSize)
+        if #available(macOS 15.0, *) {
+            NormalizedRect(normalizedRect: normalizedBoundingBox)
+                .toImageCoordinates(imageSize)
+        } else {
+            VNImageRectForNormalizedRect(
+                normalizedBoundingBox,
+                .init(imageSize.width),
+                .init(imageSize.height)
+            )
+        }
     }
 }
 
@@ -25,8 +34,31 @@ public extension ContoursVision.Contour {
     func contains(normalizedPoint: CGPoint) -> Bool {
         normalizedPath.contains(normalizedPoint)
     }
+}
+
+extension ContoursVision.Contour {
+    @available(macOS 15.0, *)
+    init(_ source: ContoursObservation.Contour) {
+        if #available(macOS 26.0, *) {
+            self.init(
+                normalizedBoundingBox: source.boundingBox.cgRect,
+                normalizedPath: source.normalizedPath,
+                normalizedPoints: source.points.map { .init(x: $0.x, y: $0.y) }
+            )
+        } else {
+            self.init(
+                normalizedBoundingBox: source.normalizedPath.boundingBox,
+                normalizedPath: source.normalizedPath,
+                normalizedPoints: source.normalizedPoints.map(SIMD2.init)
+            )
+        }
+    }
     
-    func contains(normalizedPoint: NormalizedPoint) -> Bool {
-        normalizedPath.contains(normalizedPoint.cgPoint)
+    init(_ source: VNContour) {
+        self.init(
+            normalizedBoundingBox: source.normalizedPath.boundingBox,
+            normalizedPath: source.normalizedPath,
+            normalizedPoints: source.normalizedPoints.map(SIMD2.init)
+        )
     }
 }

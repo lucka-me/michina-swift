@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Vision
 
 public protocol PointRepresentable {
     init(x: CGFloat, y: CGFloat)
@@ -22,9 +21,5 @@ public extension PointRepresentable {
 }
 
 extension CGPoint : PointRepresentable {
-    
-}
-
-extension NormalizedPoint : PointRepresentable {
     
 }

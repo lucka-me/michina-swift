@@ -38,6 +38,9 @@ public actor FacialRecognitionInferencePipeline : InferencePipeline {
             }
             self.detection = RetinaFace(session: detectionSession)
         case .apple:
+            guard #available(macOS 15.0, *) else {
+                fatalError("Models by Apple requires macOS 15")
+            }
             self.detection = AppleVisionFacialAnalyzer()
         }
         

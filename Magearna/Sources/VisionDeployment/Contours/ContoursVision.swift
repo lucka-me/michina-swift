@@ -9,7 +9,9 @@ import Accelerate
 import Vision
 
 public enum ContoursVision {
-    
+    enum Legacy {
+        
+    }
 }
 
 public extension ContoursVision {
@@ -31,17 +33,42 @@ public extension ContoursVision {
             throw .runtime("Unable to create binary CGImage.")
         }
         
+        return if #available(macOS 15.0, *) {
+            try await detect(in: cgImage)
+        } else {
+            try await Legacy.detect(in: cgImage)
+        }
+    }
+}
+
+fileprivate extension ContoursVision {
+    @available(macOS 15.0, *)
+    static func detect(in cgImage: CGImage) async throws -> [ Contour ] {
         let handler = ImageRequestHandler(cgImage, orientation: .downMirrored)
         var request = DetectContoursRequest()
         request.detectsDarkOnLight = false
-        let contours = try await handler.perform(request)
         
-        return contours.topLevelContours.map { contour in
-            .init(
-                normalizedBoundingBox: contour.boundingBox,
-                normalizedPath: contour.normalizedPath,
-                normalizedPoints: contour.points
-            )
+        return try await handler
+            .perform(request)
+            .topLevelContours
+            .map(Contour.init)
+    }
+}
+
+fileprivate extension ContoursVision.Legacy {
+    static func detect(in cgImage: CGImage) async throws -> [ ContoursVision.Contour ] {
+        let handler = VNImageRequestHandler(cgImage: cgImage, orientation: .downMirrored)
+        let request = VNDetectContoursRequest()
+        request.detectsDarkOnLight = false
+        
+        try handler.perform([ request ])
+        
+        guard let results = request.results else {
+            return [ ]
         }
+        
+        return results
+            .flatMap(\.topLevelContours)
+            .map(ContoursVision.Contour.init)
     }
 }
