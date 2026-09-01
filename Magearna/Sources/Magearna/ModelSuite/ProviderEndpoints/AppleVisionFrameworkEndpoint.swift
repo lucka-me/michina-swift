@@ -8,6 +8,7 @@
 import Foundation
 
 public extension InferenceModelSuite.Provider {
+    @available(macOS 15.0, *)
     struct AppleVisionFrameworkEndpoint : Endpoint {
         public static let provider = InferenceModelSuite.Provider.apple
         
@@ -21,10 +22,12 @@ public extension InferenceModelSuite.Provider {
     }
 }
 
+@available(macOS 15.0, *)
 public extension InferenceModelSuite.Provider.AppleVisionFrameworkEndpoint {
     static let `default` = Self.init()
 }
 
+@available(macOS 15.0, *)
 public extension InferenceModelSuite.Provider.Endpoint where
 Self == InferenceModelSuite.Provider.AppleVisionFrameworkEndpoint
 {

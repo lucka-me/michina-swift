@@ -7,7 +7,7 @@ import PackageDescription
 let package = Package(
     name: "Magearna",
     defaultLocalization: "en",
-    platforms: [ .macOS(.v15) ],
+    platforms: [ .macOS(.v14) ],
     products: [
         .library(name: "Magearna", targets: [ "Magearna" ]),
     ],

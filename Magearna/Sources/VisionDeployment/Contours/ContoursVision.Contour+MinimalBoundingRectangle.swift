@@ -6,6 +6,7 @@
 //
 
 import DequeModule
+import Foundation
 import Geometry
 import Vision
 
@@ -14,28 +15,45 @@ public extension ContoursVision.Contour {
         _ type: Rectangle.Type = Rectangle.self,
         in imageSize: CGSize
     ) -> Rectangle where Rectangle.Point == CGPoint {
-        let normalized = normalizedMinimalBoundingRectangle()
-        return .init(
-            topLeft: normalized.bottomLeft.toImageCoordinates(imageSize),
-            topRight: normalized.bottomRight.toImageCoordinates(imageSize),
-            bottomRight: normalized.topRight.toImageCoordinates(imageSize),
-            bottomLeft: normalized.topLeft.toImageCoordinates(imageSize)
-        )
+        if #available(macOS 15.0, *) {
+            let normalized = normalizedMinimalBounding(RectangleObservation.self)
+            return .init(
+                topLeft: normalized.bottomLeft.toImageCoordinates(imageSize),
+                topRight: normalized.bottomRight.toImageCoordinates(imageSize),
+                bottomRight: normalized.topRight.toImageCoordinates(imageSize),
+                bottomLeft: normalized.topLeft.toImageCoordinates(imageSize)
+            )
+        } else {
+            let normalized = normalizedMinimalBounding(type)
+            
+            let width = Int(imageSize.width)
+            let height = Int(imageSize.height)
+            
+            return .init(
+                topLeft: VNImagePointForNormalizedPoint(normalized.bottomLeft, width, height),
+                topRight: VNImagePointForNormalizedPoint(normalized.bottomRight, width, height),
+                bottomRight: VNImagePointForNormalizedPoint(normalized.topRight, width, height),
+                bottomLeft: VNImagePointForNormalizedPoint(normalized.topLeft, width, height)
+            )
+        }
     }
 }
 
-fileprivate typealias NormalizedEdge = (NormalizedPoint, NormalizedPoint)
+fileprivate typealias Edge = (SIMD2<Double>, SIMD2<Double>)
 
 fileprivate extension ContoursVision.Contour {
-    func normalizedMinimalBoundingRectangle() -> RectangleObservation {
+    func normalizedMinimalBounding<Rectangle: RectangleRepresentable>(
+        _ type: Rectangle.Type = Rectangle.self
+    ) -> Rectangle {
         let edges = convexHullEdges()
         let vertices = edges.map(\.0)
         
         var minimalArea = Double.infinity
-        var minimalRectangle: RectangleObservation? = nil
+        var minimalRectangle: Rectangle? = nil
         for edge in edges {
             guard
                 let (rectangle, area) = Self.rectangle(
+                    Rectangle.self,
                     mapping: vertices,
                     to: edge,
                     maximalArea: minimalArea
@@ -53,13 +71,14 @@ fileprivate extension ContoursVision.Contour {
 }
 
 fileprivate extension ContoursVision.Contour {
-    func convexHullEdges() -> [ NormalizedEdge ] {
+    func convexHullEdges() -> [ Edge ] {
         // Reference: ON-LINE CONSTRUCTION OF THE CONVEX HULL OF A SIMPLE POLYLINE
         //            Avraham A. MELKMAN
         // https://www.ime.usp.br/~walterfm/cursos/mac0331/2006/melkman.pdf
         
-        var deque = Deque<NormalizedPoint>(minimumCapacity: normalizedPoints.count)
+        var deque = Deque<SIMD2<Double>>(minimumCapacity: normalizedPoints.count)
         // Left > 0, Right < 0, opposite to the article
+        
         if cross(normalizedPoints[0], normalizedPoints[1], normalizedPoints[2]) < 0 {
             deque.append(normalizedPoints[0])
             deque.append(normalizedPoints[1])
@@ -96,11 +115,12 @@ fileprivate extension ContoursVision.Contour {
 }
 
 fileprivate extension ContoursVision.Contour {
-    static func rectangle(
-        mapping points: [ NormalizedPoint ],
-        to edge: NormalizedEdge,
+    static func rectangle<Rectangle: RectangleRepresentable>(
+        _ type: Rectangle.Type = Rectangle.self,
+        mapping points: [ SIMD2<Double> ],
+        to edge: Edge,
         maximalArea: CGFloat
-    ) -> (rectangle: RectangleObservation, area: CGFloat)? {
+    ) -> (rectangle: Rectangle, area: CGFloat)? {
         // Make the edge as x axis, coordinate (M, N)
         let dX = edge.1.x - edge.0.x
         let dY = edge.1.y - edge.0.y
@@ -132,7 +152,7 @@ fileprivate extension ContoursVision.Contour {
         }
         // TODO: Expand the rect here?
         
-        let rectangle = RectangleObservation(
+        let rectangle = Rectangle(
             topLeft: .init(
                 x: edge.0.x + (minM * dX - maxN * dY) / length,
                 y: edge.0.y + (minM * dY + maxN * dX) / length
@@ -152,7 +172,7 @@ fileprivate extension ContoursVision.Contour {
         )
         
         // Find the real topLeft - topRight ...
-        let normalized: RectangleObservation = switch atan2(dY, dX) / .pi {
+        let normalized: Rectangle = switch atan2(dY, dX) / .pi {
         case -(3 / 4) ..< -(1 / 4):
             .init(
                 topLeft: rectangle.bottomLeft,
@@ -182,18 +202,18 @@ fileprivate extension ContoursVision.Contour {
 }
 
 fileprivate func cross(
-    _ o: NormalizedPoint,
-    _ a: NormalizedPoint,
-    _ b: NormalizedPoint
+    _ o: SIMD2<Double>,
+    _ a: SIMD2<Double>,
+    _ b: SIMD2<Double>
 ) -> Double {
     (a.x - o.x) * (b.y - o.y) -
     (a.y - o.y) * (b.x - o.x)
 }
 
 fileprivate func dot(
-    _ o: NormalizedPoint,
-    _ a: NormalizedPoint,
-    _ b: NormalizedPoint
+    _ o: SIMD2<Double>,
+    _ a: SIMD2<Double>,
+    _ b: SIMD2<Double>
 ) -> Double {
     (a.x - o.x) * (b.x - o.x) +
     (a.y - o.y) * (b.y - o.y)

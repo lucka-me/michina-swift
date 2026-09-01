@@ -8,6 +8,7 @@
 import CoreImage
 import Vision
 
+@available(macOS 15.0, *)
 struct AppleVisionFacialAnalyzer : FaceDetectionFunction {
     func detect(image: CIImage, minimalConfidence: Float) async throws -> Output {
         let handler = ImageRequestHandler(image)
@@ -25,6 +26,7 @@ struct AppleVisionFacialAnalyzer : FaceDetectionFunction {
     }
 }
 
+@available(macOS 15.0, *)
 fileprivate extension AppleVisionFacialAnalyzer {
     func detectRectangles(
         with handler: ImageRequestHandler,
@@ -47,6 +49,7 @@ fileprivate extension AppleVisionFacialAnalyzer {
     }
 }
 
+@available(macOS 15.0, *)
 fileprivate extension AppleVisionFacialAnalyzer {
     func parse(observations: [ FaceObservation ], in imageSize: CGSize) -> Output {
         observations.compactMap { observation in
@@ -80,6 +83,7 @@ fileprivate extension AppleVisionFacialAnalyzer {
     }
 }
 
+@available(macOS 15.0, *)
 fileprivate extension FaceObservation.Landmarks2D {
     var points: [ NormalizedPoint ] {
         guard
@@ -100,6 +104,7 @@ fileprivate extension FaceObservation.Landmarks2D {
     }
 }
 
+@available(macOS 15.0, *)
 fileprivate extension FaceObservation.Landmarks2D.Region {
     var center: NormalizedPoint? {
         guard var accumulated = points.first?.cgPoint else {

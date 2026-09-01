@@ -14,11 +14,14 @@ public extension InferenceModelSuite {
                 "buffalo_m"
                 "buffalo_s"
             }
-            apple(
-                in: .facialRecognition,
-                name: "apple-vision",
-                modelCategories: [ .detection ]
-            )
+            
+            if #available(macOS 15.0, *) {
+                apple(
+                    in: .facialRecognition,
+                    name: "apple-vision",
+                    modelCategories: [ .detection ]
+                )
+            }
         },
         .search: Array {
             immichApp(in: .search) {
@@ -156,16 +159,20 @@ public extension InferenceModelSuite {
                 "ESLAV__PP-OCRv5_mobile"
                 "TH__PP-OCRv5_mobile"
             }
-           apple(
-               in: .characterRecognition,
-               name: "apple-vision",
-               modelCategories: [ .detection, .recognition ]
-           )
+            
+            if #available(macOS 15.0, *) {
+                apple(
+                    in: .characterRecognition,
+                    name: "apple-vision",
+                    modelCategories: [ .detection, .recognition ]
+                )
+            }
         },
     ]
 }
 
 fileprivate extension InferenceModelSuite {
+    @available(macOS 15.0, *)
     static func apple(
         in category: Category,
         name: String,

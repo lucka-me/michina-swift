@@ -8,6 +8,7 @@
 import CoreImage
 import Vision
 
+@available(macOS 15.0, *)
 actor AppleVisionCharacterAnalyzer :
     CharacterDetectionFunction,
     CharacterRecognitionFunction
@@ -64,6 +65,7 @@ actor AppleVisionCharacterAnalyzer :
     }
 }
 
+@available(macOS 15.0, *)
 fileprivate extension AppleVisionCharacterAnalyzer {
     enum StaticConfigurations {
         static let request: RecognizeTextRequest = {
