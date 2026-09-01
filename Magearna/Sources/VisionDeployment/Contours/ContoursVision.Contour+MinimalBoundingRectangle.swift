@@ -1,16 +1,34 @@
 //
-//  ContoursObservation.Contour+MinimalBoundingRectangle.swift
+//  ContoursVision.Contour+MinimalBoundingRectangle.swift
 //  Magearna
 //
-//  Created by Lucka on 2026-06-28.
+//  Created by Lucka on 2026-09-01.
 //
 
 import DequeModule
+import Geometry
 import Vision
 
-extension ContoursObservation.Contour {
-    func minimalBoundingRectangle() -> RectangleObservation {
-        let edges = Self.convexHullEdges(of: self.points)
+public extension ContoursVision.Contour {
+    func minimalBounding<Rectangle: RectangleRepresentable>(
+        _ type: Rectangle.Type = Rectangle.self,
+        in imageSize: CGSize
+    ) -> Rectangle where Rectangle.Point == CGPoint {
+        let normalized = normalizedMinimalBoundingRectangle()
+        return .init(
+            topLeft: normalized.bottomLeft.toImageCoordinates(imageSize),
+            topRight: normalized.bottomRight.toImageCoordinates(imageSize),
+            bottomRight: normalized.topRight.toImageCoordinates(imageSize),
+            bottomLeft: normalized.topLeft.toImageCoordinates(imageSize)
+        )
+    }
+}
+
+fileprivate typealias NormalizedEdge = (NormalizedPoint, NormalizedPoint)
+
+fileprivate extension ContoursVision.Contour {
+    func normalizedMinimalBoundingRectangle() -> RectangleObservation {
+        let edges = convexHullEdges()
         let vertices = edges.map(\.0)
         
         var minimalArea = Double.infinity
@@ -34,29 +52,25 @@ extension ContoursObservation.Contour {
     }
 }
 
-fileprivate typealias NormalizedEdge = (NormalizedPoint, NormalizedPoint)
-
-fileprivate extension ContoursObservation.Contour {
-    static func convexHullEdges(
-        of points: [ NormalizedPoint ]
-    ) -> [ NormalizedEdge ] {
+fileprivate extension ContoursVision.Contour {
+    func convexHullEdges() -> [ NormalizedEdge ] {
         // Reference: ON-LINE CONSTRUCTION OF THE CONVEX HULL OF A SIMPLE POLYLINE
         //            Avraham A. MELKMAN
         // https://www.ime.usp.br/~walterfm/cursos/mac0331/2006/melkman.pdf
         
-        var deque = Deque<NormalizedPoint>(minimumCapacity: points.count)
+        var deque = Deque<NormalizedPoint>(minimumCapacity: normalizedPoints.count)
         // Left > 0, Right < 0, opposite to the article
-        if cross(points[0], points[1], points[2]) < 0 {
-            deque.append(points[0])
-            deque.append(points[1])
+        if cross(normalizedPoints[0], normalizedPoints[1], normalizedPoints[2]) < 0 {
+            deque.append(normalizedPoints[0])
+            deque.append(normalizedPoints[1])
         } else {
-            deque.append(points[1])
-            deque.append(points[0])
+            deque.append(normalizedPoints[1])
+            deque.append(normalizedPoints[0])
         }
-        deque.append(points[2])
-        deque.prepend(points[2])
+        deque.append(normalizedPoints[2])
+        deque.prepend(normalizedPoints[2])
         
-        for point in points[3...] {
+        for point in normalizedPoints[3...] {
             guard
                 cross(point, deque[0], deque[1]) > 0 ||
                 cross(deque[deque.endIndex - 2], deque[deque.endIndex - 1], point) > 0
@@ -79,7 +93,9 @@ fileprivate extension ContoursObservation.Contour {
             (deque[$0], deque[$0 + 1])
         }
     }
-    
+}
+
+fileprivate extension ContoursVision.Contour {
     static func rectangle(
         mapping points: [ NormalizedPoint ],
         to edge: NormalizedEdge,
@@ -106,10 +122,15 @@ fileprivate extension ContoursObservation.Contour {
         
         // The max N is the edge
         let maxN = Double.zero
-        let area: CGFloat = (maxM - minM) * (maxN - minN)
+        
+        let width = maxM - minM
+        let height = maxN - minN
+        
+        let area: CGFloat = width * height
         guard area < maximalArea else {
             return nil
         }
+        // TODO: Expand the rect here?
         
         let rectangle = RectangleObservation(
             topLeft: .init(
