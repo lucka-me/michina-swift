@@ -95,12 +95,7 @@ fileprivate extension MLXLinalg {
     }
     
     static func matrixRank(_ a: MLXArray, precalculatedS: MLXArray? = nil) -> Int {
-        let s: MLXArray
-        if let precalculatedS {
-            s = precalculatedS
-        } else {
-            (_, s, _) = svd(a)
-        }
+        let s = precalculatedS ?? svd(a)
         let rtol = Double(max(a.shape[a.ndim - 2], a.shape[a.ndim - 1])) * Double.ulpOfOne
         let tol = s.max(axis: -1, keepDims: true).item(Double.self) * rtol
         return s.count { $0.item(Double.self) > tol }

@@ -39,26 +39,20 @@ public extension ContoursVision.Contour {
 extension ContoursVision.Contour {
     @available(macOS 15.0, *)
     init(_ source: ContoursObservation.Contour) {
+        self.normalizedPath = source.normalizedPath
+        
         if #available(macOS 26.0, *) {
-            self.init(
-                normalizedBoundingBox: source.boundingBox.cgRect,
-                normalizedPath: source.normalizedPath,
-                normalizedPoints: source.points.map { .init(x: $0.x, y: $0.y) }
-            )
+            self.normalizedBoundingBox = source.boundingBox.cgRect
+            self.normalizedPoints = source.points.map { .init(x: $0.x, y: $0.y) }
         } else {
-            self.init(
-                normalizedBoundingBox: source.normalizedPath.boundingBox,
-                normalizedPath: source.normalizedPath,
-                normalizedPoints: source.normalizedPoints.map(SIMD2.init)
-            )
+            self.normalizedBoundingBox = self.normalizedPath.boundingBox
+            self.normalizedPoints = source.normalizedPoints.map(SIMD2.init)
         }
     }
     
     init(_ source: VNContour) {
-        self.init(
-            normalizedBoundingBox: source.normalizedPath.boundingBox,
-            normalizedPath: source.normalizedPath,
-            normalizedPoints: source.normalizedPoints.map(SIMD2.init)
-        )
+        self.normalizedPath = source.normalizedPath
+        self.normalizedBoundingBox = self.normalizedPath.boundingBox
+        self.normalizedPoints = source.normalizedPoints.map(SIMD2.init)
     }
 }
