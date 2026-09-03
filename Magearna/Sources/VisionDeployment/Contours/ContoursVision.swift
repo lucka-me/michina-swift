@@ -15,7 +15,9 @@ public enum ContoursVision {
 }
 
 public extension ContoursVision {
-    static func detect(in buffer: vImage.PixelBuffer<vImage.PlanarF>) async throws -> [ Contour ] {
+    static func detect(
+        in buffer: vImage.PixelBuffer<vImage.PlanarF>
+    ) async throws -> [ NormalizedContour ] {
         guard
             let cgImage = buffer.makeCGImage(
                 cgImageFormat: .init(
@@ -43,7 +45,7 @@ public extension ContoursVision {
 
 fileprivate extension ContoursVision {
     @available(macOS 15.0, *)
-    static func detect(in cgImage: CGImage) async throws -> [ Contour ] {
+    static func detect(in cgImage: CGImage) async throws -> [ NormalizedContour ] {
         let handler = ImageRequestHandler(cgImage, orientation: .downMirrored)
         var request = DetectContoursRequest()
         request.detectsDarkOnLight = false
@@ -51,12 +53,12 @@ fileprivate extension ContoursVision {
         return try await handler
             .perform(request)
             .topLevelContours
-            .map(Contour.init)
+            .map(NormalizedContour.init)
     }
 }
 
 fileprivate extension ContoursVision.Legacy {
-    static func detect(in cgImage: CGImage) async throws -> [ ContoursVision.Contour ] {
+    static func detect(in cgImage: CGImage) async throws -> [ ContoursVision.NormalizedContour ] {
         let handler = VNImageRequestHandler(cgImage: cgImage, orientation: .downMirrored)
         let request = VNDetectContoursRequest()
         request.detectsDarkOnLight = false
@@ -69,6 +71,6 @@ fileprivate extension ContoursVision.Legacy {
         
         return results
             .flatMap(\.topLevelContours)
-            .map(ContoursVision.Contour.init)
+            .map(ContoursVision.NormalizedContour.init)
     }
 }
