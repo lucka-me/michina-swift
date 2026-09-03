@@ -69,7 +69,7 @@ fileprivate extension RapidCharacterDetection {
         static let batchSize: NSNumber = 1
         static let channelCount: NSNumber = 3
         
-        static let expandRatio = 1.0
+        static let expandRatio = 1.6
         
         static func inputShape(for image: CGImage) -> [ NSNumber ] {
             [
@@ -214,73 +214,12 @@ fileprivate extension RapidCharacterDetection {
             
             return .init(
                 confidence: .init(accumulated.confidence / .init(accumulated.count)),
-                // The image was flipped vertically, but the coordinate system of contour remains,
-                // the "bottom" and "top" is in the opposite side
-                item: contour
-                    .minimalBounding(Rectangle.self, in: originalImageSize)
-                    .expand(by: StaticConfigurations.expandRatio)
+                item: contour.minimalBounding(
+                    in: originalImageSize,
+                    expandBy: StaticConfigurations.expandRatio
+                )
             )
         }
-    }
-}
-
-fileprivate extension CharacterRecognitionInferencePipeline.Output.Rectangle {
-    func expand(by ratio: Double) -> Self {
-        let distance = self.area * ratio / self.perimeter
-        return .init(
-            topLeft: topLeft.offset(a: bottomLeft, b: topRight, by: distance),
-            topRight: topRight.offset(a: topLeft, b: bottomRight, by: distance),
-            bottomRight: bottomRight.offset(a: topRight, b: bottomLeft, by: distance),
-            bottomLeft: bottomLeft.offset(a: bottomRight, b: topLeft, by: distance)
-        )
-    }
-}
-
-fileprivate extension CGPoint {
-    func offset(a: Self, b: Self, by distance: Double) -> Self {
-        let dx1 = self.x - a.x
-        let dy1 = self.y - a.y
-        
-        let a1: Double, b1: Double, c1: Double
-        if dx1.isZero {
-            a1 = 1
-            b1 = 0
-            c1 = dy1 > 0 ? -distance : distance
-        } else if dy1.isZero {
-            a1 = 0
-            b1 = 1
-            c1 = dx1 > 0 ? distance : -distance
-        } else {
-            a1 = dy1
-            b1 = -dx1
-            c1 = -distance * hypot(dx1, dy1)
-        }
-        
-        let dx2 = b.x - self.x
-        let dy2 = b.y - self.y
-        
-        let a2: Double, b2: Double, c2: Double
-        if dx2.isZero {
-            a2 = 1
-            b2 = 0
-            c2 = dy2 > 0 ? -distance : distance
-        } else if dy2.isZero {
-            a2 = 0
-            b2 = 1
-            c2 = dx2 > 0 ? distance : -distance
-        } else {
-            a2 = dy2
-            b2 = -dx2
-            c2 = -distance * hypot(dx2, dy2)
-        }
-        
-        let x = (b1 * c2 - b2 * c1) / (a1 * b2 - a2 * b1)
-        let y = (a2 * c1 - a1 * c2) / (a1 * b2 - a2 * b1)
-        
-        return .init(
-            x: self.x + x,
-            y: self.y + y
-        )
     }
 }
 
