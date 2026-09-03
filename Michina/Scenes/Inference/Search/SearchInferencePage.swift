@@ -1,5 +1,5 @@
 //
-//  SearchInferenceTab.swift
+//  SearchInferencePage.swift
 //  Michina
 //
 //  Created by Lucka on 2026-05-30.
@@ -8,7 +8,7 @@
 import Magearna
 import SwiftUI
 
-struct SearchInferenceTab : TabContent {
+struct SearchInferencePage : View {
     @Environment(\.alert) private var alert
     
     @State private var visualModel: InferenceModel
@@ -50,41 +50,35 @@ struct SearchInferenceTab : TabContent {
         }
     }
     
-    var body: some TabContent<InferenceModelSuite.Category> {
-        Tab(
-            Self.category.titleKey,
-            systemImage: Self.category.systemImage,
-            value: Self.category
-        ) {
-            VisualGrid(
-                model: $visualModel,
-                outputs: $visualOutputs,
-                selection: selection
+    var body: some View {
+        VisualGrid(
+            model: $visualModel,
+            outputs: $visualOutputs,
+            selection: selection
+        )
+        .frame(minWidth: 300)
+        .toolbar(content: toolbarContent)
+        .inspector(isPresented: $isInspectorPresented) {
+            TextualForm(
+                model: $textualModel,
+                outputs: $textualOutputs,
+                selection: $selection
             )
-            .frame(minWidth: 300)
-            .toolbar(content: toolbarContent)
-            .inspector(isPresented: $isInspectorPresented) {
-                TextualForm(
-                    model: $textualModel,
-                    outputs: $textualOutputs,
-                    selection: $selection
-                )
-            }
         }
     }
 }
 
-extension SearchInferenceTab {
+extension SearchInferencePage {
     static let category = InferenceModelSuite.Category.search
 }
 
-fileprivate extension SearchInferenceTab {
+fileprivate extension SearchInferencePage {
     @ToolbarContentBuilder
     func toolbarContent() -> some ToolbarContent {
         if !visualOutputs.isEmpty || !textualOutputs.isEmpty {
             ToolbarItem(placement: .destructiveAction) {
                 Button(
-                    "SearchInferenceTab.Action.ClearOutputs",
+                    "SearchInferencePage.Action.ClearOutputs",
                     systemImage: "trash",
                     role: .destructive
                 ) {

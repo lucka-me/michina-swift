@@ -11,7 +11,7 @@
         }
       }
     },
-    "AppSettingsTab" : {
+    "AppSettingsForm" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -21,7 +21,7 @@
         }
       }
     },
-    "AppSettingsTab.Icon.InsertMenuBarExtra" : {
+    "AppSettingsForm.Icon.InsertMenuBarExtra" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -31,7 +31,7 @@
         }
       }
     },
-    "AppSettingsTab.Icon.PresentRegularActivation" : {
+    "AppSettingsForm.Icon.PresentRegularActivation" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -41,7 +41,7 @@
         }
       }
     },
-    "AppSettingsTab.Icons.Footer" : {
+    "AppSettingsForm.Icons.Footer" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -51,7 +51,7 @@
         }
       }
     },
-    "AppSettingsTab.Icons.Footer.PresentRegularActivation" : {
+    "AppSettingsForm.Icons.Footer.PresentRegularActivation" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -61,7 +61,7 @@
         }
       }
     },
-    "AppSettingsTab.LaunchAtLogin.OpenSystemSettings" : {
+    "AppSettingsForm.LaunchAtLogin.OpenSystemSettings" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -71,7 +71,7 @@
         }
       }
     },
-    "AppSettingsTab.LaunchAtLogin.RequiresApproval" : {
+    "AppSettingsForm.LaunchAtLogin.RequiresApproval" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -81,7 +81,7 @@
         }
       }
     },
-    "AppSettingsTab.LaunchAtLogin.Toggle" : {
+    "AppSettingsForm.LaunchAtLogin.Toggle" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -91,7 +91,7 @@
         }
       }
     },
-    "CharacterRecognitionInferenceTab.Action.ClearOutputHistory" : {
+    "CharacterRecognitionInferencePage.Action.ClearOutputHistory" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -101,7 +101,7 @@
         }
       }
     },
-    "CharacterRecognitionInferenceTab.Action.RunInference" : {
+    "CharacterRecognitionInferencePage.Action.RunInference" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -111,7 +111,7 @@
         }
       }
     },
-    "CharacterRecognitionInferenceTab.Inspector.DetectionMaximalResolution" : {
+    "CharacterRecognitionInferencePage.Inspector.DetectionMaximalResolution" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -121,7 +121,7 @@
         }
       }
     },
-    "CharacterRecognitionInferenceTab.Inspector.DetectionMinimalConfidence" : {
+    "CharacterRecognitionInferencePage.Inspector.DetectionMinimalConfidence" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -131,7 +131,7 @@
         }
       }
     },
-    "CharacterRecognitionInferenceTab.Inspector.Models" : {
+    "CharacterRecognitionInferencePage.Inspector.Models" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -141,7 +141,7 @@
         }
       }
     },
-    "CharacterRecognitionInferenceTab.Inspector.Parameters" : {
+    "CharacterRecognitionInferencePage.Inspector.Parameters" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -151,7 +151,7 @@
         }
       }
     },
-    "CharacterRecognitionInferenceTab.Inspector.Photo" : {
+    "CharacterRecognitionInferencePage.Inspector.Photo" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -161,7 +161,7 @@
         }
       }
     },
-    "CharacterRecognitionInferenceTab.Inspector.RecognitionMinimalConfidence" : {
+    "CharacterRecognitionInferencePage.Inspector.RecognitionMinimalConfidence" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -171,7 +171,7 @@
         }
       }
     },
-    "CharacterRecognitionInferenceTab.Output.BoxCount %lld" : {
+    "CharacterRecognitionInferencePage.Output.BoxCount %lld" : {
       "localizations" : {
         "en" : {
           "variations" : {
@@ -199,7 +199,7 @@
         }
       }
     },
-    "CharacterRecognitionInferenceTab.Output.RectangleConfidence %@" : {
+    "CharacterRecognitionInferencePage.Output.RectangleConfidence %@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -209,7 +209,7 @@
         }
       }
     },
-    "CharacterRecognitionInferenceTab.Output.TextConfidence %@" : {
+    "CharacterRecognitionInferencePage.Output.TextConfidence %@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -429,7 +429,7 @@
         }
       }
     },
-    "FacialRecognitionInferenceTab.Action.ClearOutputHistory" : {
+    "FacialRecognitionInferencePage.Action.ClearOutputHistory" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -439,7 +439,7 @@
         }
       }
     },
-    "FacialRecognitionInferenceTab.Action.RunInference" : {
+    "FacialRecognitionInferencePage.Action.RunInference" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -449,7 +449,7 @@
         }
       }
     },
-    "FacialRecognitionInferenceTab.Inspector.Input.Parameters" : {
+    "FacialRecognitionInferencePage.Inspector.Input.Parameters" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -459,7 +459,7 @@
         }
       }
     },
-    "FacialRecognitionInferenceTab.Inspector.Input.Parameters.DetectionMinimalConfidence" : {
+    "FacialRecognitionInferencePage.Inspector.Input.Parameters.DetectionMinimalConfidence" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -469,7 +469,7 @@
         }
       }
     },
-    "FacialRecognitionInferenceTab.Inspector.Input.Photo" : {
+    "FacialRecognitionInferencePage.Inspector.Input.Photo" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -479,7 +479,7 @@
         }
       }
     },
-    "FacialRecognitionInferenceTab.Inspector.Models" : {
+    "FacialRecognitionInferencePage.Inspector.Models" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -489,7 +489,7 @@
         }
       }
     },
-    "FacialRecognitionInferenceTab.Inspector.Output" : {
+    "FacialRecognitionInferencePage.Inspector.Output" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -499,7 +499,7 @@
         }
       }
     },
-    "FacialRecognitionInferenceTab.Inspector.Output.Footer" : {
+    "FacialRecognitionInferencePage.Inspector.Output.Footer" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -509,7 +509,7 @@
         }
       }
     },
-    "FacialRecognitionInferenceTab.Inspector.Output.SimilarityMinimalDistance" : {
+    "FacialRecognitionInferencePage.Inspector.Output.SimilarityMinimalDistance" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -519,7 +519,7 @@
         }
       }
     },
-    "FacialRecognitionInferenceTab.Output.FaceCount %lld" : {
+    "FacialRecognitionInferencePage.Output.FaceCount %lld" : {
       "localizations" : {
         "en" : {
           "variations" : {
@@ -1007,6 +1007,66 @@
         }
       }
     },
+    "InferenceServicePage" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inference"
+          }
+        }
+      }
+    },
+    "InferenceServicePage.AverageElapse" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Average Elapse"
+          }
+        }
+      }
+    },
+    "InferenceServicePage.NoSelection" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Selection"
+          }
+        }
+      }
+    },
+    "InferenceServicePage.Overall" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Overall"
+          }
+        }
+      }
+    },
+    "InferenceServicePage.Reset" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest"
+          }
+        }
+      }
+    },
+    "InferenceServicePage.ShowCharts" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toggle Charts"
+          }
+        }
+      }
+    },
     "InferenceServiceSettings.ExecutionProviderSettings.Option.CoreML+MLProgram" : {
       "localizations" : {
         "en" : {
@@ -1037,7 +1097,7 @@
         }
       }
     },
-    "InferenceServiceSettingsTab.Cache" : {
+    "InferenceServiceSettingsForm.Cache" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1047,7 +1107,7 @@
         }
       }
     },
-    "InferenceServiceSettingsTab.Cache.Footer" : {
+    "InferenceServiceSettingsForm.Cache.Footer" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1057,7 +1117,7 @@
         }
       }
     },
-    "InferenceServiceSettingsTab.Cache.Lifespan" : {
+    "InferenceServiceSettingsForm.Cache.Lifespan" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1067,7 +1127,7 @@
         }
       }
     },
-    "InferenceServiceSettingsTab.Cache.Lifespan.Prompt" : {
+    "InferenceServiceSettingsForm.Cache.Lifespan.Prompt" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1077,7 +1137,7 @@
         }
       }
     },
-    "InferenceServiceSettingsTab.ExecutionProvider" : {
+    "InferenceServiceSettingsForm.ExecutionProvider" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1087,7 +1147,7 @@
         }
       }
     },
-    "InferenceServiceSettingsTab.ExecutionProvider.EfficientCoreML" : {
+    "InferenceServiceSettingsForm.ExecutionProvider.EfficientCoreML" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1097,7 +1157,7 @@
         }
       }
     },
-    "InferenceServiceSettingsTab.ExecutionProvider.Footer" : {
+    "InferenceServiceSettingsForm.ExecutionProvider.Footer" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1107,7 +1167,7 @@
         }
       }
     },
-    "InferenceServiceSettingsTab.ExecutionProvider.InefficientCoreML" : {
+    "InferenceServiceSettingsForm.ExecutionProvider.InefficientCoreML" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1117,7 +1177,7 @@
         }
       }
     },
-    "InferenceServiceSettingsTab.ExecutionProvider.NeuralNetworkCoreML" : {
+    "InferenceServiceSettingsForm.ExecutionProvider.NeuralNetworkCoreML" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1127,7 +1187,7 @@
         }
       }
     },
-    "InferenceServiceSettingsTab.ImmichAppEndpoint" : {
+    "InferenceServiceSettingsForm.ImmichAppEndpoint" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1137,7 +1197,7 @@
         }
       }
     },
-    "InferenceServiceSettingsTab.ImmichAppEndpoint.Footer" : {
+    "InferenceServiceSettingsForm.ImmichAppEndpoint.Footer" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1147,7 +1207,7 @@
         }
       }
     },
-    "InferenceServiceSettingsTab.Optimization" : {
+    "InferenceServiceSettingsForm.Optimization" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1157,7 +1217,7 @@
         }
       }
     },
-    "InferenceServiceSettingsTab.Optimization.Footer" : {
+    "InferenceServiceSettingsForm.Optimization.Footer" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1167,7 +1227,7 @@
         }
       }
     },
-    "InferenceServiceSettingsTab.Optimization.PersistOptimizations" : {
+    "InferenceServiceSettingsForm.Optimization.PersistOptimizations" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1177,7 +1237,7 @@
         }
       }
     },
-    "InferenceServiceSettingsTab.PreloadModels" : {
+    "InferenceServiceSettingsForm.PreloadModels" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1187,7 +1247,7 @@
         }
       }
     },
-    "InferenceServiceSettingsTab.PreloadModels.Add" : {
+    "InferenceServiceSettingsForm.PreloadModels.Add" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1197,7 +1257,7 @@
         }
       }
     },
-    "InferenceServiceSettingsTab.PreloadModels.Footer" : {
+    "InferenceServiceSettingsForm.PreloadModels.Footer" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1207,7 +1267,7 @@
         }
       }
     },
-    "InferenceServiceSettingsTab.PreloadModels.Remove" : {
+    "InferenceServiceSettingsForm.PreloadModels.Remove" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1217,62 +1277,12 @@
         }
       }
     },
-    "InferenceServiceTab" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inference"
-          }
-        }
-      }
-    },
-    "InferenceServiceTab.AverageElapse" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Average Elapse"
-          }
-        }
-      }
-    },
-    "InferenceServiceTab.NoSelection" : {
+    "MainScene.NoSelection" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "No Selection"
-          }
-        }
-      }
-    },
-    "InferenceServiceTab.Overall" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Overall"
-          }
-        }
-      }
-    },
-    "InferenceServiceTab.Reset" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rest"
-          }
-        }
-      }
-    },
-    "InferenceServiceTab.ShowCharts" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toggle Charts"
           }
         }
       }
@@ -1395,7 +1405,7 @@
         }
       }
     },
-    "ModelsTab" : {
+    "ModelsPage" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1405,7 +1415,7 @@
         }
       }
     },
-    "ModelsTab.NoSelection" : {
+    "ModelsPage.NoSelection" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1415,7 +1425,7 @@
         }
       }
     },
-    "ModelsTab.Subtitle %lld" : {
+    "ModelsPage.Subtitle %lld" : {
       "localizations" : {
         "en" : {
           "variations" : {
@@ -1643,7 +1653,7 @@
         }
       }
     },
-    "SearchInferenceTab.Action.ClearOutputs" : {
+    "SearchInferencePage.Action.ClearOutputs" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1653,7 +1663,7 @@
         }
       }
     },
-    "SearchInferenceTab.TextualForm.Applied" : {
+    "SearchInferencePage.TextualForm.Applied" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1663,7 +1673,7 @@
         }
       }
     },
-    "SearchInferenceTab.TextualForm.Apply" : {
+    "SearchInferencePage.TextualForm.Apply" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1673,7 +1683,7 @@
         }
       }
     },
-    "SearchInferenceTab.TextualForm.Input" : {
+    "SearchInferencePage.TextualForm.Input" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1683,7 +1693,7 @@
         }
       }
     },
-    "SearchInferenceTab.TextualForm.Input.Model" : {
+    "SearchInferencePage.TextualForm.Input.Model" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1693,7 +1703,7 @@
         }
       }
     },
-    "SearchInferenceTab.TextualForm.Input.Model.LanguageCode" : {
+    "SearchInferencePage.TextualForm.Input.Model.LanguageCode" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1703,7 +1713,7 @@
         }
       }
     },
-    "SearchInferenceTab.TextualForm.Input.Model.LanguageCode.Unspecified" : {
+    "SearchInferencePage.TextualForm.Input.Model.LanguageCode.Unspecified" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1713,7 +1723,7 @@
         }
       }
     },
-    "SearchInferenceTab.TextualForm.Input.Run" : {
+    "SearchInferencePage.TextualForm.Input.Run" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1723,7 +1733,7 @@
         }
       }
     },
-    "SearchInferenceTab.TextualForm.Input.SearchText" : {
+    "SearchInferencePage.TextualForm.Input.SearchText" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1733,7 +1743,7 @@
         }
       }
     },
-    "SearchInferenceTab.VisualGrid.Input.Model" : {
+    "SearchInferencePage.VisualGrid.Input.Model" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1743,7 +1753,7 @@
         }
       }
     },
-    "SearchInferenceTab.VisualGrid.Input.Run" : {
+    "SearchInferencePage.VisualGrid.Input.Run" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1753,7 +1763,7 @@
         }
       }
     },
-    "SearchInferenceTab.VisualGrid.Output.DifferentModel" : {
+    "SearchInferencePage.VisualGrid.Output.DifferentModel" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1864,7 +1874,6 @@
       }
     },
     "WebService" : {
-      "generatesSymbol" : false,
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1874,47 +1883,7 @@
         }
       }
     },
-    "WebServiceSettingsTab.Port" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Port"
-          }
-        }
-      }
-    },
-    "WebServiceSettingsTab.Port.Footer" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The defualt port is 3003, you need to restart the Web Service to apply the new port.\nIn your Immich instance, navigate to *Machine Learning Settings* and add an URL to this device.\nThese URLs are generated from your device's network interface information, and for reference only."
-          }
-        }
-      }
-    },
-    "WebServiceSettingsTab.Port.TextField" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Listen on Port"
-          }
-        }
-      }
-    },
-    "WebServiceSettingsTab.StartWhenInitialized" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Start When Michina Launches"
-          }
-        }
-      }
-    },
-    "WebServiceTab" : {
+    "WebServicePage" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1924,12 +1893,122 @@
         }
       }
     },
-    "WebServiceTab.Clients" : {
+    "WebServicePage.Clients" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Clients"
+          }
+        }
+      }
+    },
+    "WebServicePage.Clients.Unknown" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unknown Client"
+          }
+        }
+      }
+    },
+    "WebServicePage.Errors" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Errors"
+          }
+        }
+      }
+    },
+    "WebServicePage.Errors.Clear" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear"
+          }
+        }
+      }
+    },
+    "WebServicePage.NoSelection" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Selection"
+          }
+        }
+      }
+    },
+    "WebServicePage.ServiceToggle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toggle Web Service"
+          }
+        }
+      }
+    },
+    "WebServicePage.Subtitle.Paused" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paused"
+          }
+        }
+      }
+    },
+    "WebServicePage.Subtitle.Running %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Listening on %@"
+          }
+        }
+      }
+    },
+    "WebServiceSettingsForm.Port" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Port"
+          }
+        }
+      }
+    },
+    "WebServiceSettingsForm.Port.Footer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The defualt port is 3003, you need to restart the Web Service to apply the new port.\nIn your Immich instance, navigate to *Machine Learning Settings* and add an URL to this device.\nThese URLs are generated from your device's network interface information, and for reference only."
+          }
+        }
+      }
+    },
+    "WebServiceSettingsForm.Port.TextField" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Listen on Port"
+          }
+        }
+      }
+    },
+    "WebServiceSettingsForm.StartWhenInitialized" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start When Michina Launches"
           }
         }
       }
@@ -1958,76 +2037,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "WebServiceTab.Clients.Unknown" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Unknown Client"
-          }
-        }
-      }
-    },
-    "WebServiceTab.Errors" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Errors"
-          }
-        }
-      }
-    },
-    "WebServiceTab.Errors.Clear" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Clear"
-          }
-        }
-      }
-    },
-    "WebServiceTab.NoSelection" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No Selection"
-          }
-        }
-      }
-    },
-    "WebServiceTab.ServiceToggle" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toggle Web Service"
-          }
-        }
-      }
-    },
-    "WebServiceTab.Subtitle.Paused" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Paused"
-          }
-        }
-      }
-    },
-    "WebServiceTab.Subtitle.Running %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Listening on %@"
           }
         }
       }

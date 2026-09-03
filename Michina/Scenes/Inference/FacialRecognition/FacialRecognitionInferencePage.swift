@@ -1,28 +1,28 @@
 //
-//  CharacterRecognitionInferenceTab.swift
+//  FacialRecognitionInferencePage.swift
 //  Michina
 //
-//  Created by Lucka on 2026-05-30.
+//  Created by Lucka on 2026-05-29.
 //
 
-import Geometry
 import Magearna
 import SwiftUI
 
-struct CharacterRecognitionInferenceTab : TabContent {
+struct FacialRecognitionInferencePage : View {
     @Environment(\.alert) private var alert
     
     @State private var values = ViewValues()
     
-    @State private var isInspectorPresented = true
-    
     @State private var detectionModel: InferenceModel
     @State private var recognitionModel: InferenceModel
-    
     @State private var images: [ ImageData ] = [ ]
     
     @State private var executionProgress: Progress? = nil
+    
     @State private var outputs: [ Output ] = [ ]
+    @State private var selection: PresentableFace? = nil
+    
+    @State private var isInspectorPresented = true
     
     private let service = InferenceService.default
     
@@ -48,79 +48,70 @@ struct CharacterRecognitionInferenceTab : TabContent {
         }
     }
     
-    var body: some TabContent<InferenceModelSuite.Category> {
-        Tab(
-            Self.category.titleKey,
-            systemImage: Self.category.systemImage,
-            value: Self.category
-        ) {
-            List {
-                ForEach(outputs, content: section(output:))
+    var body: some View {
+        List {
+            ForEach(outputs, content: section(output:))
+        }
+        .environment(
+            \.similarityMinimalDistance,
+             .init(values.similarityMinimalDistance)
+        )
+        .listStyle(.inset)
+        .frame(minWidth: 300)
+        .toolbar(content: toolbarContent)
+        .inspector(isPresented: $isInspectorPresented) {
+            Form {
+                modelsSection
+                inputSections
+                outputSection
             }
-            .listStyle(.inset)
-            .frame(minWidth: 300)
-            .toolbar(content: toolbarContent)
-            .inspector(isPresented: $isInspectorPresented) {
-                Form {
-                    modelsSection
-                    inputSections
-                }
-                .formStyle(.grouped)
-            }
+            .formStyle(.grouped)
         }
     }
 }
 
-extension CharacterRecognitionInferenceTab {
-    static let category = InferenceModelSuite.Category.characterRecognition
+extension FacialRecognitionInferencePage {
+    static let category = InferenceModelSuite.Category.facialRecognition
 }
 
-fileprivate extension CharacterRecognitionInferenceTab {
+fileprivate extension FacialRecognitionInferencePage {
     static let detectionModels = InferenceModelSuite.all[category]!
         .compactMap { $0.models[.detection] }
     static let recognitionModels = InferenceModelSuite.all[category]!
         .compactMap { $0.models[.recognition] }
 }
 
-fileprivate extension CharacterRecognitionInferenceTab {
+fileprivate extension FacialRecognitionInferencePage {
     @MainActor
     @Observable
     final class ViewValues {
         private struct Storage {
-            @AppStorage("CharacterRecognitionInferenceTab.DetectionMinimalConfidence")
+            @AppStorage("FacialRecognitionInferenceTab.DetectionMinimalConfidence")
             var detectionMinimalConfidence = 0.5
             
-            @AppStorage("CharacterRecognitionInferenceTab.DetectionMaximalResolution")
-            var detectionMaximalResolution = 736
-            
-            @AppStorage("CharacterRecognitionInferenceTab.RecognitionMinimalConfidence")
-            var recognitionMinimalConfidence = 0.8
+            @AppStorage("FacialRecognitionInferenceTab.SimilarityMinimalDistance")
+            var similarityMinimalDistance = 0.5
         }
         
         var detectionMinimalConfidence: Double {
             didSet { storage.detectionMinimalConfidence = detectionMinimalConfidence }
         }
         
-        var detectionMaximalResolution: Int {
-            didSet { storage.detectionMaximalResolution = detectionMaximalResolution }
-        }
-        
-        var recognitionMinimalConfidence: Double {
-            didSet { storage.recognitionMinimalConfidence = recognitionMinimalConfidence }
+        var similarityMinimalDistance: Double {
+            didSet { storage.similarityMinimalDistance = similarityMinimalDistance }
         }
         
         private let storage = Storage()
         
         init() {
             self.detectionMinimalConfidence = storage.detectionMinimalConfidence
-            self.detectionMaximalResolution = storage.detectionMaximalResolution
-            self.recognitionMinimalConfidence = storage.recognitionMinimalConfidence
+            self.similarityMinimalDistance = storage.similarityMinimalDistance
         }
     }
     
     @ViewBuilder
     var modelsSection: some View {
-        Section("CharacterRecognitionInferenceTab.Inspector.Models") {
+        Section("FacialRecognitionInferencePage.Inspector.Models") {
             Picker(
                 InferenceModel.Category.detection.titleKey,
                 selection: $detectionModel
@@ -144,7 +135,7 @@ fileprivate extension CharacterRecognitionInferenceTab {
     
     @ViewBuilder
     var inputSections: some View {
-        Section("CharacterRecognitionInferenceTab.Inspector.Photo") {
+        Section("FacialRecognitionInferencePage.Inspector.Input.Photo") {
             UnifiedPhotoPicker(selection: $images) {
                 if let image = images.first?.image {
                     image
@@ -171,45 +162,48 @@ fileprivate extension CharacterRecognitionInferenceTab {
             .buttonStyle(.plain)
         }
         
-        Section("CharacterRecognitionInferenceTab.Inspector.Parameters") {
+        Section("FacialRecognitionInferencePage.Inspector.Input.Parameters") {
             VStack {
                 LabeledContent(
-                    "CharacterRecognitionInferenceTab.Inspector.DetectionMinimalConfidence",
+                    "FacialRecognitionInferencePage.Inspector.Input.Parameters.DetectionMinimalConfidence",
                     value: values.detectionMinimalConfidence,
                     format: .number
                 )
                 Slider(value: $values.detectionMinimalConfidence, in: 0...1, step: 0.01)
                     .labelsHidden()
             }
-            
-            TextField(
-                "CharacterRecognitionInferenceTab.Inspector.DetectionMaximalResolution",
-                value: $values.detectionMaximalResolution,
-                format: .number
-            )
-            
+        }
+    }
+    
+    @ViewBuilder
+    var outputSection: some View {
+        Section {
             VStack {
                 LabeledContent(
-                    "CharacterRecognitionInferenceTab.Inspector.RecognitionMinimalConfidence",
-                    value: values.recognitionMinimalConfidence,
+                    "FacialRecognitionInferencePage.Inspector.Output.SimilarityMinimalDistance",
+                    value: values.similarityMinimalDistance,
                     format: .number
                 )
-                Slider(value: $values.recognitionMinimalConfidence, in: 0...1, step: 0.01)
+                Slider(value: $values.similarityMinimalDistance, in: 0...2, step: 0.05)
                     .labelsHidden()
             }
+        } header: {
+            Text("FacialRecognitionInferencePage.Inspector.Output")
+        } footer: {
+            Text("FacialRecognitionInferencePage.Inspector.Output.Footer")
         }
     }
 }
 
-fileprivate extension CharacterRecognitionInferenceTab {
-    typealias Pipeline = CharacterRecognitionInferencePipeline
+fileprivate extension FacialRecognitionInferencePage {
+    typealias Pipeline = FacialRecognitionInferencePipeline
     
     @ToolbarContentBuilder
     func toolbarContent() -> some ToolbarContent {
         if !images.isEmpty {
             ToolbarItem(placement: .primaryAction) {
                 Button(
-                    "CharacterRecognitionInferenceTab.Action.RunInference",
+                    "FacialRecognitionInferencePage.Action.RunInference",
                     systemImage: "play",
                     role: .BackDeployed.confirm
                 ) {
@@ -228,10 +222,11 @@ fileprivate extension CharacterRecognitionInferenceTab {
         if !outputs.isEmpty {
             ToolbarItem(placement: .destructiveAction) {
                 Button(
-                    "CharacterRecognitionInferenceTab.Action.ClearOutputHistory",
+                    "FacialRecognitionInferencePage.Action.ClearOutputHistory",
                     systemImage: "trash",
                     role: .destructive
                 ) {
+                    selection = nil
                     outputs.removeAll()
                 }
             }
@@ -251,16 +246,14 @@ fileprivate extension CharacterRecognitionInferenceTab {
         let images = self.images
         let detectionModel = self.detectionModel
         let detectionMinimalConfidence = Float(values.detectionMinimalConfidence)
-        let detectionMaximalResolution = values.detectionMaximalResolution
         let recognitionModel = self.recognitionModel
-        let recognitionMinimalConfidence = Float(values.recognitionMinimalConfidence)
         
         struct TaskResult : Sendable {
             let offset: Int
-            let input: Image
-            let inputSize: CGSize
+            let inputImage: Image
+            let inputImageSize: CGSize
             let elapse: Duration
-            let characterBoxes: [ PresentableCharacterBox ]
+            let faces: [ PresentableFace ]
         }
         
         let results = try await withThrowingTaskGroup { @Sendable group in
@@ -273,9 +266,7 @@ fileprivate extension CharacterRecognitionInferenceTab {
                     let input = Pipeline.Input(
                         detectionModel: detectionModel,
                         detectionMinimalConfidence: detectionMinimalConfidence,
-                        detectionMaximalResolution: detectionMaximalResolution,
                         recognitionModel: recognitionModel,
-                        recognitionMinimalConfidence: recognitionMinimalConfidence,
                         image: image
                     )
                     
@@ -288,10 +279,19 @@ fileprivate extension CharacterRecognitionInferenceTab {
                     
                     return TaskResult(
                         offset: enumeration.offset,
-                        input: enumeration.element.image,
-                        inputSize: image.extent.size,
+                        inputImage: enumeration.element.image,
+                        inputImageSize: image.extent.size,
                         elapse: elapse,
-                        characterBoxes: output.characterBoxes.map { .init(data: $0) }
+                        faces: output.faces.enumerated().map { (index, face) in
+                            return .init(
+                                index: index,
+                                recognitionModel: recognitionModel,
+                                data: face,
+                                landmarks: face.geometry.item.landmarks.map {
+                                    .init(data: $0)
+                                }
+                            )
+                        }
                     )
                 }
             }
@@ -308,39 +308,52 @@ fileprivate extension CharacterRecognitionInferenceTab {
             contentsOf: results.map {
                 .init(
                     index: indexStart + $0.offset,
-                    input: $0.input,
-                    inputSize: $0.inputSize,
+                    inputImage: $0.inputImage,
+                    inputImageSize: $0.inputImageSize,
+                    recognitionModel: recognitionModel,
                     elapse: $0.elapse,
-                    characterBoxes: $0.characterBoxes
+                    faces: $0.faces
                 )
             }
         )
     }
 }
 
-fileprivate extension CharacterRecognitionInferenceTab {
+fileprivate extension FacialRecognitionInferencePage {
     struct Output : Sendable, Identifiable {
         let id = UUID()
-        
         let index: Int
         
-        let input: Image
-        let inputSize: CGSize
+        let inputImage: Image
+        let inputImageSize: CGSize
+        let recognitionModel: InferenceModel
         
         let elapse: Duration
-        let characterBoxes: [ PresentableCharacterBox ]
+        let faces: [ PresentableFace ]
     }
     
-    struct PresentableCharacterBox : Identifiable, Sendable {
+    struct PresentableFace : Identifiable, Sendable {
+        let id = UUID()
+        let index: Int
+        
+        let recognitionModel: InferenceModel
+        
+        let data: Pipeline.Output.Face
+        
+        let landmarks: [ PresentableLandmark ]
+    }
+    
+    struct PresentableLandmark: Identifiable, Sendable {
         let id = UUID()
         
-        let data: Pipeline.Output.CharacterBox
+        let data: CGPoint
     }
     
     @ViewBuilder
     func section(output: Output) -> some View {
         Section {
-            OutputView(output: output)
+            OutputView(output: output, selection: $selection)
+                .listRowSeparator(.hidden)
         } header: {
             HStack(spacing: 12) {
                 Label(
@@ -353,167 +366,196 @@ fileprivate extension CharacterRecognitionInferenceTab {
                 
                 Text(output.elapse, format: .elapse)
                 Divider()
-                Text(
-                    """
-                    CharacterRecognitionInferenceTab.Output.BoxCount \
-                    \(output.characterBoxes.count)
-                    """
-                )
+                Text("FacialRecognitionInferencePage.Output.FaceCount \(output.faces.count)")
             }
             .monospaced()
         }
     }
 }
 
-fileprivate extension CharacterRecognitionInferenceTab {
+fileprivate extension FacialRecognitionInferencePage {
     struct OutputView : View {
+        @Binding private var selection: PresentableFace?
+        
         @State private var hovering: UUID? = nil
         
         private let output: Output
         
-        init(output: Output) {
+        init(output: Output, selection: Binding<PresentableFace?>) {
+            self._selection = selection
             self.output = output
         }
         
         var body: some View {
-            output.input
+            output.inputImage
                 .scaledToFit()
+                .onTapGesture {
+                    selection = nil
+                }
                 .clipShape(.rect(cornerRadius: 12))
                 .overlay {
                     GeometryReader { proxy in
-                        ForEach(output.characterBoxes) { characterBox in
-                            CharacterBoxRectangle(
-                                characterBox: characterBox,
-                                hovering: $hovering
+                        ForEach(output.faces) { face in
+                            FaceRect(
+                                face: face,
+                                hovering: $hovering,
+                                selection: $selection
                             )
                         }
                         .environment(
                             \.scale,
-                             proxy.size.width / output.inputSize.width
+                             proxy.size.width / output.inputImageSize.width
                         )
                     }
                 }
         }
     }
     
-    struct CharacterBoxRectangle : View {
+    struct FaceRect : View {
         @Binding var hovering: UUID?
+        @Binding var selection: PresentableFace?
         
         @Environment(\.scale) private var scale
         
+        @Environment(\.similarityMinimalDistance)
+        private var similarityMinimalDistance
+        
         @State var captionHeight = CGFloat.zero
         
-        private let characterBox: PresentableCharacterBox
-        private let boundingBox: CGRect
-        private let rotationAngle: Angle
+        private let face: PresentableFace
         
         init(
-            characterBox: PresentableCharacterBox,
-            hovering: Binding<UUID?>
+            face: PresentableFace,
+            hovering: Binding<UUID?>,
+            selection: Binding<PresentableFace?>
         ) {
             self._hovering = hovering
+            self._selection = selection
             
-            self.characterBox = characterBox
-            self.boundingBox = characterBox.data.rectangle.item.boundingBox
-            self.rotationAngle = .init(radians: characterBox.data.rectangle.item.rotation)
+            self.face = face
         }
         
         var body: some View {
+            if hovering == face.id {
+                ForEach(face.landmarks) { landmark in
+                    Circle()
+                        .stroke(frameColor, lineWidth: 2)
+                        .frame(width: 4, height: 4)
+                        .opacity(opacity)
+                        .zIndex(zIndex)
+                        .position(
+                            x: landmark.data.x * scale,
+                            y: landmark.data.y * scale
+                        )
+                }
+            }
+            
             RoundedRectangle(cornerRadius: 6)
-                .size(
-                    width: characterBox.data.rectangle.item.width * scale,
-                    height: characterBox.data.rectangle.item.height * scale,
-                    anchor: .center
-                )
-                .rotation(rotationAngle, anchor: .center)
-                .stroke(frameColor, lineWidth: 4)
-                .opacity(opacity)
-                .contentShape(
-                    .rect(cornerRadius: 6)
-                    .rotation(rotationAngle, anchor: .center)
-                )
+                .stroke(frameColor, lineWidth: 2)
+                .contentShape(.rect(cornerRadius: 6))
                 .onHover {
-                    // TODO: Fix hovering
-                    // contentShape seems not work well with rotated shape, maybe use
-                    // onContinuousHover + CGPath to track if it's inside the shape.
                     if $0 {
-                        hovering = characterBox.id
-                    } else if hovering == characterBox.id {
+                        hovering = face.id
+                    } else if hovering == face.id {
                         hovering = nil
                     }
                 }
+                .onTapGesture {
+                    selection = face
+                }
                 .frame(
-                    width: boundingBox.width * scale,
-                    height: boundingBox.height * scale
+                    width: face.data.geometry.item.boundingBox.width * scale,
+                    height: face.data.geometry.item.boundingBox.height * scale
                 )
                 .safeAreaInset(edge: .bottom, spacing: 4) {
-                    VStack(spacing: 4) {
-                        Text(characterBox.data.text.item)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(
-                                .background.opacity(0.8),
-                                in: .rect(cornerRadius: 6)
-                            )
-                        
-                        HStack(spacing: 8) {
-                            Text(
-                                """
-                                CharacterRecognitionInferenceTab.Output.RectangleConfidence \
-                                \(characterBox.data.rectangle.confidence, format: .confidence)
-                                """
-                            )
-                            Text(
-                                """
-                                CharacterRecognitionInferenceTab.Output.TextConfidence \
-                                \(characterBox.data.text.confidence, format: .confidence)
-                                """
-                            )
+                    VStackLayout(spacing: 2) {
+                        Text(face.data.geometry.confidence, format: .confidence)
+                        if let distance {
+                            Text(distance, format: .number.precision(.fractionLength(4)))
                         }
-                        .font(.system(.caption, design: .monospaced))
-                        .padding(.horizontal, 4)
-                        .padding(.vertical, 2)
-                        .background(frameColor, in: .rect(cornerRadius: 6))
                     }
+                    .font(.system(.caption, design: .monospaced))
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 2)
                     .onGeometryChange(for: CGFloat.self, of: \.size.height) {
                         captionHeight = $0
                     }
-                    .opacity(hovering == characterBox.id ? 1 : 0)
+                    .background(frameColor, in: .rect(cornerRadius: 6))
                 }
+                .opacity(opacity)
                 .zIndex(zIndex)
                 .position(
-                    x: boundingBox.centerX * scale,
-                    y: boundingBox.centerY * scale + 2 + (captionHeight / 2)
+                    x: face.data.geometry.item.boundingBox.centerX * scale,
+                    y: face.data.geometry.item.boundingBox.centerY * scale + 2 + (captionHeight / 2)
                 )
         }
         
         private var opacity: CGFloat {
             switch hovering {
-            case characterBox.id: 1.0
+            case face.id: 1.0
             case nil: 0.6
             default: 0.3
             }
         }
         
         private var frameColor: Color {
-            if let hovering, hovering != characterBox.id {
+            if let selection {
+                if selection.id == face.id {
+                    .teal
+                } else if let distance {
+                    if distance <= similarityMinimalDistance {
+                        .green
+                    } else {
+                        .red
+                    }
+                } else {
+                    // Different models
+                    .gray
+                }
+            } else if let hovering, hovering != face.id {
                 .gray
             } else {
-                .green
+                .blue
             }
+        }
+        
+        private var distance: Float? {
+            guard
+                let selection,
+                selection.recognitionModel == face.recognitionModel,
+                selection.id != face.id
+            else {
+                return nil
+            }
+            return face.distance(to: selection)
         }
         
         private var zIndex: Double {
             switch hovering {
-            case characterBox.id: 10
+            case face.id: 10
             default: 0
             }
         }
     }
 }
 
+fileprivate extension FacialRecognitionInferencePage.PresentableFace {
+    func distance(to other: Self) -> Float {
+        let (dot, normSelf, normOther) = zip(self.data.embedding, other.data.embedding)
+            .reduce(
+                into: (dot: Float.zero, normSelf: Float.zero, normOther: Float.zero)
+            ) { partial, pair in
+                partial.dot += pair.0 * pair.1
+                partial.normSelf += pair.0 * pair.0
+                partial.normOther += pair.1 * pair.1
+            }
+        return 1 - dot / sqrt(normSelf * normOther)
+    }
+}
+
 fileprivate extension EnvironmentValues {
     @Entry var scale: CGFloat = 1.0
+    @Entry var similarityMinimalDistance: Float = 5.0
 }
 
 fileprivate extension CGRect {
@@ -525,4 +567,3 @@ fileprivate extension CGRect {
         self.origin.y + (self.height / 2)
     }
 }
-

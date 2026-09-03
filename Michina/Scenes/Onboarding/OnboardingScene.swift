@@ -19,7 +19,7 @@ struct OnboardingScene : Scene {
             .frame(minWidth: 400, minHeight: 500)
             .alertable()
         }
-        .windowIdealSize(.fitToContent)
+//        .windowIdealSize(.fitToContent)
     }
 }
 
