@@ -1,14 +1,15 @@
 //
-//  CharacterRecognitionInferenceTab.swift
+//  CharacterRecognitionInferencePage.swift
 //  Michina
 //
 //  Created by Lucka on 2026-05-30.
 //
 
+import Geometry
 import Magearna
 import SwiftUI
 
-struct CharacterRecognitionInferenceTab : TabContent {
+struct CharacterRecognitionInferencePage : View {
     @Environment(\.alert) private var alert
     
     @State private var values = ViewValues()
@@ -47,41 +48,35 @@ struct CharacterRecognitionInferenceTab : TabContent {
         }
     }
     
-    var body: some TabContent<InferenceModelSuite.Category> {
-        Tab(
-            Self.category.titleKey,
-            systemImage: Self.category.systemImage,
-            value: Self.category
-        ) {
-            List {
-                ForEach(outputs, content: section(output:))
+    var body: some View {
+        List {
+            ForEach(outputs, content: section(output:))
+        }
+        .listStyle(.inset)
+        .frame(minWidth: 300)
+        .toolbar(content: toolbarContent)
+        .inspector(isPresented: $isInspectorPresented) {
+            Form {
+                modelsSection
+                inputSections
             }
-            .listStyle(.inset)
-            .frame(minWidth: 300)
-            .toolbar(content: toolbarContent)
-            .inspector(isPresented: $isInspectorPresented) {
-                Form {
-                    modelsSection
-                    inputSections
-                }
-                .formStyle(.grouped)
-            }
+            .formStyle(.grouped)
         }
     }
 }
 
-extension CharacterRecognitionInferenceTab {
+extension CharacterRecognitionInferencePage {
     static let category = InferenceModelSuite.Category.characterRecognition
 }
 
-fileprivate extension CharacterRecognitionInferenceTab {
+fileprivate extension CharacterRecognitionInferencePage {
     static let detectionModels = InferenceModelSuite.all[category]!
         .compactMap { $0.models[.detection] }
     static let recognitionModels = InferenceModelSuite.all[category]!
         .compactMap { $0.models[.recognition] }
 }
 
-fileprivate extension CharacterRecognitionInferenceTab {
+fileprivate extension CharacterRecognitionInferencePage {
     @MainActor
     @Observable
     final class ViewValues {
@@ -119,7 +114,7 @@ fileprivate extension CharacterRecognitionInferenceTab {
     
     @ViewBuilder
     var modelsSection: some View {
-        Section("CharacterRecognitionInferenceTab.Inspector.Models") {
+        Section("CharacterRecognitionInferencePage.Inspector.Models") {
             Picker(
                 InferenceModel.Category.detection.titleKey,
                 selection: $detectionModel
@@ -143,7 +138,7 @@ fileprivate extension CharacterRecognitionInferenceTab {
     
     @ViewBuilder
     var inputSections: some View {
-        Section("CharacterRecognitionInferenceTab.Inspector.Photo") {
+        Section("CharacterRecognitionInferencePage.Inspector.Photo") {
             UnifiedPhotoPicker(selection: $images) {
                 if let image = images.first?.image {
                     image
@@ -170,10 +165,10 @@ fileprivate extension CharacterRecognitionInferenceTab {
             .buttonStyle(.plain)
         }
         
-        Section("CharacterRecognitionInferenceTab.Inspector.Parameters") {
+        Section("CharacterRecognitionInferencePage.Inspector.Parameters") {
             VStack {
                 LabeledContent(
-                    "CharacterRecognitionInferenceTab.Inspector.DetectionMinimalConfidence",
+                    "CharacterRecognitionInferencePage.Inspector.DetectionMinimalConfidence",
                     value: values.detectionMinimalConfidence,
                     format: .number
                 )
@@ -182,14 +177,14 @@ fileprivate extension CharacterRecognitionInferenceTab {
             }
             
             TextField(
-                "CharacterRecognitionInferenceTab.Inspector.DetectionMaximalResolution",
+                "CharacterRecognitionInferencePage.Inspector.DetectionMaximalResolution",
                 value: $values.detectionMaximalResolution,
                 format: .number
             )
             
             VStack {
                 LabeledContent(
-                    "CharacterRecognitionInferenceTab.Inspector.RecognitionMinimalConfidence",
+                    "CharacterRecognitionInferencePage.Inspector.RecognitionMinimalConfidence",
                     value: values.recognitionMinimalConfidence,
                     format: .number
                 )
@@ -200,7 +195,7 @@ fileprivate extension CharacterRecognitionInferenceTab {
     }
 }
 
-fileprivate extension CharacterRecognitionInferenceTab {
+fileprivate extension CharacterRecognitionInferencePage {
     typealias Pipeline = CharacterRecognitionInferencePipeline
     
     @ToolbarContentBuilder
@@ -208,7 +203,7 @@ fileprivate extension CharacterRecognitionInferenceTab {
         if !images.isEmpty {
             ToolbarItem(placement: .primaryAction) {
                 Button(
-                    "CharacterRecognitionInferenceTab.Action.RunInference",
+                    "CharacterRecognitionInferencePage.Action.RunInference",
                     systemImage: "play",
                     role: .BackDeployed.confirm
                 ) {
@@ -227,7 +222,7 @@ fileprivate extension CharacterRecognitionInferenceTab {
         if !outputs.isEmpty {
             ToolbarItem(placement: .destructiveAction) {
                 Button(
-                    "CharacterRecognitionInferenceTab.Action.ClearOutputHistory",
+                    "CharacterRecognitionInferencePage.Action.ClearOutputHistory",
                     systemImage: "trash",
                     role: .destructive
                 ) {
@@ -317,7 +312,7 @@ fileprivate extension CharacterRecognitionInferenceTab {
     }
 }
 
-fileprivate extension CharacterRecognitionInferenceTab {
+fileprivate extension CharacterRecognitionInferencePage {
     struct Output : Sendable, Identifiable {
         let id = UUID()
         
@@ -354,7 +349,7 @@ fileprivate extension CharacterRecognitionInferenceTab {
                 Divider()
                 Text(
                     """
-                    CharacterRecognitionInferenceTab.Output.BoxCount \
+                    CharacterRecognitionInferencePage.Output.BoxCount \
                     \(output.characterBoxes.count)
                     """
                 )
@@ -364,7 +359,7 @@ fileprivate extension CharacterRecognitionInferenceTab {
     }
 }
 
-fileprivate extension CharacterRecognitionInferenceTab {
+fileprivate extension CharacterRecognitionInferencePage {
     struct OutputView : View {
         @State private var hovering: UUID? = nil
         
@@ -400,8 +395,6 @@ fileprivate extension CharacterRecognitionInferenceTab {
         
         @Environment(\.scale) private var scale
         
-        @State var captionHeight = CGFloat.zero
-        
         private let characterBox: PresentableCharacterBox
         private let boundingBox: CGRect
         private let rotationAngle: Angle
@@ -418,53 +411,40 @@ fileprivate extension CharacterRecognitionInferenceTab {
         }
         
         var body: some View {
-            RoundedRectangle(cornerRadius: 6)
-                .size(
-                    width: characterBox.data.rectangle.item.width * scale,
-                    height: characterBox.data.rectangle.item.height * scale,
-                    anchor: .center
-                )
-                .rotation(rotationAngle, anchor: .center)
-                .stroke(frameColor, lineWidth: 4)
-                .opacity(opacity)
-                .contentShape(
-                    .rect(cornerRadius: 6)
-                    .rotation(rotationAngle, anchor: .center)
-                )
-                .onHover {
-                    // TODO: Fix hovering
-                    // contentShape seems not work well with rotated shape, maybe use
-                    // onContinuousHover + CGPath to track if it's inside the shape.
-                    if $0 {
-                        hovering = characterBox.id
-                    } else if hovering == characterBox.id {
-                        hovering = nil
+            ZStack(alignment: .center) {
+                RoundedRectangle(cornerRadius: 6)
+                    .stroke(frameColor, lineWidth: 4)
+                    .onHover {
+                        if $0 {
+                            hovering = characterBox.id
+                        } else if hovering == characterBox.id {
+                            hovering = nil
+                        }
                     }
-                }
-                .frame(
-                    width: boundingBox.width * scale,
-                    height: boundingBox.height * scale
-                )
-                .safeAreaInset(edge: .bottom, spacing: 4) {
-                    VStack(spacing: 4) {
-                        Text(characterBox.data.text.item)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(
-                                .background.opacity(0.8),
-                                in: .rect(cornerRadius: 6)
-                            )
-                        
+                    .frame(
+                        width: characterBox.data.rectangle.item.width * scale,
+                        height: characterBox.data.rectangle.item.height * scale
+                    )
+                    .rotationEffect(rotationAngle, anchor: .center)
+                
+                Text(characterBox.data.text.item)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(
+                        .background.opacity(0.8),
+                        in: .rect(cornerRadius: 6)
+                    )
+                    .safeAreaInset(edge: .bottom, spacing: 4) {
                         HStack(spacing: 8) {
                             Text(
                                 """
-                                CharacterRecognitionInferenceTab.Output.RectangleConfidence \
+                                CharacterRecognitionInferencePage.Output.RectangleConfidence \
                                 \(characterBox.data.rectangle.confidence, format: .confidence)
                                 """
                             )
                             Text(
                                 """
-                                CharacterRecognitionInferenceTab.Output.TextConfidence \
+                                CharacterRecognitionInferencePage.Output.TextConfidence \
                                 \(characterBox.data.text.confidence, format: .confidence)
                                 """
                             )
@@ -474,16 +454,15 @@ fileprivate extension CharacterRecognitionInferenceTab {
                         .padding(.vertical, 2)
                         .background(frameColor, in: .rect(cornerRadius: 6))
                     }
-                    .onGeometryChange(for: CGFloat.self, of: \.size.height) {
-                        captionHeight = $0
-                    }
                     .opacity(hovering == characterBox.id ? 1 : 0)
-                }
-                .zIndex(zIndex)
-                .position(
-                    x: boundingBox.centerX * scale,
-                    y: boundingBox.centerY * scale + 2 + (captionHeight / 2)
-                )
+                    .allowsHitTesting(false)
+            }
+            .opacity(opacity)
+            .zIndex(zIndex)
+            .position(
+                x: boundingBox.centerX * scale,
+                y: boundingBox.centerY * scale
+            )
         }
         
         private var opacity: CGFloat {

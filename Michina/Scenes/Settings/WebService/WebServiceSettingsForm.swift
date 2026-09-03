@@ -1,5 +1,5 @@
 //
-//  WebServiceSettingsTab.swift
+//  WebServiceSettingsForm.swift
 //  Michina
 //
 //  Created by Lucka on 2026-05-29.
@@ -7,27 +7,30 @@
 
 import SwiftUI
 
-struct WebServiceSettingsTab : TabContent {
+struct WebServiceSettingsForm : View {
     @Environment(\.alert) private var alert
     
     @State private var settings = WebServiceSettings.shared
     
-    var body: some TabContent<Never> {
-        Tab(Self.titleKey, systemImage: Self.systemImage) {
-            Form {
-                Toggle(
-                    "WebServiceSettingsTab.StartWhenInitialized",
-                    isOn: $settings.startWhenInitialized
-                )
-                
-                PortSection()
-            }
-            .frame(minWidth: 400, idealWidth: 400, minHeight: 300)
+    var body: some View {
+        Form {
+            Toggle(
+                "WebServiceSettingsForm.StartWhenInitialized",
+                isOn: $settings.startWhenInitialized
+            )
+            
+            PortSection()
         }
+        .frame(minWidth: 400, idealWidth: 400, minHeight: 300)
     }
 }
 
-extension WebServiceSettingsTab {
+extension WebServiceSettingsForm : @MainActor LabelableMetatype {
+    static let titleKey: LocalizedStringKey = "WebService"
+    static let systemImage: String = "network"
+}
+
+extension WebServiceSettingsForm {
     struct PortSection : View {
         @Environment(\.alert) private var alert
         
@@ -37,7 +40,7 @@ extension WebServiceSettingsTab {
         var body: some View {
             Section {
                 TextField(
-                    "WebServiceSettingsTab.Port.TextField",
+                    "WebServiceSettingsForm.Port.TextField",
                     value: $settings.port,
                     format: .port
                 )
@@ -50,9 +53,9 @@ extension WebServiceSettingsTab {
                 }
                 .monospaced()
             } header: {
-                Text("WebServiceSettingsTab.Port")
+                Text("WebServiceSettingsForm.Port")
             } footer: {
-                Text("WebServiceSettingsTab.Port.Footer")
+                Text("WebServiceSettingsForm.Port.Footer")
             }
             .onAppear {
                 alert.whenTrying {
@@ -61,9 +64,4 @@ extension WebServiceSettingsTab {
             }
         }
     }
-}
-
-fileprivate extension WebServiceSettingsTab {
-    static let titleKey: LocalizedStringKey = "WebService"
-    static let systemImage: String = "network"
 }

@@ -19,6 +19,10 @@ enum ArrayBuilder<Elemenet> {
         expression
     }
     
+    static func buildOptional(_ component: [Elemenet]?) -> [Elemenet] {
+        component ?? [ ]
+    }
+    
     static func buildArray(_ components: [ [ Elemenet ] ]) -> [ Elemenet ] {
         components.flatMap(\.self)
     }

@@ -10,22 +10,64 @@ import SwiftUI
 struct SettingsScene : Scene {
     var body: some Scene {
         Settings {
-            TabView {
-                AppSettingsTab()
-                WebServiceSettingsTab()
-                InferenceServiceSettingsTab()
-            }
-            .formStyle(.grouped)
-            .applying {
-                if #available(macOS 26, *) {
-                    $0.windowResizeAnchor(.leading)
+            Group {
+                if #available(macOS 15.0, *) {
+                    navigation
                 } else {
-                    $0
+                    legacyNavigation
                 }
             }
-            .windowResizeBehavior(.enabled)
             .alertable()
         }
         .windowResizability(.contentMinSize)
+    }
+}
+
+fileprivate extension SettingsScene {
+    @available(macOS 15.0, *)
+    @ViewBuilder
+    var navigation : some View {
+        TabView {
+            Tab(AppSettingsForm.self) {
+                AppSettingsForm()
+            }
+            
+            Tab(WebServiceSettingsForm.self) {
+                WebServiceSettingsForm()
+            }
+            
+            Tab(InferenceServiceSettingsForm.self) {
+                InferenceServiceSettingsForm()
+            }
+        }
+        .formStyle(.grouped)
+        .applying {
+            if #available(macOS 26, *) {
+                $0.windowResizeAnchor(.leading)
+            } else {
+                $0
+            }
+        }
+        .windowResizeBehavior(.enabled)
+    }
+    
+    @ViewBuilder
+    var legacyNavigation : some View {
+        TabView {
+            AppSettingsForm()
+                .tabItem {
+                    Label(AppSettingsForm.self)
+                }
+            
+            WebServiceSettingsForm()
+                .tabItem {
+                    Label(WebServiceSettingsForm.self)
+                }
+            
+            InferenceServiceSettingsForm()
+                .tabItem {
+                    Label(InferenceServiceSettingsForm.self)
+                }
+        }
     }
 }
