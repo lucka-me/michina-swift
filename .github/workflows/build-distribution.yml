@@ -1,4 +1,4 @@
-name: Build Release
+name: Build Distribution
 
 on:
   push:
@@ -276,20 +276,12 @@ jobs:
         run: |
           sleep 30s
 
-          mkdir -p ${{ env.APP_STORE_TEXT_PATH }}
-          xcrun altool --beta-app-store-text ${{ env.APP_STORE_TEXT_PATH }} --download  \
-            --apple-id ${{ env.APP_IDENTIFIER }} --platform macos                       \
-            --bundle-short-version-string '${{ steps.version.outputs.version }}'        \
-            --bundle-version '${{ steps.version.outputs.build }}'                       \
-            --api-key ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}                       \
-            --api-issuer ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
-
           testFlightTextDirectory=${{ env.APP_STORE_TEXT_PATH }}/beta-${{ env.APP_IDENTIFIER }}/upload/MACOS
           mkdir -p $testFlightTextDirectory
 
           for localization in AppStoreConnect/TestFlight/*
           do
-            textFile=$testFlightTextDirectory/$(basename $localization)
+            textFile=$testFlightTextDirectory/$(basename $localization).txt
             touch $textFile
             echo "\"whatsNew\" = \"$(sed 's/"/\\"/g' $localization/changelog.txt)\";" >> $textFile
           done

@@ -1,0 +1,165 @@
+name: Build Archive
+
+on:
+  push:
+    branches-ignore:
+      - main
+    paths:
+      - Magearna/**
+      - Michina/**
+      - ONNXRuntime/**
+      - Tokenizers/**
+      - '!**.md'
+  workflow_dispatch:
+
+jobs:
+  build-xcframeworks:
+    name: Build XCFrameworks
+    uses: ./.github/workflows/build-xcframeworks.yml
+
+  build-machina:
+    name: Build Michina
+    runs-on: macos-27
+    needs:
+      - build-xcframeworks
+    env:
+      XCODE_WORKSPACE: ${{ github.workspace }}/Michina.xcworkspace
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          submodules: recursive
+      - name: Setup Xcode Cache
+        id: cache-tokenizers
+        uses: actions/cache@v6
+        with:
+          key: cache-xcode
+          path: DerivedData
+
+      - name: Install Tools
+        run: |
+          gem install xcpretty
+          brew install git-tools
+
+      - name: Prepare Paths
+        id: paths
+        env:
+          ARTIFACTS_PATH: ${{ runner.temp }}/Artifacts
+          DERIVED_DATA_PATH: ${{ github.workspace }}/DerivedData
+          SECRETS_PATH: ${{ runner.temp }}/Secrets
+        run: |
+          mkdir -p ${{ env.ARTIFACTS_PATH }}
+          echo 'artifacts=${{ env.ARTIFACTS_PATH }}' >> $GITHUB_OUTPUT
+
+          mkdir -p ${{ env.DERIVED_DATA_PATH }}
+          echo 'derived-data=${{ env.DERIVED_DATA_PATH }}' >> $GITHUB_OUTPUT
+
+          mkdir -p ${{ env.SECRETS_PATH }}
+          echo 'secrets=${{ env.SECRETS_PATH }}' >> $GITHUB_OUTPUT
+
+      - name: Restore ONNXRuntime XCFrameworks Cache
+        uses: actions/cache@v6
+        with:
+          key: ${{ needs.build-xcframeworks.outputs.onnxruntime }}
+          path: ONNXRuntime/Frameworks/onnxruntime/onnxruntime.xcframework
+          fail-on-cache-miss: true
+
+      - name: Restore Tokenizers XCFrameworks Cache
+        uses: actions/cache@v6
+        with:
+          key: ${{ needs.build-xcframeworks.outputs.tokenizers }}
+          path: |
+            Tokenizers/Frameworks/tokenizers/tokenizers.xcframework
+            Tokenizers/Sources/Tokenizers/*bridge.rs.*
+          fail-on-cache-miss: true
+
+      - name: Setup Secrets
+        id: secrets
+        env:
+          MAC_DEVELOPMENT_CERTIFICATE_PATH: ${{ steps.paths.outputs.secrets }}/mac-development.p12
+          DEVELOPER_ID_CERTIFICATE_PATH: ${{ steps.paths.outputs.secrets }}/developer-id.p12
+          APPLE_DISTRIBUTION_CERTIFICATE_PATH: ${{ steps.paths.outputs.secrets }}/apple-distribution.p12
+          MAC_INSTALLER_DISTRIBUTION_CERTIFICATE_PATH: ${{ steps.paths.outputs.secrets }}/mac-installer-distribution.p12
+          KEYCHAIN_PATH: ${{ steps.paths.outputs.secrets }}/build.keychain
+
+          APP_STORE_CONNECT_API_KEY_PATH: >
+            ${{ steps.paths.outputs.secrets }}/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8
+        run: |
+          KEYCHAIN_PASSWORD=$(openssl rand -base64 12)
+
+          security create-keychain -p $KEYCHAIN_PASSWORD ${{ env.KEYCHAIN_PATH }}
+          security set-keychain-settings -lut 21600 ${{ env.KEYCHAIN_PATH }}
+          security unlock-keychain -p $KEYCHAIN_PASSWORD ${{ env.KEYCHAIN_PATH }}
+
+          echo -n ${{ secrets.XCODE_MAC_DEVELOPMENT_CERTIFICATE }}            \
+            | base64 --decode -o ${{ env.MAC_DEVELOPMENT_CERTIFICATE_PATH }}
+          security import ${{ env.MAC_DEVELOPMENT_CERTIFICATE_PATH }}     \
+            -P ${{ secrets.XCODE_MAC_DEVELOPMENT_CERTIFICATE_PASSWORD }}  \
+            -t cert -f pkcs12                                             \
+            -A -k ${{ env.KEYCHAIN_PATH }}
+
+          echo -n ${{ secrets.XCODE_MAC_INSTALLER_DISTRIBUTION_CERTIFICATE }}           \
+            | base64 --decode -o ${{ env.MAC_INSTALLER_DISTRIBUTION_CERTIFICATE_PATH }}
+          security import ${{ env.MAC_INSTALLER_DISTRIBUTION_CERTIFICATE_PATH }}    \
+            -P ${{ secrets.XCODE_MAC_INSTALLER_DISTRIBUTION_CERTIFICATE_PASSWORD }} \
+            -t cert -f pkcs12                                                       \
+            -A -k ${{ env.KEYCHAIN_PATH }}
+
+          security set-key-partition-list -S apple-tool:,apple: ${{ env.KEYCHAIN_PATH }}
+          security list-keychain -d user -s ${{ env.KEYCHAIN_PATH }}
+
+      - name: Prepare Packages
+        run: |
+          Magearna/Scripts/prepare-proto.sh
+
+          SPM_SECURITY_PATH=~/Library/org.swift.swiftpm/security
+          mkdir -p $SPM_SECURITY_PATH
+          cp .github/security/plugins.json $SPM_SECURITY_PATH
+
+      - name: Resolve Package Dependencies
+        run: |
+          xcodebuild -resolvePackageDependencies                      \
+            -workspace ${{ env.XCODE_WORKSPACE }}                     \
+            -derivedDataPath ${{ steps.paths.outputs.derived-data }}  \
+            -scheme Michina                                           \
+            -onlyUsePackageVersionsFromResolvedFile                   \
+            -hideShellScriptEnvironment
+
+      - name: Restore Modification Time
+        env:
+          CHECKOUTS_PATH: ${{ steps.paths.outputs.derived-data }}/SourcePackages/checkouts
+        run: |
+          git restore-mtime
+          for path in ${{ env.CHECKOUTS_PATH }}/*
+          do
+            git restore-mtime -C $path
+          done
+          defaults write com.apple.dt.XCBuild IgnoreFileSystemDeviceInodeChanges -bool YES
+
+      - name: Archive
+        id: archive
+        env:
+          ARCHIVE_PATH: ${{ runner.temp }}/Michina.xcarchive
+        # FIXME: xcodebuild still compiles lot of files with cached derived data
+        run: |
+          set -o pipefail
+
+          xcodebuild archive                                          \
+            -workspace ${{ env.XCODE_WORKSPACE }}                     \
+            -scheme Michina                                           \
+            -destination generic/platform=macOS                       \
+            -archivePath ${{ env.ARCHIVE_PATH }}                      \
+            -derivedDataPath ${{ steps.paths.outputs.derived-data }}  \
+            COMPILATION_CACHE_ENABLE_CACHING=1                        \
+            -hideShellScriptEnvironment                               \
+            | xcpretty
+
+          ditto -c -k --keepParent ${{ env.ARCHIVE_PATH }} ${{ env.ARCHIVE_PATH }}.zip
+          echo 'archive-path=${{ env.ARCHIVE_PATH }}' >> $GITHUB_OUTPUT
+
+      - name: Upload Archive
+        uses: actions/upload-artifact@v7
+        with:
+          path: ${{ steps.archive.outputs.archive-path }}.zip
+          archive: false
