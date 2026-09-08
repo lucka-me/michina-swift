@@ -19,7 +19,7 @@ jobs:
 
   build-machina:
     name: Build Michina
-    runs-on: macos-27
+    runs-on: xcode-27
     needs:
       - build-xcframeworks
     env:
