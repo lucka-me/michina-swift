@@ -9,12 +9,12 @@
 Immich Machine Learning Server on macOS.
 
 [![Line of Code](https://www.aschey.tech/tokei/github/lucka-me/michina-swift)](./)
-[![Build Release][workflow-build-release-badge]][workflow-build-release]  
+[![Build Distribution][workflow-build-distribution-badge]][workflow-build-distribution]  
 [![Download Release][release-download-badge]](https://github.com/lucka-me/michina-swift/releases)
 [![TestFlight](https://img.shields.io/badge/TestFlight-join-blue)](https://testflight.apple.com/join/rJP9acvk)
 
-[workflow-build-release]: https://github.com/lucka-me/michina-swift/actions/workflows/build-release.yml
-[workflow-build-release-badge]: https://github.com/lucka-me/michina-swift/actions/workflows/build-release.yml/badge.svg
+[workflow-build-distribution]: https://github.com/lucka-me/michina-swift/actions/workflows/build-distribution.yml
+[workflow-build-distribution-badge]: https://github.com/lucka-me/michina-swift/actions/workflows/build-distribution.yml/badge.svg
 [release-download-badge]: https://img.shields.io/github/downloads/lucka-me/michina-swift/total
 
 **[Download from the latest Release](https://github.com/lucka-me/michina-swift/releases/latest)**
