@@ -3,6 +3,9 @@ Welcome to Michina 1.1.0 Beta.
 The first release, 1.0.0, has been launched. You can download it from the Releases of the GitHub repository.
 If you like Michina, buy it from App Store as a tip!
 
-Build #57
-- Added: App Intents to start / stop / toggle the Web Service, actions available in Spotlight and Shortcut
+Build #60
+- Changed: Build for macOS Golden Gate 27
+
+Build #58
+- Added: App Intents to start / stop / toggle the Web Service, actions available in Spotlight and Shortcut (#1)
 - Changed: Improve Endpoint field in Inference Service Settings
