@@ -92,9 +92,9 @@ jobs:
         run: |
           KEYCHAIN_PASSWORD=$(openssl rand -hex 12)
 
-          security -v create-keychain -p $KEYCHAIN_PASSWORD ${{ env.KEYCHAIN_PATH }}
-          security -v set-keychain-settings -lut 21600 ${{ env.KEYCHAIN_PATH }}
-          security -v unlock-keychain -p $KEYCHAIN_PASSWORD ${{ env.KEYCHAIN_PATH }}
+          security create-keychain -p $KEYCHAIN_PASSWORD ${{ env.KEYCHAIN_PATH }}
+          security set-keychain-settings -lut 21600 ${{ env.KEYCHAIN_PATH }}
+          security unlock-keychain -p $KEYCHAIN_PASSWORD ${{ env.KEYCHAIN_PATH }}
 
           echo -n ${{ secrets.XCODE_MAC_DEVELOPMENT_CERTIFICATE }}            \
             | base64 --decode -o ${{ env.MAC_DEVELOPMENT_CERTIFICATE_PATH }}
