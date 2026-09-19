@@ -136,7 +136,7 @@ jobs:
         env:
           XCODE_PROJECT_FILE: Michina/Michina.xcodeproj/project.pbxproj
         run: |
-          BUILD_NUMBER=$((57+${{ github.run_number }}))
+          BUILD_NUMBER=$((55+${{ github.run_number }}))
           echo 'Set build number to $BUILD_NUMBER'
           sed -i '' 's/CURRENT_PROJECT_VERSION = .*/CURRENT_PROJECT_VERSION = $BUILD_NUMBER;/g' \
             ${{ env.XCODE_PROJECT_FILE }}
