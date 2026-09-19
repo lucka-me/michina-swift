@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Vision
 
 public protocol PointRepresentable {
     init(x: CGFloat, y: CGFloat)
@@ -15,16 +14,12 @@ public protocol PointRepresentable {
     var y: CGFloat { get }
 }
 
-extension PointRepresentable {
-    func distance(to other: Self) -> Double {
+public extension PointRepresentable {
+    func distance(to other: Self) -> CGFloat {
         hypot(other.x - self.x, other.y - self.y)
     }
 }
 
 extension CGPoint : PointRepresentable {
-    
-}
-
-extension NormalizedPoint : PointRepresentable {
     
 }

@@ -14,7 +14,7 @@ then
     CXXBRIDGE_EXECUTABLE=$(dirname $CARGO_EXECUTABLE)/cxxbridge
 fi
 
-export MACOSX_DEPLOYMENT_TARGET=15.0
+export MACOSX_DEPLOYMENT_TARGET=12.0
 
 sourcePath=$currentDirectory/source
 cd $sourcePath && $CARGO_EXECUTABLE build --release

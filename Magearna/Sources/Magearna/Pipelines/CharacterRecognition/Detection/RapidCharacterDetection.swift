@@ -8,7 +8,7 @@
 import Accelerate
 import CoreImage
 import ONNXRuntime
-import Vision
+import VisionDeployment
 
 struct RapidCharacterDetection : CharacterDetectionFunction {
     private let session: InferenceSession
@@ -69,7 +69,7 @@ fileprivate extension RapidCharacterDetection {
         static let batchSize: NSNumber = 1
         static let channelCount: NSNumber = 3
         
-        static let expandRatio = 1.0
+        static let expandRatio = 1.6
         
         static func inputShape(for image: CGImage) -> [ NSNumber ] {
             [
@@ -159,10 +159,10 @@ fileprivate extension RapidCharacterDetection {
             return [ ]
         }
         
-        let confideShncesape = try confidencesValue.tensorTypeAndShapeInfo().shape
+        let confidencesShape = try confidencesValue.tensorTypeAndShapeInfo().shape
         let bufferSize = vImage.Size(
-            width: confideShncesape[3].intValue,
-            height: confideShncesape[2].intValue
+            width: confidencesShape[3].intValue,
+            height: confidencesShape[2].intValue
         )
         
         let pixelFormat = vImage.PlanarF.self
@@ -184,47 +184,25 @@ fileprivate extension RapidCharacterDetection {
             ),
             destination: dilatedBuffer
         )
-        guard
-            let cgImage = dilatedBuffer.makeCGImage(
-                cgImageFormat: .init(
-                    bitsPerComponent: 32,
-                    bitsPerPixel: 32,
-                    colorSpace: .init(name: CGColorSpace.linearGray)!,
-                    bitmapInfo: .init(
-                        alpha: .none,
-                        component: .float,
-                        byteOrder: .order32Host
-                    )
-                )!
-            )
-        else {
-            throw .runtime("Unable to create binary CGImage.")
-        }
         
-        let imageSize = CGSize(width: cgImage.width, height: cgImage.height)
+        let contours = try await ContoursVision.detect(in: dilatedBuffer)
+        let bufferImageSize = CGSize(width: bufferSize.width, height: bufferSize.height)
         
-        // Flip vertically to match the coordinate system of output.
-        let handler = ImageRequestHandler(cgImage, orientation: .downMirrored)
-        var request = DetectContoursRequest()
-        request.detectsDarkOnLight = false
-        let contours = try await handler.perform(request)
-        return contours.topLevelContours.map { contour in
+        return contours.map { contour in
             // Iterate every pixel in the bounding box, check if it's inside the contour, then accumulate
-            let path = contour.normalizedPath
+            let boundingBox = contour.boundingBox(in: bufferImageSize)
             
-            let boundingBox = contour.boundingBox
-                .toImageCoordinates(imageSize)
-            let rowRange = (Int(boundingBox.minY) ..< Int(boundingBox.maxY))
-            let colRange = (Int(boundingBox.minX) ..< Int(boundingBox.maxX))
+            let rowRange = Int(boundingBox.minY) ..< Int(boundingBox.maxY)
+            let colRange = Int(boundingBox.minX) ..< Int(boundingBox.maxX)
             let accumulated: (count: Int, confidence: Double) = rowRange.reduce(
                 into: (0, 0.0)
             ) { accumulated, row in
                 accumulated = colRange.reduce(into: accumulated) { accumulated, col in
                     let point = CGPoint(
-                        x: .init(col) / imageSize.width,
-                        y: .init(row) / imageSize.height
+                        x: .init(col) / bufferImageSize.width,
+                        y: .init(row) / bufferImageSize.height
                     )
-                    guard path.contains(point) else {
+                    guard contour.contains(normalizedPoint: point) else {
                         return
                     }
                     accumulated.count += 1
@@ -234,84 +212,14 @@ fileprivate extension RapidCharacterDetection {
                 }
             }
             
-            let boundingRectangle = contour.minimalBoundingRectangle()
             return .init(
                 confidence: .init(accumulated.confidence / .init(accumulated.count)),
-                // The image was flipped vertically, but the coordinate system of contour remains,
-                // the "bottom" and "top" is in the opposite side
-                item: .init(
-                    topLeft: boundingRectangle.bottomLeft
-                        .toImageCoordinates(originalImageSize),
-                    topRight: boundingRectangle.bottomRight
-                        .toImageCoordinates(originalImageSize),
-                    bottomRight: boundingRectangle.topRight
-                        .toImageCoordinates(originalImageSize),
-                    bottomLeft: boundingRectangle.topLeft
-                        .toImageCoordinates(originalImageSize)
+                item: contour.minimalBounding(
+                    in: originalImageSize,
+                    expandBy: StaticConfigurations.expandRatio
                 )
-                .expand(by: StaticConfigurations.expandRatio)
             )
         }
-    }
-}
-
-fileprivate extension CharacterRecognitionInferencePipeline.Output.Rectangle {
-    func expand(by ratio: Double) -> Self {
-        let distance = self.area * ratio / self.perimeter
-        return .init(
-            topLeft: topLeft.offset(a: bottomLeft, b: topRight, by: distance),
-            topRight: topRight.offset(a: topLeft, b: bottomRight, by: distance),
-            bottomRight: bottomRight.offset(a: topRight, b: bottomLeft, by: distance),
-            bottomLeft: bottomLeft.offset(a: bottomRight, b: topLeft, by: distance)
-        )
-    }
-}
-
-fileprivate extension CGPoint {
-    func offset(a: Self, b: Self, by distance: Double) -> Self {
-        let dx1 = self.x - a.x
-        let dy1 = self.y - a.y
-        
-        let a1: Double, b1: Double, c1: Double
-        if dx1.isZero {
-            a1 = 1
-            b1 = 0
-            c1 = dy1 > 0 ? -distance : distance
-        } else if dy1.isZero {
-            a1 = 0
-            b1 = 1
-            c1 = dx1 > 0 ? distance : -distance
-        } else {
-            a1 = dy1
-            b1 = -dx1
-            c1 = -distance * hypot(dx1, dy1)
-        }
-        
-        let dx2 = b.x - self.x
-        let dy2 = b.y - self.y
-        
-        let a2: Double, b2: Double, c2: Double
-        if dx2.isZero {
-            a2 = 1
-            b2 = 0
-            c2 = dy2 > 0 ? -distance : distance
-        } else if dy2.isZero {
-            a2 = 0
-            b2 = 1
-            c2 = dx2 > 0 ? distance : -distance
-        } else {
-            a2 = dy2
-            b2 = -dx2
-            c2 = -distance * hypot(dx2, dy2)
-        }
-        
-        let x = (b1 * c2 - b2 * c1) / (a1 * b2 - a2 * b1)
-        let y = (a2 * c1 - a1 * c2) / (a1 * b2 - a2 * b1)
-        
-        return .init(
-            x: self.x + x,
-            y: self.y + y
-        )
     }
 }
 

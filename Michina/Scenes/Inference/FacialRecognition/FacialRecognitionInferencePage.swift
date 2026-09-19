@@ -1,5 +1,5 @@
 //
-//  FacialRecognitionInferenceTab.swift
+//  FacialRecognitionInferencePage.swift
 //  Michina
 //
 //  Created by Lucka on 2026-05-29.
@@ -8,7 +8,7 @@
 import Magearna
 import SwiftUI
 
-struct FacialRecognitionInferenceTab : TabContent {
+struct FacialRecognitionInferencePage : View {
     @Environment(\.alert) private var alert
     
     @State private var values = ViewValues()
@@ -48,46 +48,40 @@ struct FacialRecognitionInferenceTab : TabContent {
         }
     }
     
-    var body: some TabContent<InferenceModelSuite.Category> {
-        Tab(
-            Self.category.titleKey,
-            systemImage: Self.category.systemImage,
-            value: Self.category
-        ) {
-            List {
-                ForEach(outputs, content: section(output:))
+    var body: some View {
+        List {
+            ForEach(outputs, content: section(output:))
+        }
+        .environment(
+            \.similarityMinimalDistance,
+             .init(values.similarityMinimalDistance)
+        )
+        .listStyle(.inset)
+        .frame(minWidth: 300)
+        .toolbar(content: toolbarContent)
+        .inspector(isPresented: $isInspectorPresented) {
+            Form {
+                modelsSection
+                inputSections
+                outputSection
             }
-            .environment(
-                \.similarityMinimalDistance,
-                 .init(values.similarityMinimalDistance)
-            )
-            .listStyle(.inset)
-            .frame(minWidth: 300)
-            .toolbar(content: toolbarContent)
-            .inspector(isPresented: $isInspectorPresented) {
-                Form {
-                    modelsSection
-                    inputSections
-                    outputSection
-                }
-                .formStyle(.grouped)
-            }
+            .formStyle(.grouped)
         }
     }
 }
 
-extension FacialRecognitionInferenceTab {
+extension FacialRecognitionInferencePage {
     static let category = InferenceModelSuite.Category.facialRecognition
 }
 
-fileprivate extension FacialRecognitionInferenceTab {
+fileprivate extension FacialRecognitionInferencePage {
     static let detectionModels = InferenceModelSuite.all[category]!
         .compactMap { $0.models[.detection] }
     static let recognitionModels = InferenceModelSuite.all[category]!
         .compactMap { $0.models[.recognition] }
 }
 
-fileprivate extension FacialRecognitionInferenceTab {
+fileprivate extension FacialRecognitionInferencePage {
     @MainActor
     @Observable
     final class ViewValues {
@@ -117,7 +111,7 @@ fileprivate extension FacialRecognitionInferenceTab {
     
     @ViewBuilder
     var modelsSection: some View {
-        Section("FacialRecognitionInferenceTab.Inspector.Models") {
+        Section("FacialRecognitionInferencePage.Inspector.Models") {
             Picker(
                 InferenceModel.Category.detection.titleKey,
                 selection: $detectionModel
@@ -141,7 +135,7 @@ fileprivate extension FacialRecognitionInferenceTab {
     
     @ViewBuilder
     var inputSections: some View {
-        Section("FacialRecognitionInferenceTab.Inspector.Input.Photo") {
+        Section("FacialRecognitionInferencePage.Inspector.Input.Photo") {
             UnifiedPhotoPicker(selection: $images) {
                 if let image = images.first?.image {
                     image
@@ -168,10 +162,10 @@ fileprivate extension FacialRecognitionInferenceTab {
             .buttonStyle(.plain)
         }
         
-        Section("FacialRecognitionInferenceTab.Inspector.Input.Parameters") {
+        Section("FacialRecognitionInferencePage.Inspector.Input.Parameters") {
             VStack {
                 LabeledContent(
-                    "FacialRecognitionInferenceTab.Inspector.Input.Parameters.DetectionMinimalConfidence",
+                    "FacialRecognitionInferencePage.Inspector.Input.Parameters.DetectionMinimalConfidence",
                     value: values.detectionMinimalConfidence,
                     format: .number
                 )
@@ -186,7 +180,7 @@ fileprivate extension FacialRecognitionInferenceTab {
         Section {
             VStack {
                 LabeledContent(
-                    "FacialRecognitionInferenceTab.Inspector.Output.SimilarityMinimalDistance",
+                    "FacialRecognitionInferencePage.Inspector.Output.SimilarityMinimalDistance",
                     value: values.similarityMinimalDistance,
                     format: .number
                 )
@@ -194,14 +188,14 @@ fileprivate extension FacialRecognitionInferenceTab {
                     .labelsHidden()
             }
         } header: {
-            Text("FacialRecognitionInferenceTab.Inspector.Output")
+            Text("FacialRecognitionInferencePage.Inspector.Output")
         } footer: {
-            Text("FacialRecognitionInferenceTab.Inspector.Output.Footer")
+            Text("FacialRecognitionInferencePage.Inspector.Output.Footer")
         }
     }
 }
 
-fileprivate extension FacialRecognitionInferenceTab {
+fileprivate extension FacialRecognitionInferencePage {
     typealias Pipeline = FacialRecognitionInferencePipeline
     
     @ToolbarContentBuilder
@@ -209,7 +203,7 @@ fileprivate extension FacialRecognitionInferenceTab {
         if !images.isEmpty {
             ToolbarItem(placement: .primaryAction) {
                 Button(
-                    "FacialRecognitionInferenceTab.Action.RunInference",
+                    "FacialRecognitionInferencePage.Action.RunInference",
                     systemImage: "play",
                     role: .BackDeployed.confirm
                 ) {
@@ -228,7 +222,7 @@ fileprivate extension FacialRecognitionInferenceTab {
         if !outputs.isEmpty {
             ToolbarItem(placement: .destructiveAction) {
                 Button(
-                    "FacialRecognitionInferenceTab.Action.ClearOutputHistory",
+                    "FacialRecognitionInferencePage.Action.ClearOutputHistory",
                     systemImage: "trash",
                     role: .destructive
                 ) {
@@ -325,7 +319,7 @@ fileprivate extension FacialRecognitionInferenceTab {
     }
 }
 
-fileprivate extension FacialRecognitionInferenceTab {
+fileprivate extension FacialRecognitionInferencePage {
     struct Output : Sendable, Identifiable {
         let id = UUID()
         let index: Int
@@ -372,14 +366,14 @@ fileprivate extension FacialRecognitionInferenceTab {
                 
                 Text(output.elapse, format: .elapse)
                 Divider()
-                Text("FacialRecognitionInferenceTab.Output.FaceCount \(output.faces.count)")
+                Text("FacialRecognitionInferencePage.Output.FaceCount \(output.faces.count)")
             }
             .monospaced()
         }
     }
 }
 
-fileprivate extension FacialRecognitionInferenceTab {
+fileprivate extension FacialRecognitionInferencePage {
     struct OutputView : View {
         @Binding private var selection: PresentableFace?
         
@@ -545,7 +539,7 @@ fileprivate extension FacialRecognitionInferenceTab {
     }
 }
 
-fileprivate extension FacialRecognitionInferenceTab.PresentableFace {
+fileprivate extension FacialRecognitionInferencePage.PresentableFace {
     func distance(to other: Self) -> Float {
         let (dot, normSelf, normOther) = zip(self.data.embedding, other.data.embedding)
             .reduce(

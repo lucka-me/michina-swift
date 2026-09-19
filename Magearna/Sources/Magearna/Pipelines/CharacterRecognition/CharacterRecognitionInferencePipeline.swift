@@ -7,6 +7,7 @@
 
 import CoreImage
 import ONNXRuntime
+import Geometry
 
 public actor CharacterRecognitionInferencePipeline : InferencePipeline {
     public static let category = InferenceModelSuite.Category.characterRecognition
@@ -34,9 +35,13 @@ public actor CharacterRecognitionInferencePipeline : InferencePipeline {
         self.recognitionOutputs.removeAll()
         
         guard input.recognitionModel.provider != .apple else {
+            guard #available(macOS 15.0, *) else {
+                fatalError("Models by Apple requires macOS 15")
+            }
             let analyzer = AppleVisionCharacterAnalyzer()
             self.detection = analyzer
             self.recognition = analyzer
+            
             return
         }
         
@@ -50,6 +55,9 @@ public actor CharacterRecognitionInferencePipeline : InferencePipeline {
             }
             self.detection = RapidCharacterDetection(session: detectionSession)
         case .apple:
+            guard #available(macOS 15.0, *) else {
+                fatalError("Models by Apple requires macOS 15")
+            }
             self.detection = AppleVisionCharacterDetectionAnalyzer()
         }
         
@@ -148,6 +156,18 @@ public extension CharacterRecognitionInferencePipeline {
             public let topRight: CGPoint
             public let bottomRight: CGPoint
             public let bottomLeft: CGPoint
+            
+            public init(
+                topLeft: CGPoint,
+                topRight: CGPoint,
+                bottomRight: CGPoint,
+                bottomLeft: CGPoint
+            ) {
+                self.topLeft = topLeft
+                self.topRight = topRight
+                self.bottomRight = bottomRight
+                self.bottomLeft = bottomLeft
+            }
         }
         
         public let characterBoxes: [ CharacterBox ]

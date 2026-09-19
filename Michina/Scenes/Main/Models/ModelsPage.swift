@@ -1,5 +1,5 @@
 //
-//  ModelsTab.swift
+//  ModelsPage.swift
 //  Michina
 //
 //  Created by Lucka on 2026-05-19.
@@ -8,7 +8,7 @@
 import Magearna
 import SwiftUI
 
-struct ModelsTab : TabContent {
+struct ModelsPage : View {
     @Environment(\.alert) private var alert
     
     @State private var cache = InferenceService.default.cache
@@ -18,48 +18,49 @@ struct ModelsTab : TabContent {
     @State private var isInspectorPresented = true
     @State private var selection: InferenceModelSuite? = nil
     
-    var body: some TabContent<Never> {
-        Tab(Self.titleKey, systemImage: Self.systemImage) {
-            List(selection: $selection) {
-                if searchText.isEmpty {
-                    ForEach(InferenceModelSuite.Category.allCases) { category in
-                        Section {
-                            ForEach(
-                                InferenceModelSuite.all[category]!,
-                                content: row(suite:)
-                            )
-                        } header: {
-                            Label(category)
-                        }
+    var body: some View {
+        List(selection: $selection) {
+            if searchText.isEmpty {
+                ForEach(InferenceModelSuite.Category.allCases) { category in
+                    Section {
+                        ForEach(
+                            InferenceModelSuite.all[category]!,
+                            content: row(suite:)
+                        )
+                    } header: {
+                        Label(category)
                     }
+                }
+                .listRowSeparator(.hidden)
+            } else {
+                ForEach(searchResults, content: row(suite:))
                     .listRowSeparator(.hidden)
-                } else {
-                    ForEach(searchResults, content: row(suite:))
-                        .listRowSeparator(.hidden)
-                }
-            }
-            .listStyle(.inset)
-            .searchable(text: $searchText, placement: .toolbar)
-            .frame(minWidth: 300, minHeight: 400)
-            .navigationTitle(Self.titleKey)
-            .navigationSubtitle("ModelsTab.Subtitle \(cache.sessions.count)")
-            .inspector(isPresented: $isInspectorPresented, content: inspectorContent)
-            .onChange(of: selection) {
-                if selection != nil {
-                    isInspectorPresented = true
-                }
             }
         }
-        .badge(cache.sessions.count)
+        .listStyle(.inset)
+        .searchable(text: $searchText, placement: .toolbar)
+        .frame(minWidth: 300, minHeight: 400)
+        .navigationTitle(Self.titleKey)
+        .navigationSubtitle("ModelsPage.Subtitle \(cache.sessions.count)")
+        .inspector(isPresented: $isInspectorPresented, content: inspectorContent)
+        .onChange(of: selection) {
+            if selection != nil {
+                isInspectorPresented = true
+            }
+        }
     }
 }
 
-fileprivate extension ModelsTab {
-    static let titleKey: LocalizedStringKey = "ModelsTab"
+extension ModelsPage : @MainActor LabelableMetatype {
+    static let titleKey: LocalizedStringKey = "ModelsPage"
     static let systemImage: String = "brain"
 }
 
-fileprivate extension ModelsTab {
+extension ModelsPage {
+    static let identifier = "ModelsPage"
+}
+
+fileprivate extension ModelsPage {
     var searchResults: [ InferenceModelSuite ] {
         InferenceModelSuite.all.flatMap { (category, suites) in
             suites.filter {
@@ -69,20 +70,20 @@ fileprivate extension ModelsTab {
     }
 }
 
-fileprivate extension ModelsTab {
+fileprivate extension ModelsPage {
     @ViewBuilder
     func inspectorContent() -> some View {
         if let selection {
             InferenceModelSuiteDetailView(suite: selection)
         } else {
-            Text("ModelsTab.NoSelection")
+            Text("ModelsPage.NoSelection")
                 .font(.system(.title, weight: .semibold))
                 .foregroundStyle(.secondary)
         }
     }
 }
 
-fileprivate extension ModelsTab {
+fileprivate extension ModelsPage {
     @ViewBuilder
     func row(suite: InferenceModelSuite) -> some View {
         VStack(alignment: .leading) {

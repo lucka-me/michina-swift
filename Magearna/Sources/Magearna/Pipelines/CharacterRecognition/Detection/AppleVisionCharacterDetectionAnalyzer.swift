@@ -8,6 +8,7 @@
 import CoreImage
 import Vision
 
+@available(macOS 15.0, *)
 struct AppleVisionCharacterDetectionAnalyzer : CharacterDetectionFunction {
     func detect(
         image: CIImage,
@@ -41,6 +42,7 @@ struct AppleVisionCharacterDetectionAnalyzer : CharacterDetectionFunction {
     }
 }
 
+@available(macOS 15.0, *)
 fileprivate extension AppleVisionCharacterDetectionAnalyzer {
     enum StaticConfigurations {
         static let request: DetectTextRectanglesRequest = {

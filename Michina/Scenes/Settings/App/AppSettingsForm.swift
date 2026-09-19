@@ -1,5 +1,5 @@
 //
-//  AppSettingsTab.swift
+//  AppSettingsForm.swift
 //  Michina
 //
 //  Created by Lucka on 2026-06-08.
@@ -8,31 +8,29 @@
 import SwiftUI
 import ServiceManagement
 
-struct AppSettingsTab : TabContent {
+struct AppSettingsForm : View {
     @Environment(\.alert) private var alert
     
     @State private var settings = AppSettings.shared
     
-    var body: some TabContent<Never> {
-        Tab(Self.titleKey, systemImage: Self.systemImage) {
-            Form {
-                Section {
-                    LaunchAtLoginControls()
-                }
-                
-                iconsSection
+    var body: some View {
+        Form {
+            Section {
+                LaunchAtLoginControls()
             }
-            .frame(minWidth: 300, idealWidth: 300, minHeight: 200)
+            
+            iconsSection
         }
+        .frame(minWidth: 300, idealWidth: 300, minHeight: 200)
     }
 }
 
-extension AppSettingsTab {
-    static let titleKey: LocalizedStringKey = "AppSettingsTab"
+extension AppSettingsForm : @MainActor LabelableMetatype {
+    static let titleKey: LocalizedStringKey = "AppSettingsForm"
     static let systemImage: String = "macwindow"
 }
 
-extension AppSettingsTab {
+extension AppSettingsForm {
     struct LaunchAtLoginControls : View {
         @Environment(\.alert) private var alert
         
@@ -42,11 +40,11 @@ extension AppSettingsTab {
             toggle
             
             if appServiceStatus == .requiresApproval {
-                Text("AppSettingsTab.LaunchAtLogin.RequiresApproval")
+                Text("AppSettingsForm.LaunchAtLogin.RequiresApproval")
                     .foregroundStyle(.yellow)
             }
             
-            Button("AppSettingsTab.LaunchAtLogin.OpenSystemSettings") {
+            Button("AppSettingsForm.LaunchAtLogin.OpenSystemSettings") {
                 SMAppService.openSystemSettingsLoginItems()
             }
             .buttonStyle(.link)
@@ -54,32 +52,32 @@ extension AppSettingsTab {
     }
 }
 
-fileprivate extension AppSettingsTab {
+fileprivate extension AppSettingsForm {
     @ViewBuilder
     var iconsSection: some View {
         Section {
             Toggle(
-                "AppSettingsTab.Icon.PresentRegularActivation",
+                "AppSettingsForm.Icon.PresentRegularActivation",
                 isOn: $settings.presentRegularActivation
             )
             Toggle(
-                "AppSettingsTab.Icon.InsertMenuBarExtra",
+                "AppSettingsForm.Icon.InsertMenuBarExtra",
                 isOn: $settings.insertMenuBarExtra
             )
         } footer: {
-            Text("AppSettingsTab.Icons.Footer")
+            Text("AppSettingsForm.Icons.Footer")
             if !settings.presentRegularActivation {
-                Text("AppSettingsTab.Icons.Footer.PresentRegularActivation")
+                Text("AppSettingsForm.Icons.Footer.PresentRegularActivation")
             }
         }
     }
 }
 
-fileprivate extension AppSettingsTab.LaunchAtLoginControls {
+fileprivate extension AppSettingsForm.LaunchAtLoginControls {
     @ViewBuilder
     var toggle: some View {
         Toggle(
-            "AppSettingsTab.LaunchAtLogin.Toggle",
+            "AppSettingsForm.LaunchAtLogin.Toggle",
             isOn: .init(
                 get: { appServiceStatus == .enabled },
                 set: { newValue in

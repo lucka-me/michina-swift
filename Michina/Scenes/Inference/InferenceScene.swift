@@ -11,7 +11,7 @@ import SwiftUI
 struct InferenceScene : Scene {
     var body: some Scene {
         WindowGroup(Self.titleKey, for: Request.self) { $request in
-            InferenceView(request: request)
+            SceneView(request: request)
                 .alertable()
                 .presentedWindowToolbarStyle(.expanded)
         }
@@ -27,7 +27,7 @@ extension InferenceScene {
     }
 }
 
-fileprivate struct InferenceView : View {
+fileprivate struct SceneView : View {
     @State private var category: InferenceModelSuite.Category
     
     private let suiteName: String?
@@ -38,11 +38,52 @@ fileprivate struct InferenceView : View {
     }
     
     var body: some View {
+        if #available(macOS 15, *) {
+            navigation
+        } else {
+            legacyNavigation
+        }
+    }
+    
+    @available(macOS 15, *)
+    @ViewBuilder
+    var navigation: some View {
         TabView(selection: $category) {
-            FacialRecognitionInferenceTab(suiteName: suiteName)
-            SearchInferenceTab(suiteName: suiteName)
-            CharacterRecognitionInferenceTab(suiteName: suiteName)
+            Tab(label: FacialRecognitionInferencePage.category) {
+                FacialRecognitionInferencePage(suiteName: suiteName)
+            }
+            
+            Tab(label: SearchInferencePage.category) {
+                SearchInferencePage(suiteName: suiteName)
+            }
+            
+            Tab(label: CharacterRecognitionInferencePage.category) {
+                CharacterRecognitionInferencePage(suiteName: suiteName)
+            }
         }
         .tabViewStyle(.tabBarOnly)
+    }
+    
+    @ViewBuilder
+    var legacyNavigation: some View {
+        TabView(selection: $category) {
+            FacialRecognitionInferencePage(suiteName: suiteName)
+                .tabItem {
+                    Label(FacialRecognitionInferencePage.category)
+                }
+                .tag(FacialRecognitionInferencePage.category)
+            
+            SearchInferencePage(suiteName: suiteName)
+                .tabItem {
+                    Label(SearchInferencePage.category)
+                }
+                .tag(SearchInferencePage.category)
+            
+            CharacterRecognitionInferencePage(suiteName: suiteName)
+                .tabItem {
+                    Label(CharacterRecognitionInferencePage.category)
+                }
+                .tag(CharacterRecognitionInferencePage.category)
+        }
     }
 }

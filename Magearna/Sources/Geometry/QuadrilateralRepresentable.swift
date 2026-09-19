@@ -10,6 +10,8 @@ import Foundation
 public protocol QuadrilateralRepresentable {
     associatedtype Point: PointRepresentable
     
+    init(topLeft: Point, topRight: Point, bottomRight: Point, bottomLeft: Point)
+    
     var topLeft: Point { get }
     var topRight: Point { get }
     var bottomRight: Point { get }
@@ -22,7 +24,7 @@ public extension QuadrilateralRepresentable {
     }
 }
 
-public extension RectangleRepresentable {
+public extension QuadrilateralRepresentable {
     var boundingBox: CGRect {
         let allX = [ topLeft.x, topRight.x, bottomRight.x, bottomLeft.x ].sorted()
         let allY = [ topLeft.y, topRight.y, bottomRight.y, bottomLeft.y ].sorted()

@@ -1,5 +1,5 @@
 //
-//  InferenceServiceSettingsTab.swift
+//  InferenceServiceSettingsForm.swift
 //  Michina
 //
 //  Created by Lucka on 2026-06-04.
@@ -8,40 +8,38 @@
 import SwiftUI
 import Magearna
 
-struct InferenceServiceSettingsTab : TabContent {
+struct InferenceServiceSettingsForm : View {
     @State var settings = InferenceServiceSettings.shared
     
-    var body: some TabContent<Never> {
-        Tab(Self.titleKey, systemImage: Self.systemImage) {
-            Form {
-                optimizationSection
-                executionProviderSection
-                preloadModelsSection
-                endpointSections
-                cacheSection
-            }
-            .frame(minWidth: 400, idealWidth: 400, minHeight: 400)
+    var body: some View {
+        Form {
+            optimizationSection
+            executionProviderSection
+            preloadModelsSection
+            endpointSections
+            cacheSection
         }
+        .frame(minWidth: 400, idealWidth: 400, minHeight: 400)
     }
 }
 
-fileprivate extension InferenceServiceSettingsTab {
+extension InferenceServiceSettingsForm : @MainActor LabelableMetatype {
     static let titleKey: LocalizedStringKey = "InferenceService"
     static let systemImage: String = "rectangle.stack"
 }
 
-fileprivate extension InferenceServiceSettingsTab {
+fileprivate extension InferenceServiceSettingsForm {
     @ViewBuilder
     var optimizationSection: some View {
         Section {
             Toggle(
-                "InferenceServiceSettingsTab.Optimization.PersistOptimizations",
+                "InferenceServiceSettingsForm.Optimization.PersistOptimizations",
                 isOn: $settings.persistOptimizations
             )
         } header: {
-            Text("InferenceServiceSettingsTab.Optimization")
+            Text("InferenceServiceSettingsForm.Optimization")
         } footer: {
-            Text("InferenceServiceSettingsTab.Optimization.Footer")
+            Text("InferenceServiceSettingsForm.Optimization.Footer")
         }
     }
     
@@ -51,7 +49,7 @@ fileprivate extension InferenceServiceSettingsTab {
         
         Section {
             Picker(
-                "InferenceServiceSettingsTab.ExecutionProvider.EfficientCoreML",
+                "InferenceServiceSettingsForm.ExecutionProvider.EfficientCoreML",
                 selection: $settings.efficientCoreML
             ) {
                 ForEach(
@@ -63,7 +61,7 @@ fileprivate extension InferenceServiceSettingsTab {
             }
             
             Picker(
-                "InferenceServiceSettingsTab.ExecutionProvider.InefficientCoreML",
+                "InferenceServiceSettingsForm.ExecutionProvider.InefficientCoreML",
                 selection: $settings.inefficientCoreML
             ) {
                 ForEach(
@@ -75,7 +73,7 @@ fileprivate extension InferenceServiceSettingsTab {
             }
             
             Picker(
-                "InferenceServiceSettingsTab.ExecutionProvider.NeuralNetworkCoreML",
+                "InferenceServiceSettingsForm.ExecutionProvider.NeuralNetworkCoreML",
                 selection: $settings.neuralNetworkCoreML
             ) {
                 ForEach(
@@ -86,15 +84,15 @@ fileprivate extension InferenceServiceSettingsTab {
                 }
             }
         } header: {
-            Text("InferenceServiceSettingsTab.ExecutionProvider")
+            Text("InferenceServiceSettingsForm.ExecutionProvider")
         } footer: {
-            Text("InferenceServiceSettingsTab.ExecutionProvider.Footer")
+            Text("InferenceServiceSettingsForm.ExecutionProvider.Footer")
         }
         .pickerStyle(.segmented)
     }
 }
 
-fileprivate extension InferenceServiceSettingsTab {
+fileprivate extension InferenceServiceSettingsForm {
     @ViewBuilder
     var preloadModelsSection: some View {
         Section {
@@ -114,15 +112,15 @@ fileprivate extension InferenceServiceSettingsTab {
             
             addPreloadModelMenu
         } header: {
-            Text("InferenceServiceSettingsTab.PreloadModels")
+            Text("InferenceServiceSettingsForm.PreloadModels")
         } footer: {
-            Text("InferenceServiceSettingsTab.PreloadModels.Footer")
+            Text("InferenceServiceSettingsForm.PreloadModels.Footer")
         }
     }
     
     @ViewBuilder
     var addPreloadModelMenu: some View {
-        Menu("InferenceServiceSettingsTab.PreloadModels.Add") {
+        Menu("InferenceServiceSettingsForm.PreloadModels.Add") {
             ForEach(InferenceModelSuite.Category.allCases) { suiteCategory in
                 Section(suiteCategory.titleKey) {
                     ForEach(preloadableSuites(category: suiteCategory)) { suite in
@@ -162,7 +160,7 @@ fileprivate extension InferenceServiceSettingsTab {
             Spacer()
             
             Button(
-                "InferenceServiceSettingsTab.PreloadModels.Remove",
+                "InferenceServiceSettingsForm.PreloadModels.Remove",
                 systemImage: "trash",
                 role: .destructive
             ) {
@@ -191,7 +189,7 @@ fileprivate extension InferenceServiceSettingsTab {
     }
 }
 
-fileprivate extension InferenceServiceSettingsTab {
+fileprivate extension InferenceServiceSettingsForm {
     @ViewBuilder
     var endpointSections: some View {
         Section {
@@ -200,27 +198,27 @@ fileprivate extension InferenceServiceSettingsTab {
                 url: $settings.immichAppEndpointURL
             )
         } header: {
-            Text("InferenceServiceSettingsTab.ImmichAppEndpoint")
+            Text("InferenceServiceSettingsForm.ImmichAppEndpoint")
         } footer: {
-            Text("InferenceServiceSettingsTab.ImmichAppEndpoint.Footer")
+            Text("InferenceServiceSettingsForm.ImmichAppEndpoint.Footer")
         }
     }
 }
 
-fileprivate extension InferenceServiceSettingsTab {
+fileprivate extension InferenceServiceSettingsForm {
     @ViewBuilder
     var cacheSection: some View {
         Section {
             TextField(
-                "InferenceServiceSettingsTab.Cache.Lifespan",
+                "InferenceServiceSettingsForm.Cache.Lifespan",
                 value: $settings.loadedLifespan,
                 format: .number.grouping(.never),
-                prompt: Text("InferenceServiceSettingsTab.Cache.Lifespan.Prompt")
+                prompt: Text("InferenceServiceSettingsForm.Cache.Lifespan.Prompt")
             )
         } header: {
-            Text("InferenceServiceSettingsTab.Cache")
+            Text("InferenceServiceSettingsForm.Cache")
         } footer: {
-            Text("InferenceServiceSettingsTab.Cache.Footer")
+            Text("InferenceServiceSettingsForm.Cache.Footer")
         }
     }
 }
