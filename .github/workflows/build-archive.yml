@@ -82,7 +82,7 @@ jobs:
           DEVELOPER_ID_CERTIFICATE_PATH: ${{ steps.paths.outputs.secrets }}/developer-id.p12
           APPLE_DISTRIBUTION_CERTIFICATE_PATH: ${{ steps.paths.outputs.secrets }}/apple-distribution.p12
           MAC_INSTALLER_DISTRIBUTION_CERTIFICATE_PATH: ${{ steps.paths.outputs.secrets }}/mac-installer-distribution.p12
-          KEYCHAIN_PATH: ${{ steps.paths.outputs.secrets }}/build.keychain
+          KEYCHAIN_PATH: ${{ steps.paths.outputs.secrets }}/build.keychain-db
 
           APP_STORE_CONNECT_API_KEY_PATH: >
             ${{ steps.paths.outputs.secrets }}/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8
@@ -92,7 +92,9 @@ jobs:
           security create-keychain -p "$KEYCHAIN_PASSWORD" ${{ env.KEYCHAIN_PATH }}
           security set-keychain-settings -lu ${{ env.KEYCHAIN_PATH }}
 
-          security list-keychain -d user -s ${{ env.KEYCHAIN_PATH }}
+          security -v list-keychains -d user
+          security -v list-keychains -d user -s ${{ env.KEYCHAIN_PATH }}
+          security -v list-keychains -d user
 
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" ${{ env.KEYCHAIN_PATH }}
 
