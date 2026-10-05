@@ -87,15 +87,14 @@ jobs:
           APP_STORE_CONNECT_API_KEY_PATH: >
             ${{ steps.paths.outputs.secrets }}/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8
         run: |
-          uname -a
-          which security
+          KEYCHAIN_PASSWORD=$(openssl rand -base64 12)
 
-          KEYCHAIN_PASSWORD="lAH05ok8rsiY5ERg"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" ${{ env.KEYCHAIN_PATH }}
+          security set-keychain-settings -lu ${{ env.KEYCHAIN_PATH }}
 
-          security -v create-keychain -p "$KEYCHAIN_PASSWORD" ${{ env.KEYCHAIN_PATH }}
-          security -v set-keychain-settings -lu ${{ env.KEYCHAIN_PATH }}
-          security -v show-keychain-info ${{ env.KEYCHAIN_PATH }}
-          security -v unlock-keychain -p "$KEYCHAIN_PASSWORD" ${{ env.KEYCHAIN_PATH }}
+          security list-keychain -d user -s ${{ env.KEYCHAIN_PATH }}
+
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" ${{ env.KEYCHAIN_PATH }}
 
           echo -n ${{ secrets.XCODE_MAC_DEVELOPMENT_CERTIFICATE }}            \
             | base64 --decode -o ${{ env.MAC_DEVELOPMENT_CERTIFICATE_PATH }}
@@ -111,8 +110,7 @@ jobs:
             -t cert -f pkcs12                                                       \
             -A -k ${{ env.KEYCHAIN_PATH }}
 
-          security set-key-partition-list -S apple-tool:,apple: ${{ env.KEYCHAIN_PATH }}
-          security list-keychain -d user -s ${{ env.KEYCHAIN_PATH }}
+            security set-key-partition-list -S apple-tool:,apple: ${{ env.KEYCHAIN_PATH }}
 
       - name: Prepare Packages
         run: |
