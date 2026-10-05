@@ -92,11 +92,13 @@ jobs:
           security create-keychain -p "$KEYCHAIN_PASSWORD" ${{ env.KEYCHAIN_PATH }}
           security set-keychain-settings -lu ${{ env.KEYCHAIN_PATH }}
 
-          security -v list-keychains -d user
+          security -v list-keychains
           security -v list-keychains -d user -s ${{ env.KEYCHAIN_PATH }}
-          security -v list-keychains -d user
+          security -v list-keychains
 
-          security unlock-keychain -p "$KEYCHAIN_PASSWORD" ${{ env.KEYCHAIN_PATH }}
+          security show-keychain-info ${{ env.KEYCHAIN_PATH }}
+
+          security -v unlock-keychain -p "$KEYCHAIN_PASSWORD" ${{ env.KEYCHAIN_PATH }}
 
           echo -n ${{ secrets.XCODE_MAC_DEVELOPMENT_CERTIFICATE }}            \
             | base64 --decode -o ${{ env.MAC_DEVELOPMENT_CERTIFICATE_PATH }}
