@@ -42,6 +42,7 @@ jobs:
         run: |
           gem install xcpretty
           brew install git-tools
+          xcodebuild -downloadComponent MetalToolchain
 
       - name: Prepare Paths
         id: paths
@@ -89,16 +90,9 @@ jobs:
         run: |
           KEYCHAIN_PASSWORD=$(openssl rand -base64 12)
 
-          security -v create-keychain -p "" ${{ env.KEYCHAIN_PATH }}
-          security -v set-keychain-settings -u ${{ env.KEYCHAIN_PATH }}
-
-          security -v list-keychains
-          security -v list-keychains -d user -s ${{ env.KEYCHAIN_PATH }}
-          security -v list-keychains
-
-          security show-keychain-info ${{ env.KEYCHAIN_PATH }}
-
-          security -v unlock-keychain -p "" ${{ env.KEYCHAIN_PATH }}
+          security create-keychain -p "" ${{ env.KEYCHAIN_PATH }}
+          security set-keychain-settings -u ${{ env.KEYCHAIN_PATH }}
+          security unlock-keychain -p "" ${{ env.KEYCHAIN_PATH }}
 
           echo -n ${{ secrets.XCODE_MAC_DEVELOPMENT_CERTIFICATE }}            \
             | base64 --decode -o ${{ env.MAC_DEVELOPMENT_CERTIFICATE_PATH }}
@@ -114,7 +108,8 @@ jobs:
             -t cert -f pkcs12                                                       \
             -A -k ${{ env.KEYCHAIN_PATH }}
 
-            security set-key-partition-list -S apple-tool:,apple: ${{ env.KEYCHAIN_PATH }}
+          security set-key-partition-list -S apple-tool:,apple: ${{ env.KEYCHAIN_PATH }}
+          security list-keychains -d user -s ${{ env.KEYCHAIN_PATH }}
 
       - name: Prepare Packages
         run: |
