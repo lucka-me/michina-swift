@@ -144,7 +144,7 @@ jobs:
           )
 
           echo "version=$MARKETING_VERSION" >> $GITHUB_OUTPUT
-          echo 'build=$BUILD_NUMBER' >> $GITHUB_OUTPUT
+          echo "build=$BUILD_NUMBER" >> $GITHUB_OUTPUT
 
       - name: Prepare Packages
         run: |
