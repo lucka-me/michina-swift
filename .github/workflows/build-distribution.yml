@@ -19,7 +19,7 @@ jobs:
 
   build-machina:
     name: Build Michina
-    runs-on: macos-26
+    runs-on: xcode-27
     needs:
       - build-xcframeworks
     env:
@@ -41,6 +41,7 @@ jobs:
         run: |
           gem install xcpretty
           brew install git-tools
+          xcodebuild -downloadComponent MetalToolchain
 
       - name: Prepare Paths
         id: paths
@@ -90,11 +91,9 @@ jobs:
           APP_STORE_CONNECT_API_KEY_PATH: >
             ${{ steps.paths.outputs.secrets }}/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8
         run: |
-          KEYCHAIN_PASSWORD=$(openssl rand -hex 12)
-
-          security create-keychain -p $KEYCHAIN_PASSWORD ${{ env.KEYCHAIN_PATH }}
+          security create-keychain -p "" ${{ env.KEYCHAIN_PATH }}
           security set-keychain-settings -lut 21600 ${{ env.KEYCHAIN_PATH }}
-          security unlock-keychain -p $KEYCHAIN_PASSWORD ${{ env.KEYCHAIN_PATH }}
+          security unlock-keychain -p "" ${{ env.KEYCHAIN_PATH }}
 
           echo -n ${{ secrets.XCODE_MAC_DEVELOPMENT_CERTIFICATE }}            \
             | base64 --decode -o ${{ env.MAC_DEVELOPMENT_CERTIFICATE_PATH }}
@@ -136,16 +135,16 @@ jobs:
         env:
           XCODE_PROJECT_FILE: Michina/Michina.xcodeproj/project.pbxproj
         run: |
-          BUILD_NUMBER=$((57+${{ github.run_number }}))
-          echo 'Set build number to $BUILD_NUMBER'
-          sed -i '' 's/CURRENT_PROJECT_VERSION = .*/CURRENT_PROJECT_VERSION = $BUILD_NUMBER;/g' \
+          BUILD_NUMBER=$((53+${{ github.run_number }}))
+          echo "Set build number to $BUILD_NUMBER"
+          sed -i '' "s/CURRENT_PROJECT_VERSION = .*/CURRENT_PROJECT_VERSION = $BUILD_NUMBER;/g" \
             ${{ env.XCODE_PROJECT_FILE }}
           MARKETING_VERSION=$(                                                                            \
             sed -nE 's/\t+MARKETING_VERSION = ([0-9\.]+);/\1/p' ${{ env.XCODE_PROJECT_FILE }} | head -n 1 \
           )
 
           echo "version=$MARKETING_VERSION" >> $GITHUB_OUTPUT
-          echo 'build=$BUILD_NUMBER' >> $GITHUB_OUTPUT
+          echo "build=$BUILD_NUMBER" >> $GITHUB_OUTPUT
 
       - name: Prepare Packages
         run: |
