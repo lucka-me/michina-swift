@@ -419,53 +419,40 @@ fileprivate extension CharacterRecognitionInferenceTab {
         }
         
         var body: some View {
-            RoundedRectangle(cornerRadius: 6)
-                .size(
-                    width: characterBox.data.rectangle.item.width * scale,
-                    height: characterBox.data.rectangle.item.height * scale,
-                    anchor: .center
-                )
-                .rotation(rotationAngle, anchor: .center)
-                .stroke(frameColor, lineWidth: 4)
-                .opacity(opacity)
-                .contentShape(
-                    .rect(cornerRadius: 6)
-                    .rotation(rotationAngle, anchor: .center)
-                )
-                .onHover {
-                    // TODO: Fix hovering
-                    // contentShape seems not work well with rotated shape, maybe use
-                    // onContinuousHover + CGPath to track if it's inside the shape.
-                    if $0 {
-                        hovering = characterBox.id
-                    } else if hovering == characterBox.id {
-                        hovering = nil
+            ZStack(alignment: .center) {
+                RoundedRectangle(cornerRadius: 6)
+                    .stroke(frameColor, lineWidth: 4)
+                    .onHover {
+                        if $0 {
+                            hovering = characterBox.id
+                        } else if hovering == characterBox.id {
+                            hovering = nil
+                        }
                     }
-                }
-                .frame(
-                    width: boundingBox.width * scale,
-                    height: boundingBox.height * scale
-                )
-                .safeAreaInset(edge: .bottom, spacing: 4) {
-                    VStack(spacing: 4) {
-                        Text(characterBox.data.text.item)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(
-                                .background.opacity(0.8),
-                                in: .rect(cornerRadius: 6)
-                            )
-                        
+                    .frame(
+                        width: characterBox.data.rectangle.item.width * scale,
+                        height: characterBox.data.rectangle.item.height * scale
+                    )
+                    .rotationEffect(rotationAngle, anchor: .center)
+                
+                Text(characterBox.data.text.item)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(
+                        .background.opacity(0.8),
+                        in: .rect(cornerRadius: 6)
+                    )
+                    .safeAreaInset(edge: .bottom, spacing: 4) {
                         HStack(spacing: 8) {
                             Text(
                                 """
-                                CharacterRecognitionInferenceTab.Output.RectangleConfidence \
+                                CharacterRecognitionInferencePage.Output.RectangleConfidence \
                                 \(characterBox.data.rectangle.confidence, format: .confidence)
                                 """
                             )
                             Text(
                                 """
-                                CharacterRecognitionInferenceTab.Output.TextConfidence \
+                                CharacterRecognitionInferencePage.Output.TextConfidence \
                                 \(characterBox.data.text.confidence, format: .confidence)
                                 """
                             )
@@ -475,16 +462,15 @@ fileprivate extension CharacterRecognitionInferenceTab {
                         .padding(.vertical, 2)
                         .background(frameColor, in: .rect(cornerRadius: 6))
                     }
-                    .onGeometryChange(for: CGFloat.self, of: \.size.height) {
-                        captionHeight = $0
-                    }
                     .opacity(hovering == characterBox.id ? 1 : 0)
-                }
-                .zIndex(zIndex)
-                .position(
-                    x: boundingBox.centerX * scale,
-                    y: boundingBox.centerY * scale + 2 + (captionHeight / 2)
-                )
+                    .allowsHitTesting(false)
+            }
+            .opacity(opacity)
+            .zIndex(zIndex)
+            .position(
+                x: boundingBox.centerX * scale,
+                y: boundingBox.centerY * scale
+            )
         }
         
         private var opacity: CGFloat {
