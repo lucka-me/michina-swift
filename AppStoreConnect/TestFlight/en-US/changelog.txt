@@ -1,12 +1,10 @@
-Welcome to Michina 1.1.0 Beta.
+Welcome to Michina 1.2.0 Beta.
 
-The first release, 1.0.0, has been launched. You can download it from the Releases of the GitHub repository.
+Release 1.1.0 has been launched. You can download it from the Releases of the GitHub repository.
 If you like Michina, buy it from App Store as a tip!
 
-Build #59
-- Changed: Build for macOS Golden Gate 27
-- Due to an issue in GitHub Actions' Xcode 27 environment, this build is built manually
+We will work on supporting the v2 models of Immich, including OCR models hosted on Hugging Face, please stay tuned.
 
-Build #58
-- Added: App Intents to start / stop / toggle the Web Service, actions available in Spotlight and Shortcut (#1)
-- Changed: Improve Endpoint field in Inference Service Settings
+Build #61
+- Fixed: Some mathmatical issues in OCR rectangle calculation, the rectangles should be closer to the Immich's results
+- Fixed: In OCR Inference page, rectangles may be highlightened even hovering outside of them
