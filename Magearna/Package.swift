@@ -7,7 +7,7 @@ import PackageDescription
 let package = Package(
     name: "Magearna",
     defaultLocalization: "en",
-    platforms: [ .macOS(.v15) ],
+    platforms: [ .macOS(.v14) ],
     products: [
         .library(name: "Magearna", targets: [ "Magearna" ]),
     ],
@@ -23,7 +23,8 @@ let package = Package(
         .target(
             name: "Magearna",
             dependencies: [
-                .product(name: "DequeModule", package: "swift-collections"),
+                .target(name: "VisionDeployment"),
+                
                 .product(name: "HTTPTypesFoundation", package: "swift-http-types"),
                 .product(name: "MLX", package: "mlx-swift"),
                 .product(name: "ONNXRuntime", package: "ONNXRuntime"),
@@ -37,6 +38,15 @@ let package = Package(
                 .plugin(name: "SwiftProtobufPlugin", package: "swift-protobuf")
             ]
         ),
+        .target(
+            name: "VisionDeployment",
+            dependencies: [
+                .target(name: "Geometry"),
+                
+                .product(name: "DequeModule", package: "swift-collections"),
+            ]
+        ),
+        .target(name: "Geometry"),
     ],
     swiftLanguageModes: [ .v6 ],
 )

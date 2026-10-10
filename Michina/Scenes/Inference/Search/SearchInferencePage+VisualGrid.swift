@@ -1,5 +1,5 @@
 //
-//  SearchInferenceTab+VisualGrid.swift
+//  SearchInferencePage+VisualGrid.swift
 //  Michina
 //
 //  Created by Lucka on 2026-06-22.
@@ -8,7 +8,7 @@
 import Magearna
 import SwiftUI
 
-extension SearchInferenceTab {
+extension SearchInferencePage {
     struct VisualGrid : View {
         @Binding private var model: InferenceModel
         @Binding private var outputs: [ Output ]
@@ -51,12 +51,12 @@ extension SearchInferenceTab {
     }
 }
 
-extension SearchInferenceTab.VisualGrid {
+extension SearchInferencePage.VisualGrid {
     static let models = InferenceModelSuite.all[.search]!
         .compactMap { $0.models[.visual] }
 }
 
-extension SearchInferenceTab.VisualGrid {
+extension SearchInferencePage.VisualGrid {
     typealias Pipeline = VisualSearchInferencePipeline
     
     struct Output : Identifiable {
@@ -71,7 +71,7 @@ extension SearchInferenceTab.VisualGrid {
     }
 }
 
-fileprivate extension SearchInferenceTab.VisualGrid {
+fileprivate extension SearchInferencePage.VisualGrid {
     static let columns: [ GridItem ] = [
         .init(
             .adaptive(minimum: 150, maximum: 300),
@@ -81,7 +81,7 @@ fileprivate extension SearchInferenceTab.VisualGrid {
     ]
 }
 
-fileprivate extension SearchInferenceTab.VisualGrid {
+fileprivate extension SearchInferencePage.VisualGrid {
     @ViewBuilder
     var inputCell: some View {
         Color.secondary
@@ -135,7 +135,7 @@ fileprivate extension SearchInferenceTab.VisualGrid {
     var inputContent: some View {
         VStack(alignment: .leading, spacing: 8) {
             Picker(
-                "SearchInferenceTab.VisualGrid.Input.Model",
+                "SearchInferencePage.VisualGrid.Input.Model",
                 selection: $model
             ) {
                 ForEach(Self.models) { model in
@@ -146,7 +146,7 @@ fileprivate extension SearchInferenceTab.VisualGrid {
             .labelsHidden()
             
             ZStack(alignment: .leading) {
-                Button("SearchInferenceTab.VisualGrid.Input.Run") {
+                Button("SearchInferencePage.VisualGrid.Input.Run") {
                     alert.whenTrying(runInference)
                 }
                 .disabled(images.isEmpty || progress != nil)
@@ -225,7 +225,7 @@ fileprivate extension SearchInferenceTab.VisualGrid {
     }
 }
 
-fileprivate extension SearchInferenceTab.VisualGrid {
+fileprivate extension SearchInferencePage.VisualGrid {
     @ViewBuilder
     func cell(output: (output: Output, distance: Float?)) -> some View {
         Color.clear
@@ -243,7 +243,7 @@ fileprivate extension SearchInferenceTab.VisualGrid {
                                 format: .number.precision(.fractionLength(4))
                             )
                         } else {
-                            Text("SearchInferenceTab.VisualGrid.Output.DifferentModel")
+                            Text("SearchInferencePage.VisualGrid.Output.DifferentModel")
                         }
                     }
                     
@@ -285,8 +285,8 @@ fileprivate extension SearchInferenceTab.VisualGrid {
     }
 }
 
-fileprivate extension SearchInferenceTab.TextualForm.Output {
-    func distance(to other: SearchInferenceTab.VisualGrid.Output) -> Float {
+fileprivate extension SearchInferencePage.TextualForm.Output {
+    func distance(to other: SearchInferencePage.VisualGrid.Output) -> Float {
         guard self.modelSuiteName == other.modelSuiteName else {
             return .infinity
         }

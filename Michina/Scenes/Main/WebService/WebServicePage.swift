@@ -1,5 +1,5 @@
 //
-//  WebServiceTab.swift
+//  WebServicePage.swift
 //  Michina
 //
 //  Created by Lucka on 2026-05-19.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct WebServiceTab : TabContent {
+struct WebServicePage : View {
     @Environment(\.alert) private var alert
     
     @State private var service = WebService.shared
@@ -17,40 +17,37 @@ struct WebServiceTab : TabContent {
     @State private var isInspectorPresented = true
     @State private var selection: Selection? = nil
     
-    var body: some TabContent<Never> {
-        Tab(Self.titleKey, systemImage: systemImage) {
-            List(selection: $selection) {
-                Section {
-                    ForEach(service.clientMetrics, content: row(client:))
-                        .monospaced()
-                } header: {
-                    Label("WebServiceTab.Clients", systemImage: "server.rack")
-                        .listRowSeparator(.hidden)
-                }
-            }
-            .listStyle(.inset)
-            .frame(minWidth: 200, minHeight: 400)
-            .toolbar(content: toolbarContent)
-            .navigationTitle("WebService")
-            .navigationSubtitle(navigationSubtitleKey)
-            .inspector(isPresented: $isInspectorPresented, content: inspectorContent)
-            .onChange(of: selection) {
-                if selection != nil {
-                    isInspectorPresented = true
-                }
+    var body: some View {
+        List(selection: $selection) {
+            Section {
+                ForEach(service.clientMetrics, content: row(client:))
+                    .monospaced()
+            } header: {
+                Label("WebServicePage.Clients", systemImage: "server.rack")
+                    .listRowSeparator(.hidden)
             }
         }
-        .badge(service.clientMetrics.count)
+        .listStyle(.inset)
+        .frame(minWidth: 200, minHeight: 400)
+        .toolbar(content: toolbarContent)
+        .navigationTitle("WebService")
+        .navigationSubtitle(navigationSubtitleKey)
+        .inspector(isPresented: $isInspectorPresented, content: inspectorContent)
+        .onChange(of: selection) {
+            if selection != nil {
+                isInspectorPresented = true
+            }
+        }
     }
 }
 
-fileprivate extension WebServiceTab {
-    static let titleKey: LocalizedStringKey = "WebServiceTab"
-}
-
-fileprivate extension WebServiceTab {
-    var systemImage: String {
-        if service.errors.isEmpty {
+extension WebServicePage {
+    static let identifier = "WebServicePage"
+    
+    static let titleKey: LocalizedStringKey = "WebServicePage"
+    
+    static func systemImage(isServiceErrorsEmpty: Bool) -> String {
+        if isServiceErrorsEmpty {
             "network"
         } else {
             "exclamationmark.triangle"
@@ -58,12 +55,12 @@ fileprivate extension WebServiceTab {
     }
 }
 
-fileprivate extension WebServiceTab {
+fileprivate extension WebServicePage {
     @ToolbarContentBuilder
     func toolbarContent() -> some ToolbarContent {
         ToolbarItem(placement: .primaryAction) {
             Toggle(
-                "WebServiceTab.ServiceToggle",
+                "WebServicePage.ServiceToggle",
                 systemImage: "power",
                 isOn: .init(
                     get: { service.status.isRunning },
@@ -74,7 +71,7 @@ fileprivate extension WebServiceTab {
         
         if !service.errors.isEmpty {
             ToolbarItem(placement: .status) {
-                Button("WebServiceTab.Errors", systemImage: "exclamationmark.triangle") {
+                Button("WebServicePage.Errors", systemImage: "exclamationmark.triangle") {
                     isErrorsPopoverPresented = true
                 }
                 .badge(service.errors.count)
@@ -123,7 +120,7 @@ fileprivate extension WebServiceTab {
     
     @ViewBuilder
     var clearErrorsButton: some View {
-        Button("WebServiceTab.Errors.Clear", role: .destructive) {
+        Button("WebServicePage.Errors.Clear", role: .destructive) {
             service.clearErrors()
             isErrorsPopoverPresented = false
         }
@@ -132,7 +129,7 @@ fileprivate extension WebServiceTab {
     }
 }
 
-fileprivate extension WebServiceTab {
+fileprivate extension WebServicePage {
     @ViewBuilder
     func inspectorContent() -> some View {
         if
@@ -141,18 +138,18 @@ fileprivate extension WebServiceTab {
         {
             ClientMetricView(client: client)
         } else {
-            Text("WebServiceTab.NoSelection")
+            Text("WebServicePage.NoSelection")
                 .font(.system(.title, weight: .semibold))
                 .foregroundStyle(.secondary)
         }
     }
 }
 
-fileprivate extension WebServiceTab {
+fileprivate extension WebServicePage {
     @ViewBuilder
     func row(client: WebClientMetric) -> some View {
         VStack(alignment: .leading) {
-            Text(client.address ?? .init(localized: "WebServiceTab.Clients.Unknown"))
+            Text(client.address ?? .init(localized: "WebServicePage.Clients.Unknown"))
                 .font(.headline)
             
             HStack(alignment: .firstTextBaseline, spacing: 12) {
@@ -167,11 +164,11 @@ fileprivate extension WebServiceTab {
     }
 }
 
-fileprivate extension WebServiceTab {
+fileprivate extension WebServicePage {
     var navigationSubtitleKey: LocalizedStringKey {
         switch service.status {
-        case .paused: "WebServiceTab.Subtitle.Paused"
-        case .running(let port): "WebServiceTab.Subtitle.Running \(port, format: .port)"
+        case .paused: "WebServicePage.Subtitle.Paused"
+        case .running(let port): "WebServicePage.Subtitle.Running \(port, format: .port)"
         }
     }
 }

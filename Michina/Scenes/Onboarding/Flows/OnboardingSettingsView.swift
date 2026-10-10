@@ -15,7 +15,7 @@ struct OnboardingSettingsView : View {
     var body: some View {
         Form {
             Section {
-                AppSettingsTab.LaunchAtLoginControls()
+                AppSettingsForm.LaunchAtLoginControls()
                 
                 Toggle(
                     "OnboardingSettingsView.Launch.StartWhenInitialized",
@@ -25,7 +25,7 @@ struct OnboardingSettingsView : View {
                 Text("OnboardingSettingsView.Launch")
             }
             
-            WebServiceSettingsTab.PortSection()
+            WebServiceSettingsForm.PortSection()
             
             Section {
                 SettingsLink()

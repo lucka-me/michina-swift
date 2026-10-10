@@ -1,5 +1,5 @@
 //
-//  SearchInferenceTab+TextualForm.swift
+//  SearchInferencePage+TextualForm.swift
 //  Michina
 //
 //  Created by Lucka on 2026-06-22.
@@ -8,7 +8,7 @@
 import Magearna
 import SwiftUI
 
-extension SearchInferenceTab {
+extension SearchInferencePage {
     struct TextualForm : View {
         @Binding private var model: InferenceModel
         @Binding private var outputs: [ Output ]
@@ -45,12 +45,12 @@ extension SearchInferenceTab {
     }
 }
 
-extension SearchInferenceTab.TextualForm {
+extension SearchInferencePage.TextualForm {
     static let models = InferenceModelSuite.all[.search]!
         .compactMap { $0.models[.textual] }
 }
 
-extension SearchInferenceTab.TextualForm {
+extension SearchInferencePage.TextualForm {
     typealias Pipeline = TextualSearchInferencePipeline
     
     struct Output : Hashable, Identifiable {
@@ -74,7 +74,7 @@ extension SearchInferenceTab.TextualForm {
     }
 }
 
-fileprivate extension SearchInferenceTab.TextualForm {
+fileprivate extension SearchInferencePage.TextualForm {
     @MainActor
     @Observable
     final class ViewValues {
@@ -95,7 +95,7 @@ fileprivate extension SearchInferenceTab.TextualForm {
     }
 }
 
-fileprivate extension SearchInferenceTab.TextualForm {
+fileprivate extension SearchInferencePage.TextualForm {
     static let languageCodes: [ String ] = [
         "af",
         "ar",
@@ -157,9 +157,9 @@ fileprivate extension SearchInferenceTab.TextualForm {
     
     @ViewBuilder
     var inputSection: some View {
-        Section("SearchInferenceTab.TextualForm.Input") {
+        Section("SearchInferencePage.TextualForm.Input") {
             Picker(
-                "SearchInferenceTab.TextualForm.Input.Model",
+                "SearchInferencePage.TextualForm.Input.Model",
                 selection: $model
             ) {
                 ForEach(Self.models) { model in
@@ -171,10 +171,10 @@ fileprivate extension SearchInferenceTab.TextualForm {
             
             if model.suiteName.hasPrefix("nllb") {
                 Picker(
-                    "SearchInferenceTab.TextualForm.Input.Model.LanguageCode",
+                    "SearchInferencePage.TextualForm.Input.Model.LanguageCode",
                     selection: $values.languageCode
                 ) {
-                    Text("SearchInferenceTab.TextualForm.Input.Model.LanguageCode.Unspecified")
+                    Text("SearchInferencePage.TextualForm.Input.Model.LanguageCode.Unspecified")
                         .tag(String?.none)
                     
                     ForEach(Self.languageCodes, id: \.self) { code in
@@ -184,7 +184,7 @@ fileprivate extension SearchInferenceTab.TextualForm {
                 }
             }
             
-            TextField("SearchInferenceTab.TextualForm.Input.SearchText", text: $searchText)
+            TextField("SearchInferencePage.TextualForm.Input.SearchText", text: $searchText)
                 .onSubmit(of: .text) {
                     alert.whenTrying(runInference)
                 }
@@ -193,7 +193,7 @@ fileprivate extension SearchInferenceTab.TextualForm {
             if let progress {
                 ProgressView(progress)
             } else {
-                Button("SearchInferenceTab.TextualForm.Input.Run") {
+                Button("SearchInferencePage.TextualForm.Input.Run") {
                     alert.whenTrying(runInference)
                 }
                 .disabled(searchText.isEmpty)
@@ -246,15 +246,15 @@ fileprivate extension SearchInferenceTab.TextualForm {
     }
 }
 
-fileprivate extension SearchInferenceTab.TextualForm {
+fileprivate extension SearchInferencePage.TextualForm {
     @ViewBuilder
     func section(output: Output) -> some View {
         Section {
             LabeledContent {
                 if selection == output {
-                    Text("SearchInferenceTab.TextualForm.Applied")
+                    Text("SearchInferencePage.TextualForm.Applied")
                 } else {
-                    Button("SearchInferenceTab.TextualForm.Apply") {
+                    Button("SearchInferencePage.TextualForm.Apply") {
                         selection = output
                     }
                     .buttonStyle(.link)

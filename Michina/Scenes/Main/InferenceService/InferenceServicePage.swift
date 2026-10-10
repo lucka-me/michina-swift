@@ -1,5 +1,5 @@
 //
-//  InferenceServiceTab.swift
+//  InferenceServicePage.swift
 //  Michina
 //
 //  Created by Lucka on 2026-05-19.
@@ -8,7 +8,7 @@
 import Magearna
 import SwiftUI
 
-struct InferenceServiceTab : TabContent {
+struct InferenceServicePage : View {
     @State private var values = ViewValues()
     
     @State private var metrics = InferenceServiceMetrics.shared
@@ -16,38 +16,40 @@ struct InferenceServiceTab : TabContent {
     @State private var isInspectorPresented = true
     @State private var selection: Selection? = nil
     
-    var body: some TabContent<Never> {
-        Tab(Self.titleKey, systemImage: Self.systemImage) {
-            List(selection: $selection) {
-                section(category: nil)
-                
-                ForEach(InferenceModelSuite.Category.allCases, content: section(category:))
-            }
-            .listStyle(.inset)
-            .frame(minWidth: 300, minHeight: 400)
-            .toolbar(content: toolbarContent)
-            .navigationTitle("InferenceService")
-            .inspector(isPresented: $isInspectorPresented, content: inspectorContent)
-            .onChange(of: selection) {
-                if selection != nil {
-                    isInspectorPresented = true
-                }
+    var body: some View {
+        List(selection: $selection) {
+            section(category: nil)
+            
+            ForEach(InferenceModelSuite.Category.allCases, content: section(category:))
+        }
+        .listStyle(.inset)
+        .frame(minWidth: 300, minHeight: 400)
+        .toolbar(content: toolbarContent)
+        .navigationTitle("InferenceService")
+        .inspector(isPresented: $isInspectorPresented, content: inspectorContent)
+        .onChange(of: selection) {
+            if selection != nil {
+                isInspectorPresented = true
             }
         }
     }
 }
 
-fileprivate extension InferenceServiceTab {
-    static let titleKey: LocalizedStringKey = "InferenceServiceTab"
+extension InferenceServicePage : @MainActor LabelableMetatype {
+    static let titleKey: LocalizedStringKey = "InferenceServicePage"
     static let systemImage: String = "sparkles.rectangle.stack"
 }
 
-fileprivate extension InferenceServiceTab {
+extension InferenceServicePage {
+    static let identifier = "InferenceServicePage"
+}
+
+fileprivate extension InferenceServicePage {
     @MainActor
     @Observable
     final class ViewValues {
         private struct Storage {
-            @AppStorage("InferenceServiceTab.ShowCharts")
+            @AppStorage("InferenceServicePage.ShowCharts")
             var showCharts = true
         }
         
@@ -66,7 +68,7 @@ fileprivate extension InferenceServiceTab {
     func toolbarContent() -> some ToolbarContent {
         ToolbarItem {
             Toggle(
-                "InferenceServiceTab.ShowCharts",
+                "InferenceServicePage.ShowCharts",
                 systemImage: "chart.xyaxis.line",
                 isOn: $values.showCharts
             )
@@ -74,7 +76,7 @@ fileprivate extension InferenceServiceTab {
         
         ToolbarItem(placement: .destructiveAction) {
             Button(
-                "InferenceServiceTab.Reset",
+                "InferenceServicePage.Reset",
                 systemImage: "arrow.counterclockwise",
                 role: .destructive,
                 action: metrics.reset
@@ -83,20 +85,20 @@ fileprivate extension InferenceServiceTab {
     }
 }
 
-fileprivate extension InferenceServiceTab {
+fileprivate extension InferenceServicePage {
     @ViewBuilder
     func inspectorContent() -> some View {
         if case let .category(category) = selection {
             InferencePipelineMetricView(metric: metrics.pipelines[category]!)
         } else {
-            Text("InferenceServiceTab.NoSelection")
+            Text("InferenceServicePage.NoSelection")
                 .font(.system(.title, weight: .semibold))
                 .foregroundStyle(.secondary)
         }
     }
 }
 
-fileprivate extension InferenceServiceTab {
+fileprivate extension InferenceServicePage {
     @ViewBuilder
     func section(category: InferenceModelSuite.Category?) -> some View {
         Section {
@@ -113,7 +115,7 @@ fileprivate extension InferenceServiceTab {
                 if let category {
                     Label(category)
                 } else {
-                    Label("InferenceServiceTab.Overall", systemImage: "rectangle.stack")
+                    Label("InferenceServicePage.Overall", systemImage: "rectangle.stack")
                 }
             }
         }
@@ -147,7 +149,7 @@ fileprivate extension InferenceServiceTab {
             Spacer()
             
             VStack(alignment: .trailing) {
-                Text("InferenceServiceTab.AverageElapse")
+                Text("InferenceServicePage.AverageElapse")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 Text(pipelineMetric.averageElapse, format: .elapse)
