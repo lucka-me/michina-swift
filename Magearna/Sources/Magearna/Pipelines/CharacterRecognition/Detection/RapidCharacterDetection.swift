@@ -8,7 +8,7 @@
 import Accelerate
 import CoreImage
 import ONNXRuntime
-import VisionDeployment
+import MagearnaVision
 
 struct RapidCharacterDetection : CharacterDetectionFunction {
     private let session: InferenceSession
@@ -185,7 +185,7 @@ fileprivate extension RapidCharacterDetection {
             destination: dilatedBuffer
         )
         
-        let contours = try await ContoursVision.detect(in: dilatedBuffer)
+        let contours = try await NormalizedContour.detect(in: dilatedBuffer)
         let bufferImageSize = CGSize(width: bufferSize.width, height: bufferSize.height)
         
         return contours.map { contour in

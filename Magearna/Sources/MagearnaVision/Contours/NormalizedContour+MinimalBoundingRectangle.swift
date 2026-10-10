@@ -1,15 +1,15 @@
 //
-//  ContoursVision.NormalizedContour+MinimalBoundingRectangle.swift
+//  NormalizedContour+MinimalBoundingRectangle.swift
 //  Magearna
 //
 //  Created by Lucka on 2026-09-01.
 //
 
 import DequeModule
-import Geometry
+import MagearnaGeometry
 import Vision
 
-public extension ContoursVision.NormalizedContour {
+public extension NormalizedContour {
     func minimalBounding<Rectangle: RectangleRepresentable>(
         _ type: Rectangle.Type = Rectangle.self,
         in imageSize: CGSize,
@@ -51,7 +51,7 @@ public extension ContoursVision.NormalizedContour {
 
 fileprivate typealias CGEdge = (CGPoint, CGPoint)
 
-fileprivate extension ContoursVision.NormalizedContour {
+fileprivate extension NormalizedContour {
     func convexHullEdges(in imageSize: CGSize) -> [ CGEdge ] {
         // Reference: ON-LINE CONSTRUCTION OF THE CONVEX HULL OF A SIMPLE POLYLINE
         //            Avraham A. MELKMAN
@@ -109,7 +109,7 @@ fileprivate extension ContoursVision.NormalizedContour {
     }
 }
 
-fileprivate extension ContoursVision.NormalizedContour {
+fileprivate extension NormalizedContour {
     static func rectangle<Rectangle: RectangleRepresentable>(
         _ type: Rectangle.Type = Rectangle.self,
         mapping points: [ CGPoint ],

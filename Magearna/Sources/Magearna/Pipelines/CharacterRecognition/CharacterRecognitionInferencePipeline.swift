@@ -6,8 +6,8 @@
 //
 
 import CoreImage
+import MagearnaGeometry
 import ONNXRuntime
-import Geometry
 
 public actor CharacterRecognitionInferencePipeline : InferencePipeline {
     public static let category = InferenceModelSuite.Category.characterRecognition

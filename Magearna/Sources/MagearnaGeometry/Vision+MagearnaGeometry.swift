@@ -1,5 +1,5 @@
 //
-//  Vision+Geometry.swift
+//  Vision+MagearnaGeometry.swift
 //  Magearna
 //
 //  Created by Lucka on 2026-09-01.

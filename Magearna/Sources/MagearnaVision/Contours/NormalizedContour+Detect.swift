@@ -1,5 +1,5 @@
 //
-//  ContoursVision.swift
+//  NormalizedContour+Detect.swift
 //  Magearna
 //
 //  Created by Lucka on 2026-09-01.
@@ -8,16 +8,10 @@
 import Accelerate
 import Vision
 
-public enum ContoursVision {
-    enum Legacy {
-        
-    }
-}
-
-public extension ContoursVision {
+public extension NormalizedContour {
     static func detect(
         in buffer: vImage.PixelBuffer<vImage.PlanarF>
-    ) async throws -> [ NormalizedContour ] {
+    ) async throws -> [ Self ] {
         guard
             let cgImage = buffer.makeCGImage(
                 cgImageFormat: .init(
@@ -43,7 +37,7 @@ public extension ContoursVision {
     }
 }
 
-fileprivate extension ContoursVision {
+fileprivate extension NormalizedContour {
     @available(macOS 15.0, *)
     static func detect(in cgImage: CGImage) async throws -> [ NormalizedContour ] {
         let handler = ImageRequestHandler(cgImage, orientation: .downMirrored)
@@ -57,20 +51,22 @@ fileprivate extension ContoursVision {
     }
 }
 
-fileprivate extension ContoursVision.Legacy {
-    static func detect(in cgImage: CGImage) async throws -> [ ContoursVision.NormalizedContour ] {
-        let handler = VNImageRequestHandler(cgImage: cgImage, orientation: .downMirrored)
-        let request = VNDetectContoursRequest()
-        request.detectsDarkOnLight = false
-        
-        try handler.perform([ request ])
-        
-        guard let results = request.results else {
-            return [ ]
+fileprivate extension NormalizedContour {
+    enum Legacy {
+        static func detect(in cgImage: CGImage) async throws -> [ NormalizedContour ] {
+            let handler = VNImageRequestHandler(cgImage: cgImage, orientation: .downMirrored)
+            let request = VNDetectContoursRequest()
+            request.detectsDarkOnLight = false
+            
+            try handler.perform([ request ])
+            
+            guard let results = request.results else {
+                return [ ]
+            }
+            
+            return results
+                .flatMap(\.topLevelContours)
+                .map(NormalizedContour.init)
         }
-        
-        return results
-            .flatMap(\.topLevelContours)
-            .map(ContoursVision.NormalizedContour.init)
     }
 }

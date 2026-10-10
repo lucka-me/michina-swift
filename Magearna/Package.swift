@@ -23,7 +23,7 @@ let package = Package(
         .target(
             name: "Magearna",
             dependencies: [
-                .target(name: "VisionDeployment"),
+                .target(name: "MagearnaVision"),
                 
                 .product(name: "HTTPTypesFoundation", package: "swift-http-types"),
                 .product(name: "MLX", package: "mlx-swift"),
@@ -38,15 +38,15 @@ let package = Package(
                 .plugin(name: "SwiftProtobufPlugin", package: "swift-protobuf")
             ]
         ),
+        .target(name: "MagearnaGeometry"),
         .target(
-            name: "VisionDeployment",
+            name: "MagearnaVision",
             dependencies: [
-                .target(name: "Geometry"),
+                .target(name: "MagearnaGeometry"),
                 
                 .product(name: "DequeModule", package: "swift-collections"),
             ]
         ),
-        .target(name: "Geometry"),
     ],
     swiftLanguageModes: [ .v6 ],
 )

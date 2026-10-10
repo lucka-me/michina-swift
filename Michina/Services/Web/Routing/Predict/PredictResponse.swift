@@ -7,9 +7,9 @@
 
 import CoreGraphics
 import Foundation
-import Geometry
 import Hummingbird
 import Magearna
+import MagearnaGeometry
 
 enum PredictResponse {
     case facialRecognition(output: FacialRecognitionInferencePipeline.Output, imageSize: CGSize)

@@ -1,5 +1,5 @@
 //
-//  ContoursVision+NormalizedContour.swift
+//  NormalizedContour.swift
 //  Magearna
 //
 //  Created by Lucka on 2026-09-01.
@@ -7,15 +7,13 @@
 
 import Vision
 
-public extension ContoursVision {
-    struct NormalizedContour {
-        let boundingBox: CGRect
-        let path: CGPath
-        let points: [ CGPoint ]
-    }
+public struct NormalizedContour {
+    let boundingBox: CGRect
+    let path: CGPath
+    let points: [ CGPoint ]
 }
 
-public extension ContoursVision.NormalizedContour {
+public extension NormalizedContour {
     func boundingBox(in imageSize: CGSize) -> CGRect {
         if #available(macOS 15.0, *) {
             NormalizedRect(normalizedRect: boundingBox)
@@ -30,13 +28,13 @@ public extension ContoursVision.NormalizedContour {
     }
 }
 
-public extension ContoursVision.NormalizedContour {
+public extension NormalizedContour {
     func contains(normalizedPoint: CGPoint) -> Bool {
         path.contains(normalizedPoint)
     }
 }
 
-extension ContoursVision.NormalizedContour {
+extension NormalizedContour {
     @available(macOS 15.0, *)
     init(_ source: ContoursObservation.Contour) {
         self.path = source.normalizedPath
